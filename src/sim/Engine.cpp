@@ -78,25 +78,27 @@ namespace MQSimEngine
 		}
 		
 		Sim_Event* ev = NULL;
+		sim_time_type key;
+
 		while (true) {
-			if (_EventList->Count == 0 || stop) {
+			if (_EventList->size() == 0 || stop) {
 				break;
 			}
 
-			EventTreeNode* minNode = _EventList->Get_min_node();
-			ev = minNode->FirstSimEvent;
+			key = _EventList->Get_min_key();
+			ev = _EventList->GetData(key);
 
 			_sim_time = ev->Fire_time;
 
-			while (ev != NULL) {
+			while (ev != NULL)
+			{
 				if(!ev->Ignore) {
 					ev->Target_sim_object->Execute_simulator_event(ev);
 				}
-				Sim_Event* consumed_event = ev;
+
 				ev = ev->Next_event;
-				delete consumed_event;
 			}
-			_EventList->Remove(minNode);
+			_EventList->Remove(key);
 		}
 	}
 
@@ -133,3 +135,4 @@ namespace MQSimEngine
 		return false;
 	}
 }
+
