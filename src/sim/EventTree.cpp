@@ -1,3 +1,9 @@
+// This file implements the event tree, which is used to store all future events for the engine
+// This is implemented using the C++ map library function
+// The key of each element is the timestamp at which it will be executed in simulation time, the
+// data is the element itself.
+// In case there are multiple elements with the same timestamp, they are linked via the pointer Next_event inside the data_element (which is of type SimEvent*)
+
 #include <exception>
 #include <map>
 #include "EventTree.h"
@@ -21,10 +27,13 @@ namespace MQSimEngine
 	// Inserts a new element into the EventTree
 	void EventTree::Add(sim_time_type key, Sim_Event* data)
 	{
+		// If key is not yet in map, insert it
 		if (map.find(key) == map.end())
 		{
 			map.insert({key, data});
 		}
+		// If key is in map, start at that element, and iterate through the Next_events
+		// until we reach the end, then insert it
 		else
 		{
 			Sim_Event* tmp = map.find(key)->second;
@@ -55,7 +64,7 @@ namespace MQSimEngine
 	}
 
 	// Returns the size of the Event_Tree
-	int EventTree::size()
+	int EventTree::Size()
 	{
 		return map.size();
 	}
@@ -66,23 +75,12 @@ namespace MQSimEngine
 		return map.begin()->first;
 	}
 
-	// Returns the object with the minimum key value
-	Sim_Event* EventTree::Get_min_value()
-	{
-		return map.begin()->second;
-	}
-
 	// removes the key and data object (delete)
 	void EventTree::Remove(sim_time_type key)
 	{
 		map.erase(key);
 	}
 
-	// removes the entry with the minimum key
-	void EventTree::Remove_min()
-	{
-		EventTree::Remove(Get_min_key());
-	}
 
 	/// Empties or clears the tree
 	void EventTree::Clear()
