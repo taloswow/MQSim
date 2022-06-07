@@ -3,25 +3,17 @@
 
 #include <iostream>
 #include <unordered_map>
+
 #include "Sim_Defs.h"
-#include "EventTree.h"
 #include "Sim_Object.h"
+#include "EventTree.h"
 
 namespace MQSimEngine {
 	class Engine
 	{
-		friend class EventTree;
 	public:
-		Engine()
-		{
-			this->_EventList = new EventTree;
-			started = false;
-		}
-
-		~Engine() {
-			delete _EventList;
-		}
-		
+		Engine();
+		~Engine();
 		static Engine* Instance();
 		sim_time_type Time();
 		Sim_Event* RegisterSimEvent(sim_time_type fireTime, Sim_Object* targetObject, void* parameters = NULL, int type = 0);

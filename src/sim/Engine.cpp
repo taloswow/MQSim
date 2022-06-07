@@ -8,6 +8,17 @@ namespace MQSimEngine
 {
 	Engine* Engine::_instance = NULL;
 
+	// Constuctor. Create EventTree as EventList
+	Engine::Engine() {
+		this->_EventList = new EventTree;
+		started = false;
+	}
+
+	// Destructor. Delete EventList
+	Engine::~Engine() {
+		delete _EventList;
+	}
+
 	// If there is not yet an instance of the Engine, create one
 	Engine* Engine::Instance() {
 		if (_instance == 0) {
