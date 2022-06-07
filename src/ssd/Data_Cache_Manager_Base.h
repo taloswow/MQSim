@@ -28,7 +28,7 @@ namespace SSD_Components
 			Caching_Mode* caching_mode_per_input_stream, Cache_Sharing_Mode sharing_mode, unsigned int stream_count);
 		virtual ~Data_Cache_Manager_Base();
 		void Setup_triggers();
-		void Start_simulation();
+		void StartSimulation();
 		void Validate_simulation_config();
 
 		typedef void(*UserRequestServicedSignalHanderType) (User_Request*);

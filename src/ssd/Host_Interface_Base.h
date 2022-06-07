@@ -18,10 +18,10 @@ namespace Host_Components
 
 namespace SSD_Components
 {
-#define COPYDATA(DEST,SRC,SIZE) if(Simulator->Is_integrated_execution_mode()) {DEST = new char[SIZE]; memcpy(DEST, SRC, SIZE);} else DEST = SRC;
+#define COPYDATA(DEST,SRC,SIZE) if(Simulator->IsIntegratedExecutionMode()) {DEST = new char[SIZE]; memcpy(DEST, SRC, SIZE);} else DEST = SRC;
 #define DELETE_REQUEST_NVME(REQ) \
 	delete (Submission_Queue_Entry*)REQ->IO_command_info; \
-	if(Simulator->Is_integrated_execution_mode())\
+	if(Simulator->IsIntegratedExecutionMode())\
 		{if(REQ->Data != NULL) delete[] (char*)REQ->Data;} \
 	if(REQ->Transaction_list.size() != 0) PRINT_ERROR("Deleting an unhandled user requests in the host interface! MQSim thinks something is going wrong!")\
 	delete REQ;

@@ -888,7 +888,7 @@ namespace SSD_Components
 		xmlwriter.Write_end_element_tag();
 	}
 
-	void FTL::Start_simulation()
+	void FTL::StartSimulation()
 	{
 	}
 

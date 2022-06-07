@@ -24,16 +24,16 @@ namespace MQSimEngine {
 		
 		static Engine* Instance();
 		sim_time_type Time();
-		Sim_Event* Register_sim_event(sim_time_type fireTime, Sim_Object* targetObject, void* parameters = NULL, int type = 0);
-		void Ignore_sim_event(Sim_Event*);
+		Sim_Event* RegisterSimEvent(sim_time_type fireTime, Sim_Object* targetObject, void* parameters = NULL, int type = 0);
+		void IgnoreSimEvent(Sim_Event*);
 		void Reset();
 		void AddObject(Sim_Object* obj);
 		Sim_Object* GetObject(sim_object_id_type object_id);
 		void RemoveObject(Sim_Object* obj);
-		void Start_simulation();
-		void Stop_simulation();
-		bool Has_started();
-		bool Is_integrated_execution_mode();
+		void StartSimulation();
+		void StopSimulation();
+		bool HasStarted();
+		bool IsIntegratedExecutionMode();
 	private:
 		sim_time_type _sim_time;
 		EventTree* _EventList;

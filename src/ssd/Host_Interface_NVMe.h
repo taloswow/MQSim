@@ -90,7 +90,7 @@ public:
 						unsigned int no_of_input_streams, uint16_t queue_fetch_size, unsigned int sectors_per_page, Data_Cache_Manager_Base *cache);
 	stream_id_type Create_new_stream(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 									 uint64_t submission_queue_base_address, uint64_t completion_queue_base_address);
-	void Start_simulation();
+	void StartSimulation();
 	void Validate_simulation_config();
 	void Execute_simulator_event(MQSimEngine::Sim_Event *);
 	uint16_t Get_submission_queue_depth();

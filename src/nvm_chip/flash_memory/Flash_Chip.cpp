@@ -53,7 +53,7 @@ namespace NVM
 			connectedReadyHandlers.push_back(function);
 		}
 		
-		void Flash_Chip::Start_simulation()
+		void Flash_Chip::StartSimulation()
 		{
 		}
 
@@ -112,7 +112,7 @@ namespace NVM
 			}
 
 			targetDie->Expected_finish_time = Simulator->Time() + Get_command_execution_latency(command->CommandCode, command->Address[0].PageID);
-			targetDie->CommandFinishEvent = Simulator->Register_sim_event(targetDie->Expected_finish_time,
+			targetDie->CommandFinishEvent = Simulator->RegisterSimEvent(targetDie->Expected_finish_time,
 				this, command, static_cast<int>(Chip_Sim_Event_Type::COMMAND_FINISHED));
 			targetDie->CurrentCMD = command;
 			targetDie->Status = DieStatus::BUSY;
@@ -213,7 +213,7 @@ namespace NVM
 			throw "Suspend is not supported for read operations!";*/
 
 			targetDie->RemainingSuspendedExecTime = targetDie->Expected_finish_time - Simulator->Time();
-			Simulator->Ignore_sim_event(targetDie->CommandFinishEvent);//The simulator engine should not execute the finish event for the suspended command
+			Simulator->IgnoreSimEvent(targetDie->CommandFinishEvent);//The simulator engine should not execute the finish event for the suspended command
 			targetDie->CommandFinishEvent = NULL;
 
 			targetDie->SuspendedCMD = targetDie->CurrentCMD;
@@ -244,7 +244,7 @@ namespace NVM
 			STAT_totalResumeCount++;
 
 			targetDie->Expected_finish_time = Simulator->Time() + targetDie->RemainingSuspendedExecTime;
-			targetDie->CommandFinishEvent = Simulator->Register_sim_event(targetDie->Expected_finish_time,
+			targetDie->CommandFinishEvent = Simulator->RegisterSimEvent(targetDie->Expected_finish_time,
 				this, targetDie->CurrentCMD, static_cast<int>(Chip_Sim_Event_Type::COMMAND_FINISHED));
 			if (targetDie->Expected_finish_time > this->expectedFinishTime) {
 				this->expectedFinishTime = targetDie->Expected_finish_time;

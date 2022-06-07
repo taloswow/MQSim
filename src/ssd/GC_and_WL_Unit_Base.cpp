@@ -166,7 +166,7 @@ namespace SSD_Components
 			} //switch (transaction->Type)
 	}
 
-	void GC_and_WL_Unit_Base::Start_simulation()
+	void GC_and_WL_Unit_Base::StartSimulation()
 	{
 	}
 

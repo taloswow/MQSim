@@ -412,7 +412,7 @@ void SSD_Device::Perform_preconditioning(std::vector<Utils::Workload_Statistics 
 	}
 }
 
-void SSD_Device::Start_simulation()
+void SSD_Device::StartSimulation()
 {
 }
 

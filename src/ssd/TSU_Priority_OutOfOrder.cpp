@@ -109,7 +109,7 @@ TSU_Priority_OutOfOrder::~TSU_Priority_OutOfOrder()
     delete[] MappingWriteTRQueue;
 }
 
-void TSU_Priority_OutOfOrder::Start_simulation()
+void TSU_Priority_OutOfOrder::StartSimulation()
 {
 }
 

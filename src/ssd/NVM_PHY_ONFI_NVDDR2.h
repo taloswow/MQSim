@@ -92,7 +92,7 @@ namespace SSD_Components
 			unsigned int ChannelCount, unsigned int chip_no_per_channel, unsigned int DieNoPerChip, unsigned int PlaneNoPerDie);
 		void Setup_triggers();
 		void Validate_simulation_config();
-		void Start_simulation();
+		void StartSimulation();
 
 		void Send_command_to_chip(std::list<NVM_Transaction_Flash*>& transactionList);
 		void Change_flash_page_status_for_preconditioning(const NVM::FlashMemory::Physical_Page_Address& page_address, const LPA_type lpa);

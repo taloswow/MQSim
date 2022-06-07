@@ -20,7 +20,7 @@ class Host_System : public MQSimEngine::Sim_Object, public MQSimEngine::Sim_Repo
 public:
 	Host_System(Host_Parameter_Set* parameters, bool preconditioning_required, SSD_Components::Host_Interface_Base* ssd_host_interface);
 	~Host_System();
-	void Start_simulation();
+	void StartSimulation();
 	void Validate_simulation_config();
 	void Execute_simulator_event(MQSimEngine::Sim_Event* event);
 	void Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter);

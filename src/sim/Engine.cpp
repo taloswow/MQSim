@@ -59,7 +59,7 @@ namespace MQSimEngine
 	}
 
 	/// This is the main method of simulator which starts simulation process.
-	void Engine::Start_simulation()
+	void Engine::StartSimulation()
 	{
 		started = true;
 
@@ -73,7 +73,7 @@ namespace MQSimEngine
 			}
 
 			obj->second->Validate_simulation_config();
-			obj->second->Start_simulation();
+			obj->second->StartSimulation();
 		}
 			
 		while (true) {
@@ -103,13 +103,13 @@ namespace MQSimEngine
 	}
 
 	// Set the stop flag, so that the simulation stops after finishing the current event
-	void Engine::Stop_simulation()
+	void Engine::StopSimulation()
 	{
 		stop = true;
 	}
 
 	// Returns true if the simulation has started
-	bool Engine::Has_started()
+	bool Engine::HasStarted()
 	{
 		return started;
 	}
@@ -121,7 +121,7 @@ namespace MQSimEngine
 	}
 
 	// Register a new sim_event and pack it into the EventTree
-	Sim_Event* Engine::Register_sim_event(sim_time_type fireTime, Sim_Object* targetObject, void* parameters, int type)
+	Sim_Event* Engine::RegisterSimEvent(sim_time_type fireTime, Sim_Object* targetObject, void* parameters, int type)
 	{
 		Sim_Event* ev = new Sim_Event(fireTime, targetObject, parameters, type);
 		DEBUG("RegisterEvent " << fireTime << " " << targetObject)
@@ -130,12 +130,12 @@ namespace MQSimEngine
 	}
 
 	// Set the flag for an event to ignore / not execute it
-	void Engine::Ignore_sim_event(Sim_Event* ev)
+	void Engine::IgnoreSimEvent(Sim_Event* ev)
 	{
 		ev->Ignore = true;
 	}
 
-	bool Engine::Is_integrated_execution_mode()
+	bool Engine::IsIntegratedExecutionMode()
 	{
 		return false;
 	}

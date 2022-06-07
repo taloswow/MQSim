@@ -56,7 +56,7 @@ namespace SSD_Components {
 	{
 	}
 
-	void NVM_PHY_ONFI_NVDDR2::Start_simulation()
+	void NVM_PHY_ONFI_NVDDR2::StartSimulation()
 	{
 	}
 
@@ -198,7 +198,7 @@ namespace SSD_Components {
 					targetChip->StartCMDXfer();
 					chipBKE->Status = ChipStatus::CMD_IN;
 					chipBKE->Last_transfer_finish_time = Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()];
-					Simulator->Register_sim_event(Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()], this,
+					Simulator->RegisterSimEvent(Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()], this,
 						dieBKE, (int)NVDDR2_SimEventType::READ_CMD_ADDR_TRANSFERRED);
 				} else {
 					dieBKE->DieInterleavedTime = suspendTime + target_channel->ReadCommandTime[transaction_list.size()];
@@ -234,7 +234,7 @@ namespace SSD_Components {
 						targetChip->StartCMDDataInXfer();
 						chipBKE->Status = ChipStatus::CMD_DATA_IN;
 						chipBKE->Last_transfer_finish_time = Simulator->Time() + suspendTime + target_channel->ProgramCommandTime[transaction_list.size()] + data_transfer_time;
-						Simulator->Register_sim_event(Simulator->Time() + suspendTime + target_channel->ProgramCommandTime[transaction_list.size()] + data_transfer_time,
+						Simulator->RegisterSimEvent(Simulator->Time() + suspendTime + target_channel->ProgramCommandTime[transaction_list.size()] + data_transfer_time,
 							this, dieBKE, (int)NVDDR2_SimEventType::PROGRAM_CMD_ADDR_DATA_TRANSFERRED);
 					} else {
 						dieBKE->DieInterleavedTime = suspendTime + target_channel->ProgramCommandTime[transaction_list.size()] + data_transfer_time;
@@ -265,7 +265,7 @@ namespace SSD_Components {
 						targetChip->StartCMDXfer();
 						chipBKE->Status = ChipStatus::CMD_IN;
 						chipBKE->Last_transfer_finish_time = Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()];
-						Simulator->Register_sim_event(Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()], this,
+						Simulator->RegisterSimEvent(Simulator->Time() + suspendTime + target_channel->ReadCommandTime[transaction_list.size()], this,
 							dieBKE, (int)NVDDR2_SimEventType::READ_CMD_ADDR_TRANSFERRED);
 					} else {
 						dieBKE->DieInterleavedTime = suspendTime + target_channel->ReadCommandTime[transaction_list.size()];
@@ -297,7 +297,7 @@ namespace SSD_Components {
 					targetChip->StartCMDXfer();
 					chipBKE->Status = ChipStatus::CMD_IN;
 					chipBKE->Last_transfer_finish_time = Simulator->Time() + suspendTime + target_channel->EraseCommandTime[transaction_list.size()];
-					Simulator->Register_sim_event(Simulator->Time() + suspendTime + target_channel->EraseCommandTime[transaction_list.size()],
+					Simulator->RegisterSimEvent(Simulator->Time() + suspendTime + target_channel->EraseCommandTime[transaction_list.size()],
 						this, dieBKE, (int)NVDDR2_SimEventType::ERASE_SETUP_COMPLETED);
 				} else {
 					dieBKE->DieInterleavedTime = suspendTime + target_channel->EraseCommandTime[transaction_list.size()];
@@ -447,7 +447,7 @@ namespace SSD_Components {
 			}
 			targetChip->StartCMDXfer();
 			waitingChipBKE->Status = ChipStatus::CMD_IN;
-			Simulator->Register_sim_event(Simulator->Time() + this->channels[channel_id]->ProgramCommandTime[waitingBKE->ActiveTransactions.size()],
+			Simulator->RegisterSimEvent(Simulator->Time() + this->channels[channel_id]->ProgramCommandTime[waitingBKE->ActiveTransactions.size()],
 				this, waitingBKE, (int)NVDDR2_SimEventType::PROGRAM_COPYBACK_CMD_ADDR_TRANSFERRED);
 			waitingChipBKE->OngoingDieCMDTransfers.push(waitingBKE);
 
@@ -550,7 +550,7 @@ namespace SSD_Components {
 				}
 				chip->StartCMDXfer();
 				chipBKE->Status = ChipStatus::CMD_IN;
-				Simulator->Register_sim_event(Simulator->Time() + _my_instance->channels[chip->ChannelID]->ProgramCommandTime[dieBKE->ActiveTransactions.size()],
+				Simulator->RegisterSimEvent(Simulator->Time() + _my_instance->channels[chip->ChannelID]->ProgramCommandTime[dieBKE->ActiveTransactions.size()],
 					_my_instance, dieBKE, (int)NVDDR2_SimEventType::PROGRAM_COPYBACK_CMD_ADDR_TRANSFERRED);
 				chipBKE->OngoingDieCMDTransfers.push(dieBKE);
 				_my_instance->channels[chip->ChannelID]->SetStatus(BusChannelStatus::BUSY, chip);
@@ -626,7 +626,7 @@ namespace SSD_Components {
 		dieBKE->ActiveTransfer = tr;
 		channels[tr->Address.ChannelID]->Chips[tr->Address.ChipID]->StartDataOutXfer();
 		chipBKE->Status = ChipStatus::DATA_OUT;
-		Simulator->Register_sim_event(Simulator->Time() + NVDDR2DataOutTransferTime(tr->Data_and_metadata_size_in_byte, channels[tr->Address.ChannelID]),
+		Simulator->RegisterSimEvent(Simulator->Time() + NVDDR2DataOutTransferTime(tr->Data_and_metadata_size_in_byte, channels[tr->Address.ChannelID]),
 			this, dieBKE, (int)NVDDR2_SimEventType::READ_DATA_TRANSFERRED);
 
 		tr->STAT_transfer_time += NVDDR2DataOutTransferTime(tr->Data_and_metadata_size_in_byte, channels[tr->Address.ChannelID]);
@@ -644,26 +644,26 @@ namespace SSD_Components {
 			case Transaction_Type::READ:
 				chip->StartCMDXfer();
 				bookKeepingTable[chip->ChannelID][chip->ChipID].Status = ChipStatus::CMD_IN;
-				Simulator->Register_sim_event(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
+				Simulator->RegisterSimEvent(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
 					this, bookKeepingEntry, (int)NVDDR2_SimEventType::READ_CMD_ADDR_TRANSFERRED);
 				break;
 			case Transaction_Type::WRITE:
 				if (((NVM_Transaction_Flash_WR*)bookKeepingEntry->ActiveTransactions.front())->RelatedRead == NULL) {
 					chip->StartCMDDataInXfer();
 					bookKeepingTable[chip->ChannelID][chip->ChipID].Status = ChipStatus::CMD_DATA_IN;
-					Simulator->Register_sim_event(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
+					Simulator->RegisterSimEvent(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
 						this, bookKeepingEntry, (int)NVDDR2_SimEventType::PROGRAM_CMD_ADDR_DATA_TRANSFERRED);
 				} else {
 					chip->StartCMDXfer();
 					bookKeepingTable[chip->ChannelID][chip->ChipID].Status = ChipStatus::CMD_IN;
-					Simulator->Register_sim_event(Simulator->Time() + bookKeepingEntry->DieInterleavedTime, this,
+					Simulator->RegisterSimEvent(Simulator->Time() + bookKeepingEntry->DieInterleavedTime, this,
 						bookKeepingEntry, (int)NVDDR2_SimEventType::READ_CMD_ADDR_TRANSFERRED);
 				}
 				break;
 			case Transaction_Type::ERASE:
 				chip->StartCMDXfer();
 				bookKeepingTable[chip->ChannelID][chip->ChipID].Status = ChipStatus::CMD_IN;
-				Simulator->Register_sim_event(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
+				Simulator->RegisterSimEvent(Simulator->Time() + bookKeepingEntry->DieInterleavedTime,
 					this, bookKeepingEntry, (int)NVDDR2_SimEventType::ERASE_SETUP_COMPLETED);
 				break;
 			default:

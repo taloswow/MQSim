@@ -38,7 +38,7 @@ namespace Host_Components
 		}
 	}
 
-	void SATA_HBA::Start_simulation()
+	void SATA_HBA::StartSimulation()
 	{
 	}
 
@@ -89,7 +89,7 @@ namespace Host_Components
 				delete cqe;
 
 				if(consume_requests.size() > 0) {
-					Simulator->Register_sim_event(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::CONSUME_IO_REQUEST));
+					Simulator->RegisterSimEvent(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::CONSUME_IO_REQUEST));
 				}
 				break;
 			}
@@ -116,7 +116,7 @@ namespace Host_Components
 				}
 
 				if (host_requests.size() > 0) {
-					Simulator->Register_sim_event(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::SUBMIT_IO_REQUEST));
+					Simulator->RegisterSimEvent(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::SUBMIT_IO_REQUEST));
 				}
 
 				break;
@@ -128,7 +128,7 @@ namespace Host_Components
 	{
 		host_requests.push(request);
 		if (host_requests.size() == 1) {
-			Simulator->Register_sim_event(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::SUBMIT_IO_REQUEST));
+			Simulator->RegisterSimEvent(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::SUBMIT_IO_REQUEST));
 		}
 	}
 
@@ -136,7 +136,7 @@ namespace Host_Components
 	{
 		consume_requests.push(cqe);
 		if (consume_requests.size() == 1) {
-			Simulator->Register_sim_event(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::CONSUME_IO_REQUEST));
+			Simulator->RegisterSimEvent(Simulator->Time() + hba_processing_delay, this, NULL, static_cast<int>(HBA_Sim_Events::CONSUME_IO_REQUEST));
 		}
 	}
 	

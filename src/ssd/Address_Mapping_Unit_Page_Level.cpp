@@ -407,7 +407,7 @@ namespace SSD_Components
 		flash_controller->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
 	}
 
-	void Address_Mapping_Unit_Page_Level::Start_simulation()
+	void Address_Mapping_Unit_Page_Level::StartSimulation()
 	{
 		Store_mapping_table_on_flash_at_start();
 	}

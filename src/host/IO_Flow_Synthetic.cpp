@@ -194,9 +194,9 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		}
 	}
 
-	void IO_Flow_Synthetic::Start_simulation() 
+	void IO_Flow_Synthetic::StartSimulation() 
 	{
-		IO_Flow_Base::Start_simulation();
+		IO_Flow_Base::StartSimulation();
 
 		if (address_distribution == Utils::Address_Distribution_Type::STREAMING) {
 			streaming_next_address = random_address_generator->Uniform_ulong(start_lsa_on_device, end_lsa_on_device);
@@ -206,9 +206,9 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		}
 
 		if (generator_type == Utils::Request_Generator_Type::BANDWIDTH) {
-			Simulator->Register_sim_event((sim_time_type)random_time_interval_generator->Exponential((double)Average_inter_arrival_time_nano_sec), this, 0, 0);
+			Simulator->RegisterSimEvent((sim_time_type)random_time_interval_generator->Exponential((double)Average_inter_arrival_time_nano_sec), this, 0, 0);
 		} else {
-			Simulator->Register_sim_event((sim_time_type)1, this, 0, 0);
+			Simulator->RegisterSimEvent((sim_time_type)1, this, 0, 0);
 		}
 	}
 
@@ -222,7 +222,7 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 			Host_IO_Request* req = Generate_next_request();
 			if (req != NULL) {
 				Submit_io_request(req);
-				Simulator->Register_sim_event(Simulator->Time() + (sim_time_type)random_time_interval_generator->Exponential((double)Average_inter_arrival_time_nano_sec), this, 0, 0);
+				Simulator->RegisterSimEvent(Simulator->Time() + (sim_time_type)random_time_interval_generator->Exponential((double)Average_inter_arrival_time_nano_sec), this, 0, 0);
 			}
 		} else {
 			for (unsigned int i = 0; i < average_number_of_enqueued_requests; i++) {

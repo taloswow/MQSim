@@ -404,7 +404,7 @@ void Host_Interface_NVMe::Validate_simulation_config()
 	}
 }
 
-void Host_Interface_NVMe::Start_simulation()
+void Host_Interface_NVMe::StartSimulation()
 {
 }
 

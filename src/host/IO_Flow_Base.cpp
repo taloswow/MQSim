@@ -136,7 +136,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 
 	}
 
-	void IO_Flow_Base::Start_simulation()
+	void IO_Flow_Base::StartSimulation()
 	{
 		next_logging_milestone = logging_period;
 		if (enabled_logging) {

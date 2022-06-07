@@ -111,7 +111,7 @@ const std::vector<Host_Components::IO_Flow_Base*> Host_System::Get_io_flows()
 	return IO_flows;
 }
 
-void Host_System::Start_simulation()
+void Host_System::StartSimulation()
 {
 	switch (ssd_device->Host_interface->GetType()) {
 		case HostInterface_Types::NVME:

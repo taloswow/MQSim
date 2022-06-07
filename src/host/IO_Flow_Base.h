@@ -48,7 +48,7 @@ namespace Host_Components
 					 HostInterface_Types SSD_device_type, PCIe_Root_Complex *pcie_root_complex, SATA_HBA *sata_hba,
 					 bool enabled_logging, sim_time_type logging_period, std::string logging_file_path);
 		~IO_Flow_Base();
-		void Start_simulation();
+		void StartSimulation();
 		IO_Flow_Priority_Class::Priority Priority_class() { return priority_class; }
 		virtual Host_IO_Request* Generate_next_request() = 0;
 		virtual void NVMe_consume_io_request(Completion_Queue_Entry*);

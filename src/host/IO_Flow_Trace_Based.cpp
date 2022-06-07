@@ -73,9 +73,9 @@ void IO_Flow_Trace_Based::SATA_consume_io_request(Host_IO_Request *io_request)
 	IO_Flow_Base::SATA_consume_io_request(io_request);
 }
 
-void IO_Flow_Trace_Based::Start_simulation()
+void IO_Flow_Trace_Based::StartSimulation()
 {
-	IO_Flow_Base::Start_simulation();
+	IO_Flow_Base::StartSimulation();
 	std::string trace_line;
 	char *pEnd;
 
@@ -122,7 +122,7 @@ void IO_Flow_Trace_Based::Start_simulation()
 	std::getline(trace_file, trace_line);
 	Utils::Helper_Functions::Remove_cr(trace_line);
 	Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, current_trace_line);
-	Simulator->Register_sim_event(std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
+	Simulator->RegisterSimEvent(std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
 }
 
 void IO_Flow_Trace_Based::Validate_simulation_config()
@@ -159,7 +159,7 @@ void IO_Flow_Trace_Based::Execute_simulator_event(MQSimEngine::Sim_Event *)
 			PRINT_MESSAGE("* Replay round " << replay_counter << "of " << total_replay_no << " started  for" << ID())
 		}
 		char *pEnd;
-		Simulator->Register_sim_event(time_offset + std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
+		Simulator->RegisterSimEvent(time_offset + std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
 	}
 }
 

@@ -136,9 +136,9 @@ namespace SSD_Components
 		delete[] low_intensity_class_write;
 	}
 
-	void TSU_FLIN::Start_simulation() 
+	void TSU_FLIN::StartSimulation() 
 	{
-		Simulator->Register_sim_event(flow_classification_epoch, this, 0, 0);
+		Simulator->RegisterSimEvent(flow_classification_epoch, this, 0, 0);
 	}
 
 	void TSU_FLIN::Validate_simulation_config() {}
@@ -171,7 +171,7 @@ namespace SSD_Components
 				}
 			}
 		}
-		Simulator->Register_sim_event(Simulator->Time() + flow_classification_epoch, this, 0, 0);
+		Simulator->RegisterSimEvent(Simulator->Time() + flow_classification_epoch, this, 0, 0);
 	}
 
 	inline void TSU_FLIN::Prepare_for_transaction_submit()

@@ -63,7 +63,7 @@ TSU_OutOfOrder::~TSU_OutOfOrder()
 	delete[] MappingWriteTRQueue;
 }
 
-void TSU_OutOfOrder::Start_simulation()
+void TSU_OutOfOrder::StartSimulation()
 {
 }
 

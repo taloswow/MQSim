@@ -4,9 +4,11 @@
 // data is the element itself.
 // In case there are multiple elements with the same timestamp, they are linked via the pointer Next_event inside the data_element (which is of type SimEvent*)
 
+#include "EventTree.h"
+
 #include <exception>
 #include <map>
-#include "EventTree.h"
+
 #include "Engine.h"
 
 namespace MQSimEngine

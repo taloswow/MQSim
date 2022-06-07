@@ -29,7 +29,7 @@ namespace SSD_Components
 		host_interface->Connect_to_user_request_arrived_signal(handle_user_request_arrived_signal);
 	}
 
-	void Data_Cache_Manager_Base::Start_simulation() {}
+	void Data_Cache_Manager_Base::StartSimulation() {}
 	
 	void Data_Cache_Manager_Base::Validate_simulation_config() {}
 

@@ -73,7 +73,7 @@ namespace SSD_Components
 			const uint16_t ncq_depth, const LHA_type max_logical_sector_address, const unsigned int sectors_per_page, Data_Cache_Manager_Base* cache);
 		void Set_ncq_address(const uint64_t submission_queue_base_address, const uint64_t completion_queue_base_address);
 		uint16_t Get_ncq_depth();
-		void Start_simulation();
+		void StartSimulation();
 		void Validate_simulation_config();
 		void Execute_simulator_event(MQSimEngine::Sim_Event*);
 		void Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter);

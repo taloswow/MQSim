@@ -307,7 +307,7 @@ namespace SSD_Components
 		}
 	}
 
-	void Host_Interface_SATA::Start_simulation() {}
+	void Host_Interface_SATA::StartSimulation() {}
 
 	void Host_Interface_SATA::Execute_simulator_event(MQSimEngine::Sim_Event* event) {}
 
