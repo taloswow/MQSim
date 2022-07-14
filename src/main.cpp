@@ -3,6 +3,7 @@
 #include <ctime>
 #include <string>
 #include <cstring>
+
 #include "ssd/SSD_Defs.h"
 #include "exec/Execution_Parameter_Set.h"
 #include "exec/SSD_Device.h"
@@ -13,7 +14,7 @@
 using namespace std;
 
 
-void command_line_args(char* argv[], string& input_file_path, string& workload_file_path)
+void CommandLineArgs(char* argv[], string& input_file_path, string& workload_file_path)
 {
 
 	for (int arg_cntr = 1; arg_cntr < 5; arg_cntr++) {
@@ -35,7 +36,7 @@ void command_line_args(char* argv[], string& input_file_path, string& workload_f
 	}
 }
 
-void read_configuration_parameters(const string ssd_config_file_path, Execution_Parameter_Set* exec_params)
+void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Parameter_Set* exec_params)
 {
 	ifstream ssd_config_file;
 	ssd_config_file.open(ssd_config_file_path.c_str());
@@ -266,10 +267,10 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
-	command_line_args(argv, ssd_config_file_path, workload_defs_file_path);
+	CommandLineArgs(argv, ssd_config_file_path, workload_defs_file_path);
 
 	Execution_Parameter_Set* exec_params = new Execution_Parameter_Set;
-	read_configuration_parameters(ssd_config_file_path, exec_params);
+	ReadConfigurationParameters(ssd_config_file_path, exec_params);
 	std::vector<std::vector<IO_Flow_Parameter_Set*>*>* io_scenarios = read_workload_definitions(workload_defs_file_path);
 
 	int cntr = 1;
