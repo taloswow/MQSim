@@ -1,7 +1,7 @@
 #ifndef SIMULATOR_OBJECT_H
 #define SIMULATOR_OBJECT_H
 
-#include<string>
+#include <string>
 #include "Sim_Event.h"
 
 namespace MQSimEngine
@@ -10,6 +10,8 @@ namespace MQSimEngine
 	class Sim_Object
 	{
 	public:
+		// Initialization of a Sim_Object
+		// set triggers to False
 		Sim_Object(const sim_object_id_type &id)
 		{
 			_id = id;
@@ -26,13 +28,16 @@ namespace MQSimEngine
 			return _triggersSetUp;
 		}
 
-		//The Start function is invoked at the start phase of simulation to perform initialization
+		// The Start function is invoked at the start phase
+		// of simulation to perform initialization
 		virtual void StartSimulation() = 0;
 
-		//The Validate_simulation_config function is invoked to check if the objected is correctly configured or not.
+		// The Validate_simulation_config function is invoked
+		// to check if the objected is correctly configured or not.
 		virtual void Validate_simulation_config() = 0;
 
-		//The object connects its internal functions to the outside triggering events from other objects
+		// The object connects its internal functions to the outside
+		// triggering events from other objects
 		virtual void Setup_triggers()
 		{
 			_triggersSetUp = true;
