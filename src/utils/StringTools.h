@@ -10,7 +10,7 @@ namespace Utils
 	class Helper_Functions
 	{
 	public:
-		static std::string Path_separator()
+		static std::string PathSeparator()
 		{
 #ifdef _WIN32
 			return "\\";
@@ -34,7 +34,7 @@ namespace Utils
 			}
 		}
 
-		static void Remove_cr(std::string& str)//remove carriage return in linux
+		static void RemoveCR(std::string& str)//remove carriage return in linux
 		{
 			if (str[str.size() - 1] == '\r') {
 				str.erase(str.size() - 1, 1);

@@ -89,7 +89,7 @@ void IO_Flow_Trace_Based::StartSimulation()
 	sim_time_type last_request_arrival_time = 0;
 	while (std::getline(trace_file, trace_line))
 	{
-		Utils::Helper_Functions::Remove_cr(trace_line);
+		Utils::Helper_Functions::RemoveCR(trace_line);
 		current_trace_line.clear();
 		Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, current_trace_line);
 		if (current_trace_line.size() != ASCIIItemsPerLine)
@@ -120,7 +120,7 @@ void IO_Flow_Trace_Based::StartSimulation()
 	trace_file.open(trace_file_path);
 	current_trace_line.clear();
 	std::getline(trace_file, trace_line);
-	Utils::Helper_Functions::Remove_cr(trace_line);
+	Utils::Helper_Functions::RemoveCR(trace_line);
 	Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, current_trace_line);
 	Simulator->RegisterSimEvent(std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
 }
@@ -142,7 +142,7 @@ void IO_Flow_Trace_Based::Execute_simulator_event(MQSimEngine::Sim_Event *)
 		std::string trace_line;
 		if (std::getline(trace_file, trace_line))
 		{
-			Utils::Helper_Functions::Remove_cr(trace_line);
+			Utils::Helper_Functions::RemoveCR(trace_line);
 			current_trace_line.clear();
 			Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, current_trace_line);
 		}
@@ -153,7 +153,7 @@ void IO_Flow_Trace_Based::Execute_simulator_event(MQSimEngine::Sim_Event *)
 			replay_counter++;
 			time_offset = Simulator->Time();
 			std::getline(trace_file, trace_line);
-			Utils::Helper_Functions::Remove_cr(trace_line);
+			Utils::Helper_Functions::RemoveCR(trace_line);
 			current_trace_line.clear();
 			Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, current_trace_line);
 			PRINT_MESSAGE("* Replay round " << replay_counter << "of " << total_replay_no << " started  for" << ID())
@@ -198,7 +198,7 @@ void IO_Flow_Trace_Based::Get_statistics(Utils::Workload_Statistics &stats, LPA_
 	std::vector<std::string> line_splitted;
 	while (std::getline(trace_file_temp, trace_line))
 	{
-		Utils::Helper_Functions::Remove_cr(trace_line);
+		Utils::Helper_Functions::RemoveCR(trace_line);
 		line_splitted.clear();
 		Utils::Helper_Functions::Tokenize(trace_line, ASCIILineDelimiter, line_splitted);
 		if (line_splitted.size() != ASCIIItemsPerLine)

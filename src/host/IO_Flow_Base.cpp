@@ -523,86 +523,86 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 	void IO_Flow_Base::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix + ".IO_Flow";
-		xmlwriter.Write_open_tag(tmp);
+		xmlwriter.WriteOpenTag(tmp);
 
 
 		std::string attr = "Name";
 		std::string val = ID();
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Request_Count";
 		val = std::to_string(STAT_generated_request_count);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Read_Request_Count";
 		val = std::to_string(STAT_generated_read_request_count);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Write_Request_Count";
 		val = std::to_string(STAT_generated_write_request_count);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "IOPS";
 		val = std::to_string((double)STAT_generated_request_count / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "IOPS_Read";
 		val = std::to_string((double)STAT_generated_read_request_count / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "IOPS_Write";
 		val = std::to_string((double)STAT_generated_write_request_count / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bytes_Transferred";
 		val = std::to_string((double)STAT_transferred_bytes_total);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bytes_Transferred_Read";
 		val = std::to_string((double)STAT_transferred_bytes_read);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bytes_Transferred_Write";
 		val = std::to_string((double)STAT_transferred_bytes_write);
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bandwidth";
 		val = std::to_string((double)STAT_transferred_bytes_total / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bandwidth_Read";
 		val = std::to_string((double)STAT_transferred_bytes_read / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Bandwidth_Write";
 		val = std::to_string((double)STAT_transferred_bytes_write / (Simulator->Time() / SIM_TIME_TO_SECONDS_COEFF));
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 
 		attr = "Device_Response_Time";
 		val = std::to_string(Get_device_response_time());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Min_Device_Response_Time";
 		val = std::to_string(Get_min_device_response_time());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Max_Device_Response_Time";
 		val = std::to_string(Get_max_device_response_time());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "End_to_End_Request_Delay";
 		val = std::to_string(Get_end_to_end_request_delay());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Min_End_to_End_Request_Delay";
 		val = std::to_string(Get_min_end_to_end_request_delay());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Max_End_to_End_Request_Delay";
 		val = std::to_string(Get_max_end_to_end_request_delay());
-		xmlwriter.Write_attribute_string(attr, val);
+		xmlwriter.WriteAttributeString(attr, val);
 
-		xmlwriter.Write_close_tag();
+		xmlwriter.WriteCloseTag();
 	}
 }

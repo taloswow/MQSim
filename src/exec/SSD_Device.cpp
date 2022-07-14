@@ -262,7 +262,7 @@ SSD_Device::SSD_Device(Device_Parameter_Set *parameters, std::vector<IO_Flow_Par
 			}
 		}
 
-		Utils::Logical_Address_Partitioning_Unit::Allocate_logical_address_for_flows(parameters->HostInterface_Type, (unsigned int)io_flows->size(),
+		Utils::Logical_Address_Partitioning_Unit::AllocateLogicalAddressForFlows(parameters->HostInterface_Type, (unsigned int)io_flows->size(),
 																					 parameters->Flash_Channel_Count, parameters->Chip_No_Per_Channel, parameters->Flash_Parameters.Die_No_Per_Chip, parameters->Flash_Parameters.Plane_No_Per_Die,
 																					 flow_channel_id_assignments, flow_chip_id_assignments, flow_die_id_assignments, flow_plane_id_assignments,
 																					 parameters->Flash_Parameters.Block_No_Per_Plane, parameters->Flash_Parameters.Page_No_Per_Block,
@@ -352,12 +352,12 @@ SSD_Device::SSD_Device(Device_Parameter_Set *parameters, std::vector<IO_Flow_Par
 		{
 		case HostInterface_Types::NVME:
 			device->Host_interface = new SSD_Components::Host_Interface_NVMe(device->ID() + ".HostInterface",
-																			 Utils::Logical_Address_Partitioning_Unit::Get_total_device_lha_count(), parameters->IO_Queue_Depth, parameters->IO_Queue_Depth,
+																			 Utils::Logical_Address_Partitioning_Unit::GetTotalDeviceLHACount(), parameters->IO_Queue_Depth, parameters->IO_Queue_Depth,
 																			 (unsigned int)io_flows->size(), parameters->Queue_Fetch_Size, parameters->Flash_Parameters.Page_Capacity / SECTOR_SIZE_IN_BYTE, dcm);
 			break;
 		case HostInterface_Types::SATA:
 			device->Host_interface = new SSD_Components::Host_Interface_SATA(device->ID() + ".HostInterface",
-																			 parameters->IO_Queue_Depth, Utils::Logical_Address_Partitioning_Unit::Get_total_device_lha_count(), parameters->Flash_Parameters.Page_Capacity / SECTOR_SIZE_IN_BYTE, dcm);
+																			 parameters->IO_Queue_Depth, Utils::Logical_Address_Partitioning_Unit::GetTotalDeviceLHACount(), parameters->Flash_Parameters.Page_Capacity / SECTOR_SIZE_IN_BYTE, dcm);
 
 			break;
 		default:
@@ -428,7 +428,7 @@ void SSD_Device::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter
 {
 	std::string tmp;
 	tmp = ID();
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	this->Host_interface->Report_results_in_XML(ID(), xmlwriter);
 	if (Memory_Type == NVM::NVM_Type::FLASH)
@@ -444,7 +444,7 @@ void SSD_Device::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter
 			}
 		}
 	}
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 unsigned int SSD_Device::Get_no_of_LHAs_in_an_NVM_write_unit()

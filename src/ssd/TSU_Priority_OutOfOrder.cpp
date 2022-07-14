@@ -124,7 +124,7 @@ void TSU_Priority_OutOfOrder::Execute_simulator_event(MQSimEngine::Sim_Event *ev
 void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter &xmlwriter)
 {
     name_prefix = name_prefix + ".TSU";
-    xmlwriter.Write_open_tag(name_prefix);
+    xmlwriter.WriteOpenTag(name_prefix);
 
     TSU_Base::Report_results_in_XML(name_prefix, xmlwriter);
 
@@ -190,7 +190,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
         }
     }
 
-    xmlwriter.Write_close_tag();
+    xmlwriter.WriteCloseTag();
 }
 
 void TSU_Priority_OutOfOrder::Schedule()

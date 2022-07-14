@@ -213,15 +213,15 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 		string tmp;
 		xmlwriter.Open(workload_defs_file_path.c_str());
 		tmp = "MQSim_IO_Scenarios";
-		xmlwriter.Write_open_tag(tmp);
+		xmlwriter.WriteOpenTag(tmp);
 		tmp = "IO_Scenario";
-		xmlwriter.Write_open_tag(tmp);
+		xmlwriter.WriteOpenTag(tmp);
 
 		io_flow_1->XML_serialize(xmlwriter);
 		io_flow_2->XML_serialize(xmlwriter);
 
-		xmlwriter.Write_close_tag();
-		xmlwriter.Write_close_tag();
+		xmlwriter.WriteCloseTag();
+		xmlwriter.WriteCloseTag();
 		xmlwriter.Close();
 	}
 	workload_defs_file.close();
@@ -235,12 +235,12 @@ void collect_results(SSD_Device& ssd, Host_System& host, const char* output_file
 	xmlwriter.Open(output_file_path);
 
 	std::string tmp("MQSim_Results");
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 	
 	host.Report_results_in_XML("", xmlwriter);
 	ssd.Report_results_in_XML("", xmlwriter);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 
 	std::vector<Host_Components::IO_Flow_Base*> IO_flows = host.Get_io_flows();
 	for (unsigned int stream_id = 0; stream_id < IO_flows.size(); stream_id++) {

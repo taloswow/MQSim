@@ -1,9 +1,10 @@
 #include "Helper_Functions.h"
+
 #include <cmath>
 
 namespace Utils
 {
-	double Combination_count(double n, double k)
+	double CombinationCount(double n, double k)
 	{
 		if (k > n) {
 			return 0;
@@ -26,13 +27,19 @@ namespace Utils
 		return result;
 	}
 
-	double Combination_count(unsigned int n, unsigned int k)
+	double CombinationCount(unsigned int n, unsigned int k)
 	{
-		return Combination_count(double(n), double(k));
+		return CombinationCount(double(n), double(k));
 	}
 
 
-	void Euler_estimation(std::vector<double>& mu, unsigned int b, double rho, int d, double h, double max_diff, int itr_max)
+	void EulerEstimation(std::vector<double>& mu,
+			unsigned int b,
+			double rho,
+			int d,
+			double h,
+			double max_diff,
+			int itr_max)
 	{
 		std::vector<double> w_0, w;
 		for (int i = 0; i <= mu.size(); i++) {

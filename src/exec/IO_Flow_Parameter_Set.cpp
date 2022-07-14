@@ -25,7 +25,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Device_Level_Data_Caching_Mode";
@@ -43,7 +43,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 			val = "WRITE_READ_CACHE";
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Channel_IDs";
 	val = "";
@@ -53,7 +53,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		}
 		val += std::to_string(Channel_IDs[i]);
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Chip_IDs";
 	val = "";
@@ -63,7 +63,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		}
 		val += std::to_string(Chip_IDs[i]);
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Die_IDs";
 	val = "";
@@ -73,7 +73,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		}
 		val += std::to_string(Die_IDs[i]);
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Plane_IDs";
 	val = "";
@@ -83,11 +83,11 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		}
 		val += std::to_string(Plane_IDs[i]);
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Initial_Occupancy_Percentage";
 	val = std::to_string(Initial_Occupancy_Percentage);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 }
 
 void IO_Flow_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)
@@ -222,12 +222,12 @@ void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "IO_Flow_Parameter_Set_Synthetic";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 	IO_Flow_Parameter_Set::XML_serialize(xmlwriter);
 
 	std::string attr = "Working_Set_Percentage";
 	std::string val = std::to_string(Working_Set_Percentage);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Synthetic_Generator_Type";
 	switch (Synthetic_Generator_Type) {
@@ -238,11 +238,11 @@ void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
 			val = "QUEUE_DEPTH";
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Read_Percentage";
 	val = std::to_string(Read_Percentage);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Address_Distribution";
@@ -257,20 +257,20 @@ void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
 			val = "RANDOM_UNIFORM";
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	 
 
 	attr = "Percentage_of_Hot_Region";
 	val = std::to_string(Percentage_of_Hot_Region);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Generated_Aligned_Addresses";
 	val = (Generated_Aligned_Addresses ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Address_Alignment_Unit";
 	val = std::to_string(Address_Alignment_Unit);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	
 	attr = "Request_Size_Distribution";
 	switch (Request_Size_Distribution) {
@@ -281,43 +281,43 @@ void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
 			val = "NORMAL";
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Average_Request_Size";
 	val = std::to_string(Average_Request_Size);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Variance_Request_Size";
 	val = std::to_string(Variance_Request_Size);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Seed";
 	val = std::to_string(Seed);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Average_No_of_Reqs_in_Queue";
 	val = std::to_string(Average_No_of_Reqs_in_Queue);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Bandwidth";
 	val = std::to_string(Bandwidth);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Stop_Time";
 	val = std::to_string(Stop_Time);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Total_Requests_To_Generate";
 	val = std::to_string(Total_Requests_To_Generate);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void IO_Flow_Parameter_Set_Synthetic::XML_deserialize(rapidxml::xml_node<> *node)
@@ -405,20 +405,20 @@ void IO_Flow_Parameter_Set_Trace_Based::XML_serialize(Utils::XmlWriter& xmlwrite
 {
 
 	std::string tmp = "IO_Flow_Parameter_Set_Trace_Based";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 	IO_Flow_Parameter_Set::XML_serialize(xmlwriter);
 
 	std::string attr = "File_Path";
 	std::string val = File_Path;
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Percentage_To_Be_Executed";
 	val = std::to_string(Percentage_To_Be_Executed);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Relay_Count";
 	val = std::to_string(Relay_Count);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Time_Unit";
 	switch (Time_Unit) {
@@ -432,9 +432,9 @@ void IO_Flow_Parameter_Set_Trace_Based::XML_serialize(Utils::XmlWriter& xmlwrite
 			val = "MICROSECOND";
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void IO_Flow_Parameter_Set_Trace_Based::XML_deserialize(rapidxml::xml_node<> *node)

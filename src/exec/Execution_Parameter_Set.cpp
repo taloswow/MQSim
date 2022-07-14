@@ -9,12 +9,12 @@ void Execution_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "Execution_Parameter_Set";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	Host_Configuration.XML_serialize(xmlwriter);
 	SSD_Device_Configuration.XML_serialize(xmlwriter);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void Execution_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)

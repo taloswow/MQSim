@@ -47,15 +47,15 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "Device_Parameter_Set";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	std::string attr = "Seed";
 	std::string val = std::to_string(Seed);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Enabled_Preconditioning";
 	val = (Enabled_Preconditioning ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Memory_Type";
 	val;
@@ -66,7 +66,7 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "HostInterface_Type";
 	val;
@@ -80,15 +80,15 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "IO_Queue_Depth";
 	val = std::to_string(IO_Queue_Depth);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Queue_Fetch_Size";
 	val = std::to_string(Queue_Fetch_Size);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 
 	attr = "Caching_Mechanism";
@@ -102,7 +102,7 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_Sharing_Mode";
 	switch (Data_Cache_Sharing_Mode) {
@@ -115,35 +115,35 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_Capacity";
 	val = std::to_string(Data_Cache_Capacity);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_Row_Size";
 	val = std::to_string(Data_Cache_DRAM_Row_Size);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_Data_Rate";
 	val = std::to_string(Data_Cache_DRAM_Data_Rate);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_Data_Busrt_Size";
 	val = std::to_string(Data_Cache_DRAM_Data_Busrt_Size);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_tRCD";
 	val = std::to_string(Data_Cache_DRAM_tRCD);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_tCL";
 	val = std::to_string(Data_Cache_DRAM_tCL);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Data_Cache_DRAM_tRP";
 	val = std::to_string(Data_Cache_DRAM_tRP);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Address_Mapping";
 	switch (Address_Mapping) {
@@ -156,15 +156,15 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Ideal_Mapping_Table";
 	val = (Use_Copyback_for_GC ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	
 	attr = "CMT_Capacity";
 	val = std::to_string(CMT_Capacity);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "CMT_Sharing_Mode";
 	switch (CMT_Sharing_Mode) {
@@ -177,7 +177,7 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Plane_Allocation_Scheme";
 	switch (Plane_Allocation_Scheme) {
@@ -256,7 +256,7 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Transaction_Scheduling_Policy";
 	switch (Transaction_Scheduling_Policy) {
@@ -272,15 +272,15 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Overprovisioning_Ratio";
 	val = std::to_string(Overprovisioning_Ratio);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "GC_Exec_Threshold";
 	val = std::to_string(GC_Exec_Threshold);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "GC_Block_Selection_Policy";
 	switch (GC_Block_Selection_Policy) {
@@ -305,59 +305,59 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	
 	attr = "Use_Copyback_for_GC";
 	val = (Use_Copyback_for_GC ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Preemptible_GC_Enabled";
 	val = (Preemptible_GC_Enabled ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "GC_Hard_Threshold";
 	val = std::to_string(GC_Hard_Threshold);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Dynamic_Wearleveling_Enabled";
 	val = (Dynamic_Wearleveling_Enabled ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Static_Wearleveling_Enabled";
 	val = (Static_Wearleveling_Enabled ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	
 	attr = "Static_Wearleveling_Threshold";
 	val = std::to_string(Static_Wearleveling_Threshold);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 	
 	attr = "Preferred_suspend_erase_time_for_read";
 	val = std::to_string(Preferred_suspend_erase_time_for_read);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Preferred_suspend_erase_time_for_write";
 	val = std::to_string(Preferred_suspend_erase_time_for_write);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Preferred_suspend_write_time_for_read";
 	val = std::to_string(Preferred_suspend_write_time_for_read);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Flash_Channel_Count";
 	val = std::to_string(Flash_Channel_Count);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Flash_Channel_Width";
 	val = std::to_string(Flash_Channel_Width);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Channel_Transfer_Rate";
 	val = std::to_string(Channel_Transfer_Rate);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Chip_No_Per_Channel";
 	val = std::to_string(Chip_No_Per_Channel);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Flash_Comm_Protocol";
 	switch (Flash_Comm_Protocol) {
@@ -367,11 +367,11 @@ void Device_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	Flash_Parameters.XML_serialize(xmlwriter);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void Device_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)

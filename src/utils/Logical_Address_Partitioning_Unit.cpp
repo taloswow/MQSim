@@ -44,11 +44,21 @@ namespace Utils
 		delete[] resource_list;
 	}
 
-	void Logical_Address_Partitioning_Unit::Allocate_logical_address_for_flows(HostInterface_Types hostinterface_type, unsigned int concurrent_stream_no,
-		unsigned int channel_count, unsigned int chip_no_per_channel, unsigned int die_no_per_chip, unsigned int plane_no_per_die,
-		std::vector<std::vector<flash_channel_ID_type>> stream_channel_ids, std::vector<std::vector<flash_chip_ID_type>> stream_chip_ids,
-		std::vector<std::vector<flash_die_ID_type>> stream_die_ids, std::vector<std::vector<flash_plane_ID_type>> stream_plane_ids,
-		unsigned int block_no_per_plane, unsigned int page_no_per_block, unsigned int sector_no_per_page, double overprovisioning_ratio) 
+	void Logical_Address_Partitioning_Unit::AllocateLogicalAddressForFlows(
+			HostInterface_Types hostinterface_type,
+			unsigned int concurrent_stream_no,
+			unsigned int channel_count,
+			unsigned int chip_no_per_channel,
+			unsigned int die_no_per_chip,
+			unsigned int plane_no_per_die,
+			std::vector<std::vector<flash_channel_ID_type>> stream_channel_ids,
+			std::vector<std::vector<flash_chip_ID_type>> stream_chip_ids,
+			std::vector<std::vector<flash_die_ID_type>> stream_die_ids,
+			std::vector<std::vector<flash_plane_ID_type>> stream_plane_ids,
+			unsigned int block_no_per_plane,
+			unsigned int page_no_per_block,
+			unsigned int sector_no_per_page,
+			double overprovisioning_ratio) 
 	{
 		if (initialized) {
 			return;
@@ -159,7 +169,7 @@ namespace Utils
 		initialized = true;
 	}
 
-	double Logical_Address_Partitioning_Unit::Get_share_of_physcial_pages_in_plane(flash_channel_ID_type channel_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id)
+	double Logical_Address_Partitioning_Unit::GetShareOfPhysicalPagesInPlane(flash_channel_ID_type channel_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id)
 	{
 		switch (hostinterface_type) {
 			case HostInterface_Types::NVME:
@@ -172,7 +182,7 @@ namespace Utils
 		return 1.0;
 	}
 
-	LHA_type Logical_Address_Partitioning_Unit::Start_lha_available_to_flow(stream_id_type stream_id)
+	LHA_type Logical_Address_Partitioning_Unit::StartLhaAvilableToFlow(stream_id_type stream_id)
 	{
 		if (initialized) {
 			switch (hostinterface_type) {
@@ -190,7 +200,7 @@ namespace Utils
 		PRINT_ERROR("The address partitioning unit is not initialized!")
 	}
 
-	LHA_type Logical_Address_Partitioning_Unit::End_lha_available_to_flow(stream_id_type stream_id)
+	LHA_type Logical_Address_Partitioning_Unit::EndLhaAvilableToFlow(stream_id_type stream_id)
 	{
 		if (initialized) {
 			switch (hostinterface_type) {
@@ -207,7 +217,7 @@ namespace Utils
 		PRINT_ERROR("The address partitioning unit is not initialized!")
 	}
 
-	LHA_type Logical_Address_Partitioning_Unit::LHA_count_allocate_to_flow_from_host_view(stream_id_type stream_id)
+	LHA_type Logical_Address_Partitioning_Unit::LHACountAllocateToFlowFromHostView(stream_id_type stream_id)
 	{
 		if (initialized) {
 			switch (hostinterface_type) {
@@ -224,7 +234,7 @@ namespace Utils
 		PRINT_ERROR("The address partitioning unit is not initialized!")
 	}
 
-	LHA_type Logical_Address_Partitioning_Unit::LHA_count_allocate_to_flow_from_device_view(stream_id_type stream_id)
+	LHA_type Logical_Address_Partitioning_Unit::LHACountAllocateToFlowFromDeviceView(stream_id_type stream_id)
 	{
 		if (initialized) {
 			switch (hostinterface_type) {
@@ -241,7 +251,7 @@ namespace Utils
 		PRINT_ERROR("The address partitioning unit is not initialized!")
 	}
 
-	PDA_type Logical_Address_Partitioning_Unit::PDA_count_allocate_to_flow(stream_id_type stream_id)
+	PDA_type Logical_Address_Partitioning_Unit::PDACountAllocateToFlow(stream_id_type stream_id)
 	{
 		if (initialized) {
 			switch (hostinterface_type) {
@@ -257,7 +267,7 @@ namespace Utils
 		PRINT_ERROR("The address partitioning unit is not initialized!")
 	}
 
-	LHA_type Logical_Address_Partitioning_Unit::Get_total_device_lha_count()
+	LHA_type Logical_Address_Partitioning_Unit::GetTotalDeviceLHACount()
 	{
 		return total_lha_no;
 	}

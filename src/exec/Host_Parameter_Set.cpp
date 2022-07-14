@@ -14,29 +14,29 @@ void Host_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "Host_Parameter_Set";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	std::string attr = "PCIe_Lane_Bandwidth";
 	std::string val = std::to_string(PCIe_Lane_Bandwidth);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "PCIe_Lane_Count";
 	val = std::to_string(PCIe_Lane_Count);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "SATA_Processing_Delay";
 	val = std::to_string(SATA_Processing_Delay);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Enable_ResponseTime_Logging";
 	val = (Enable_ResponseTime_Logging ? "true" : "false");
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "ResponseTime_Logging_Period_Length";
 	val = std::to_string(ResponseTime_Logging_Period_Length);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void Host_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)

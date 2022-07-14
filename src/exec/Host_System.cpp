@@ -49,8 +49,8 @@ Host_System::Host_System(Host_Parameter_Set* parameters, bool preconditioning_re
 					flow_param->Working_Set_Percentage = 100;
 				}
 				io_flow = new Host_Components::IO_Flow_Synthetic(this->ID() + ".IO_Flow.Synth.No_" + std::to_string(flow_id), flow_id,
-					Utils::Logical_Address_Partitioning_Unit::Start_lha_available_to_flow(flow_id),
-					Utils::Logical_Address_Partitioning_Unit::End_lha_available_to_flow(flow_id),
+					Utils::Logical_Address_Partitioning_Unit::StartLhaAvilableToFlow(flow_id),
+					Utils::Logical_Address_Partitioning_Unit::EndLhaAvilableToFlow(flow_id),
 					((double)flow_param->Working_Set_Percentage / 100.0), FLOW_ID_TO_Q_ID(flow_id), nvme_sq_size, nvme_cq_size,
 					flow_param->Priority_Class, flow_param->Read_Percentage / double(100.0), flow_param->Address_Distribution, flow_param->Percentage_of_Hot_Region / double(100.0),
 					flow_param->Request_Size_Distribution, flow_param->Average_Request_Size, flow_param->Variance_Request_Size,
@@ -64,7 +64,7 @@ Host_System::Host_System(Host_Parameter_Set* parameters, bool preconditioning_re
 			case Flow_Type::TRACE: {
 				IO_Flow_Parameter_Set_Trace_Based * flow_param = (IO_Flow_Parameter_Set_Trace_Based*)parameters->IO_Flow_Definitions[flow_id];
 				io_flow = new Host_Components::IO_Flow_Trace_Based(this->ID() + ".IO_Flow.Trace." + flow_param->File_Path, flow_id,
-					Utils::Logical_Address_Partitioning_Unit::Start_lha_available_to_flow(flow_id), Utils::Logical_Address_Partitioning_Unit::End_lha_available_to_flow(flow_id),
+					Utils::Logical_Address_Partitioning_Unit::StartLhaAvilableToFlow(flow_id), Utils::Logical_Address_Partitioning_Unit::EndLhaAvilableToFlow(flow_id),
 					FLOW_ID_TO_Q_ID(flow_id), nvme_sq_size, nvme_cq_size,
 					flow_param->Priority_Class, flow_param->Initial_Occupancy_Percentage / double(100.0),
 					flow_param->File_Path, flow_param->Time_Unit, flow_param->Relay_Count, flow_param->Percentage_To_Be_Executed,
@@ -165,13 +165,13 @@ void Host_System::Report_results_in_XML(std::string name_prefix, Utils::XmlWrite
 {
 	std::string tmp;
 	tmp = ID();
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	for (auto &flow : IO_flows) {
 		flow->Report_results_in_XML("Host", xmlwriter);
 	}
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 std::vector<Utils::Workload_Statistics*> Host_System::get_workloads_statistics()

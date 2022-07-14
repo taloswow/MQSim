@@ -13,14 +13,14 @@ namespace Utils
 		bool Open(const std::string);
 		void Close();
 		bool exists(const std::string);
-		void Write_open_tag(const std::string);
-		void Write_close_tag();
-		void Write_start_element_tag(const std::string);
-		void Write_end_element_tag();
-		void Write_attribute(const std::string);
-		void Write_string(const std::string);
-		void Write_attribute_string(const std::string attribute_name, const std::string attribute_value);
-		void Write_attribute_string_inline(const std::string attribute_name, const std::string attribute_value);
+		void WriteOpenTag(const std::string);
+		void WriteCloseTag();
+		void WriteStartElementTag(const std::string);
+		void WriteEndElementTag();
+		void WriteAttribute(const std::string);
+		void WriteString(const std::string);
+		void WriteAttributeString(const std::string attribute_name, const std::string attribute_value);
+		void WriteAttributeStringInline(const std::string attribute_name, const std::string attribute_value);
 	private:
 		std::ofstream outFile;
 		int indent;

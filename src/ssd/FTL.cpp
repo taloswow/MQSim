@@ -441,17 +441,17 @@ namespace SSD_Components
 					case GC_Block_Selection_Policy_Type::FIFO://Could be estimated with greedy for large page_no_per_block values, as mentioned in //Based on: B. Van Houdt, "A mean field model for a class of garbage collection algorithms in flash-based solid state drives", SIGMETRICS 2013.
 					{
 						for (unsigned int i = 0; i <= page_no_per_block; i++) {
-							steadystate_block_status_probability.push_back(Utils::Combination_count(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
+							steadystate_block_status_probability.push_back(Utils::CombinationCount(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
 						}
-						Utils::Euler_estimation(steadystate_block_status_probability, page_no_per_block, rho, 30, 0.001, 0.0000000001, 10000);//As specified in the SIGMETRICS 2013 paper, a larger value for d-choices (the name of RGA in Van Houdt's paper) will lead to results close to greedy. We use d=30 to estimate steady-state of the greedy policy with that of d-chioces.
+						Utils::EulerEstimation(steadystate_block_status_probability, page_no_per_block, rho, 30, 0.001, 0.0000000001, 10000);//As specified in the SIGMETRICS 2013 paper, a larger value for d-choices (the name of RGA in Van Houdt's paper) will lead to results close to greedy. We use d=30 to estimate steady-state of the greedy policy with that of d-chioces.
 						break;
 					}
 					case GC_Block_Selection_Policy_Type::RGA://Based on: B. Van Houdt, "A mean field model for a class of garbage collection algorithms in flash-based solid state drives", SIGMETRICS 2013.
 					{
 						for (unsigned int i = 0; i <= page_no_per_block; i++) {
-							steadystate_block_status_probability.push_back(Utils::Combination_count(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
+							steadystate_block_status_probability.push_back(Utils::CombinationCount(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
 						}
-						Utils::Euler_estimation(steadystate_block_status_probability, page_no_per_block, rho, GC_and_WL_Unit->Get_GC_policy_specific_parameter(), 0.001, 0.0000000001, 10000);
+						Utils::EulerEstimation(steadystate_block_status_probability, page_no_per_block, rho, GC_and_WL_Unit->Get_GC_policy_specific_parameter(), 0.001, 0.0000000001, 10000);
 						break;
 					}
 					case GC_Block_Selection_Policy_Type::RANDOM:
@@ -555,17 +555,17 @@ namespace SSD_Components
 					case GC_Block_Selection_Policy_Type::FIFO://Could be estimated with greedy for large page_no_per_block values, as mentioned in //Based on: B. Van Houdt, "A mean field model for a class of garbage collection algorithms in flash-based solid state drives", SIGMETRICS 2013.
 					{
 						for (unsigned int i = 0; i <= page_no_per_block; i++) {
-							steadystate_block_status_probability.push_back(Utils::Combination_count(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
+							steadystate_block_status_probability.push_back(Utils::CombinationCount(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
 						}
-						Utils::Euler_estimation(steadystate_block_status_probability, page_no_per_block, rho, 30, 0.001, 0.0000000001, 10000);//As specified in the SIGMETRICS 2013 paper, a larger value for d-choices (the name of RGA in Van Houdt's paper) will lead to results close to greedy. We use d=30 to estimate steady-state of the greedy policy with that of d-chioces.
+						Utils::EulerEstimation(steadystate_block_status_probability, page_no_per_block, rho, 30, 0.001, 0.0000000001, 10000);//As specified in the SIGMETRICS 2013 paper, a larger value for d-choices (the name of RGA in Van Houdt's paper) will lead to results close to greedy. We use d=30 to estimate steady-state of the greedy policy with that of d-chioces.
 						break;
 					}
 					case GC_Block_Selection_Policy_Type::RGA://Based on: B. Van Houdt, "A mean field model for a class of garbage collection algorithms in flash-based solid state drives", SIGMETRICS 2013.
 					{
 						for (unsigned int i = 0; i <= page_no_per_block; i++) {
-							steadystate_block_status_probability.push_back(Utils::Combination_count(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
+							steadystate_block_status_probability.push_back(Utils::CombinationCount(page_no_per_block, i) * std::pow(rho, i) * std::pow(1 - rho, page_no_per_block - i));
 						}
-						Utils::Euler_estimation(steadystate_block_status_probability, page_no_per_block, rho, GC_and_WL_Unit->Get_GC_policy_specific_parameter(), 0.001, 0.0000000001, 10000);
+						Utils::EulerEstimation(steadystate_block_status_probability, page_no_per_block, rho, GC_and_WL_Unit->Get_GC_policy_specific_parameter(), 0.001, 0.0000000001, 10000);
 						break;
 					}
 					case GC_Block_Selection_Policy_Type::RANDOM:
@@ -755,137 +755,137 @@ namespace SSD_Components
 	void FTL::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix + ".FTL";
-		xmlwriter.Write_start_element_tag(tmp);
+		xmlwriter.WriteStartElementTag(tmp);
 
 		std::string attr = "Issued_Flash_Read_CMD";
 		std::string val = std::to_string(Stats::IssuedReadCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Interleaved_Read_CMD";
 		val = std::to_string(Stats::IssuedInterleaveReadCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Multiplane_Read_CMD";
 		val = std::to_string(Stats::IssuedMultiplaneReadCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Copyback_Read_CMD";
 		val = std::to_string(Stats::IssuedCopybackReadCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Multiplane_Copyback_Read_CMD";
 		val = std::to_string(Stats::IssuedMultiplaneCopybackReadCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Program_CMD";
 		val = std::to_string(Stats::IssuedProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Interleaved_Program_CMD";
 		val = std::to_string(Stats::IssuedInterleaveProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Multiplane_Program_CMD";
 		val = std::to_string(Stats::IssuedMultiplaneProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Interleaved_Multiplane_Program_CMD";
 		val = std::to_string(Stats::IssuedInterleaveMultiplaneProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Copyback_Program_CMD";
 		val = std::to_string(Stats::IssuedCopybackProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Multiplane_Copyback_Program_CMD";
 		val = std::to_string(Stats::IssuedMultiplaneCopybackProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Erase_CMD";
 		val = std::to_string(Stats::IssuedEraseCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Interleaved_Erase_CMD";
 		val = std::to_string(Stats::IssuedInterleaveEraseCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Multiplane_Erase_CMD";
 		val = std::to_string(Stats::IssuedMultiplaneEraseCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Interleaved_Multiplane_Erase_CMD";
 		val = std::to_string(Stats::IssuedInterleaveMultiplaneEraseCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Suspend_Program_CMD";
 		val = std::to_string(Stats::IssuedSuspendProgramCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Suspend_Erase_CMD";
 		val = std::to_string(Stats::IssuedSuspendEraseCMD);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Read_CMD_For_Mapping";
 		val = std::to_string(Stats::Total_flash_reads_for_mapping);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Issued_Flash_Program_CMD_For_Mapping";
 		val = std::to_string(Stats::Total_flash_writes_for_mapping);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Hits";
 		val = std::to_string(Stats::CMT_hits);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Hits_For_Read";
 		val = std::to_string(Stats::readTR_CMT_hits);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Hits_For_Write";
 		val = std::to_string(Stats::writeTR_CMT_hits);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Misses";
 		val = std::to_string(Stats::CMT_miss);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Misses_For_Read";
 		val = std::to_string(Stats::readTR_CMT_miss);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "CMT_Misses_For_Write";
 		val = std::to_string(Stats::writeTR_CMT_miss);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Total_CMT_Queries";
 		val = std::to_string(Stats::total_CMT_queries);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Total_CMT_Queries_For_Reads";
 		val = std::to_string(Stats::total_readTR_CMT_queries);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Total_CMT_Queries_For_Writes";
 		val = std::to_string(Stats::total_writeTR_CMT_queries);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Total_GC_Executions";
 		val = std::to_string(Stats::Total_gc_executions);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Average_Page_Movement_For_GC";
 		val = std::to_string(double(Stats::Total_page_movements_for_gc) / double(Stats::Total_gc_executions));
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Total_WL_Executions";
 		val = std::to_string(Stats::Total_wl_executions);
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Average_Page_Movement_For_WL";
 		val = std::to_string(double(Stats::Total_page_movements_for_wl) / double(Stats::Total_wl_executions));
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
-		xmlwriter.Write_end_element_tag();
+		xmlwriter.WriteEndElementTag();
 	}
 
 	void FTL::StartSimulation()

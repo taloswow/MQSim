@@ -384,7 +384,7 @@ namespace SSD_Components
 				PlaneAllocationScheme,
 				channel_ids, (unsigned int)(stream_channel_ids[domainID].size()), chip_ids, (unsigned int)(stream_chip_ids[domainID].size()), die_ids, 
 				(unsigned int)(stream_die_ids[domainID].size()), plane_ids, (unsigned int)(stream_plane_ids[domainID].size()),
-				Utils::Logical_Address_Partitioning_Unit::PDA_count_allocate_to_flow(domainID), Utils::Logical_Address_Partitioning_Unit::LHA_count_allocate_to_flow_from_device_view(domainID),
+				Utils::Logical_Address_Partitioning_Unit::PDACountAllocateToFlow(domainID), Utils::Logical_Address_Partitioning_Unit::LHACountAllocateToFlowFromDeviceView(domainID),
 				sector_no_per_page);
 			delete[] channel_ids;
 			delete[] chip_ids;
@@ -633,7 +633,7 @@ namespace SSD_Components
 				PRINT_ERROR("Calling address allocation for a previously allocated LPA during preconditioning!")
 			}
 			allocate_plane_for_preconditioning(stream_id, (*lpa).first, plane_address);
-			if (LPA_type(Utils::Logical_Address_Partitioning_Unit::Get_share_of_physcial_pages_in_plane(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID) * page_no_per_plane)
+			if (LPA_type(Utils::Logical_Address_Partitioning_Unit::GetShareOfPhysicalPagesInPlane(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID) * page_no_per_plane)
 				> assigned_lpas[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID].size()) {
 				assigned_lpas[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID].push_back((*lpa).first);
 				lpa++;
@@ -654,7 +654,7 @@ namespace SSD_Components
 						plane_address.PlaneID = domains[stream_id]->Plane_ids[plane_cntr];
 
 						unsigned int physical_block_consumption_goal = (unsigned int)(double(block_no_per_plane - ftl->GC_and_WL_Unit->Get_minimum_number_of_free_pages_before_GC() / 2)
-							* Utils::Logical_Address_Partitioning_Unit::Get_share_of_physcial_pages_in_plane(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID));
+							* Utils::Logical_Address_Partitioning_Unit::GetShareOfPhysicalPagesInPlane(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID));
 
 						//Adjust the average
 						double model_average = 0;

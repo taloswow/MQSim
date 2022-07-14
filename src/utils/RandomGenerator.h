@@ -2,6 +2,7 @@
 #define RANDOM_GENERATOR
 
 #include <cstdint>
+
 #include "CMRRandomGenerator.h"
 
 namespace Utils

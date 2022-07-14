@@ -52,40 +52,40 @@ namespace SSD_Components
 	void Flash_Transaction_Queue::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix;
-		xmlwriter.Write_start_element_tag(tmp);
+		xmlwriter.WriteStartElementTag(tmp);
 
 		std::string attr = "Name";
 		std::string val = id;
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "No_Of_Transactions_Enqueued";
 		val = std::to_string(RequestQueueProbe.NRequests());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "No_Of_Transactions_Dequeued";
 		val = std::to_string(RequestQueueProbe.NDepartures());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Avg_Queue_Length";
 		val = std::to_string(RequestQueueProbe.AvgQueueLength());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Max_Queue_Length";
 		val = std::to_string(RequestQueueProbe.MaxQueueLength());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "STDev_Queue_Length";
 		val = std::to_string(RequestQueueProbe.STDevQueueLength());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Avg_Transaction_Waiting_Time";
 		val = std::to_string(RequestQueueProbe.AvgWaitingTime());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
 		attr = "Max_Transaction_Waiting_Time";
 		val = std::to_string(RequestQueueProbe.MaxWaitingTime());
-		xmlwriter.Write_attribute_string_inline(attr, val);
+		xmlwriter.WriteAttributeStringInline(attr, val);
 
-		xmlwriter.Write_end_element_tag();
+		xmlwriter.WriteEndElementTag();
 	}
 }

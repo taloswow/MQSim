@@ -26,7 +26,7 @@ void Flash_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "Flash_Parameter_Set";
-	xmlwriter.Write_open_tag(tmp);
+	xmlwriter.WriteOpenTag(tmp);
 
 	std::string attr = "Flash_Technology";
 	std::string val;
@@ -43,7 +43,7 @@ void Flash_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "CMD_Suspension_Support";
 	switch (CMD_Suspension_Support) {
@@ -62,73 +62,73 @@ void Flash_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 		default:
 			break;
 	}
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Read_Latency_LSB";
 	val = std::to_string(Page_Read_Latency_LSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Read_Latency_CSB";
 	val = std::to_string(Page_Read_Latency_CSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Read_Latency_MSB";
 	val = std::to_string(Page_Read_Latency_MSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Program_Latency_LSB";
 	val = std::to_string(Page_Program_Latency_LSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Program_Latency_CSB";
 	val = std::to_string(Page_Program_Latency_CSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Program_Latency_MSB";
 	val = std::to_string(Page_Program_Latency_MSB);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Block_Erase_Latency";
 	val = std::to_string(Block_Erase_Latency);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Block_PE_Cycles_Limit";
 	val = std::to_string(Block_PE_Cycles_Limit);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Suspend_Erase_Time";
 	val = std::to_string(Suspend_Erase_Time);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Suspend_Program_Time";
 	val = std::to_string(Suspend_Program_Time);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Die_No_Per_Chip";
 	val = std::to_string(Die_No_Per_Chip);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Plane_No_Per_Die";
 	val = std::to_string(Plane_No_Per_Die);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Block_No_Per_Plane";
 	val = std::to_string(Block_No_Per_Plane);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_No_Per_Block";
 	val = std::to_string(Page_No_Per_Block);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Capacity";
 	val = std::to_string(Page_Capacity);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
 	attr = "Page_Metadat_Capacity";
 	val = std::to_string(Page_Metadat_Capacity);
-	xmlwriter.Write_attribute_string(attr, val);
+	xmlwriter.WriteAttributeString(attr, val);
 
-	xmlwriter.Write_close_tag();
+	xmlwriter.WriteCloseTag();
 }
 
 void Flash_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)

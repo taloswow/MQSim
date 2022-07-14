@@ -1,4 +1,5 @@
 #include "XMLWriter.h"
+
 #include "../sim/Engine.h"
 
 namespace Utils
@@ -30,7 +31,7 @@ namespace Utils
 		}
 	}
 	
-	void XmlWriter::Write_open_tag(const std::string openTag) {
+	void XmlWriter::WriteOpenTag(const std::string openTag) {
 		if (outFile.is_open()) {
 			for (int i = 0; i < indent; i++) {
 				outFile << "\t";
@@ -45,7 +46,7 @@ namespace Utils
 		}
 	}
 	
-	void XmlWriter::Write_attribute_string(const std::string attribute_name, const std::string attribute_value)
+	void XmlWriter::WriteAttributeString(const std::string attribute_name, const std::string attribute_value)
 	{
 		if (outFile.is_open()) {
 			for (int i = 0; i < indent + 1; i++) {
@@ -58,7 +59,7 @@ namespace Utils
 		}
 	}
 	
-	void XmlWriter::Write_close_tag() {
+	void XmlWriter::WriteCloseTag() {
 		if (outFile.is_open()) {
 			indent -= 1;
 			for (int i = 0; i < indent; i++) {
@@ -72,7 +73,7 @@ namespace Utils
 		}
 	}
 	
-	void XmlWriter::Write_start_element_tag(const std::string elementTag) {
+	void XmlWriter::WriteStartElementTag(const std::string elementTag) {
 		if (outFile.is_open()) {
 			for (int i = 0; i < indent; i++) {
 				outFile << "\t";
@@ -86,7 +87,7 @@ namespace Utils
 		}
 	}
 
-	void XmlWriter::Write_end_element_tag()
+	void XmlWriter::WriteEndElementTag()
 	{
 		if (outFile.is_open()) {
 			outFile << "/>\n";
@@ -97,7 +98,7 @@ namespace Utils
 		}
 	}
 
-	void XmlWriter::Write_attribute(const std::string outAttribute)
+	void XmlWriter::WriteAttribute(const std::string outAttribute)
 	{
 		if (outFile.is_open()) {
 			outFile << " " << outAttribute;
@@ -106,7 +107,7 @@ namespace Utils
 		}
 	}
 
-	void XmlWriter::Write_attribute_string_inline(const std::string attribute_name, const std::string attribute_value)
+	void XmlWriter::WriteAttributeStringInline(const std::string attribute_name, const std::string attribute_value)
 	{
 		if (outFile.is_open()) {
 			outFile << " ";
@@ -116,7 +117,7 @@ namespace Utils
 		}
 	}
 
-	void XmlWriter::Write_string(const std::string outString)
+	void XmlWriter::WriteString(const std::string outString)
 	{
 		if (outFile.is_open()) {
 			outFile << ">" << outString;
