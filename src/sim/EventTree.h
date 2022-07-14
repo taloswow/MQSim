@@ -15,9 +15,9 @@ namespace MQSimEngine
 
 		void Add(sim_time_type key, Sim_Event* data);
 		Sim_Event* GetData(sim_time_type key);
-		void Insert_sim_event(Sim_Event* data);
+		void InsertSimEvent(Sim_Event* data);
 		int Size();
-		sim_time_type Get_min_key();
+		sim_time_type GetMinKey();
 		void Remove(sim_time_type key);
 		void Clear();
 	};

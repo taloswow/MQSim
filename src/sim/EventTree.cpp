@@ -56,7 +56,7 @@ namespace MQSimEngine
 	}
 
 	// Extracts the fire time of an event and inserts it into the EventTree
-	void EventTree::Insert_sim_event(Sim_Event* event)
+	void EventTree::InsertSimEvent(Sim_Event* event)
 	{
 		if (event->Fire_time < Engine::Instance()->Time()) {
 			PRINT_ERROR("Illegal request to register a simulation event before Now!")
@@ -72,7 +72,7 @@ namespace MQSimEngine
 	}
 
 	// Returns the value of the minimum key
-	sim_time_type EventTree::Get_min_key()
+	sim_time_type EventTree::GetMinKey()
 	{
 		return map.begin()->first;
 	}

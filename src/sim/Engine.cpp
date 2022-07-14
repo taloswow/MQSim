@@ -94,7 +94,7 @@ namespace MQSimEngine
 			}
 			
 			// Get the event which is next to execute
-			sim_time_type key = _EventList->Get_min_key();
+			sim_time_type key = _EventList->GetMinKey();
 			Sim_Event* ev = _EventList->GetData(key);
 
 			_sim_time = ev->Fire_time;
@@ -136,7 +136,7 @@ namespace MQSimEngine
 	{
 		Sim_Event* ev = new Sim_Event(fireTime, targetObject, parameters, type);
 		DEBUG("RegisterEvent " << fireTime << " " << targetObject)
-		_EventList->Insert_sim_event(ev);
+		_EventList->InsertSimEvent(ev);
 		return ev;
 	}
 
