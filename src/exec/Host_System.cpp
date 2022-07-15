@@ -56,7 +56,7 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 					Utils::Logical_Address_Partitioning_Unit::StartLhaAvilableToFlow(flow_id),
 					Utils::Logical_Address_Partitioning_Unit::EndLhaAvilableToFlow(flow_id),
 					((double)flow_param->Working_Set_Percentage / 100.0), FLOW_ID_TO_Q_ID(flow_id), nvme_sq_size, nvme_cq_size,
-					flow_param->Priority_Class, flow_param->Read_Percentage / double(100.0), flow_param->Address_Distribution, flow_param->Percentage_of_Hot_Region / double(100.0),
+					flow_param->PriorityClass, flow_param->Read_Percentage / double(100.0), flow_param->Address_Distribution, flow_param->Percentage_of_Hot_Region / double(100.0),
 					flow_param->Request_Size_Distribution, flow_param->Average_Request_Size, flow_param->Variance_Request_Size,
 					flow_param->Synthetic_Generator_Type, (flow_param->Bandwidth == 0? 0 :NanoSecondCoeff / ((flow_param->Bandwidth / SECTOR_SIZE_IN_BYTE) / flow_param->Average_Request_Size)),
 					flow_param->Average_No_of_Reqs_in_Queue, flow_param->Generated_Aligned_Addresses, flow_param->Address_Alignment_Unit,
@@ -70,7 +70,7 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 				io_flow = new Host_Components::IO_Flow_Trace_Based(this->ID() + ".IO_Flow.Trace." + flow_param->File_Path, flow_id,
 					Utils::Logical_Address_Partitioning_Unit::StartLhaAvilableToFlow(flow_id), Utils::Logical_Address_Partitioning_Unit::EndLhaAvilableToFlow(flow_id),
 					FLOW_ID_TO_Q_ID(flow_id), nvme_sq_size, nvme_cq_size,
-					flow_param->Priority_Class, flow_param->Initial_Occupancy_Percentage / double(100.0),
+					flow_param->PriorityClass, flow_param->Initial_Occupancy_Percentage / double(100.0),
 					flow_param->File_Path, flow_param->Time_Unit, flow_param->Relay_Count, flow_param->Percentage_To_Be_Executed,
 					ssd_host_interface->GetType(), this->PCIe_root_complex, this->SATA_hba,
 					parameters->Enable_ResponseTime_Logging, parameters->ResponseTime_Logging_Period_Length, parameters->Input_file_path + ".IO_Flow.No_" + std::to_string(flow_id) + ".log");
@@ -122,8 +122,8 @@ void Host_System::StartSimulation()
 			for (uint16_t flow_cntr = 0; flow_cntr < IO_flows.size(); flow_cntr++) {
 				((SSD_Components::Host_Interface_NVMe*) ssd_device->Host_interface)->Create_new_stream(
 					IO_flows[flow_cntr]->Priority_class(),
-					IO_flows[flow_cntr]->Get_start_lsa_on_device(), IO_flows[flow_cntr]->Get_end_lsa_address_on_device(),
-					IO_flows[flow_cntr]->Get_nvme_queue_pair_info()->Submission_queue_memory_base_address, IO_flows[flow_cntr]->Get_nvme_queue_pair_info()->Completion_queue_memory_base_address);
+					IO_flows[flow_cntr]->GetStartLSAOnDevice(), IO_flows[flow_cntr]->GetEndLSAonDevice(),
+					IO_flows[flow_cntr]->GetNVMeQueuePairInfo()->Submission_queue_memory_base_address, IO_flows[flow_cntr]->GetNVMeQueuePairInfo()->Completion_queue_memory_base_address);
 			}
 			break;
 		case HostInterface_Types::SATA:
@@ -184,7 +184,7 @@ std::vector<Utils::Workload_Statistics*> Host_System::get_workloads_statistics()
 
 	for (auto &workload : IO_flows) {
 		Utils::Workload_Statistics* s = new Utils::Workload_Statistics;
-		workload->Get_statistics(*s, ssd_device->ConvertHostLogicToDeviceAddress, ssd_device->FindNVMSubunitAccessBitmap);
+		workload->GetStatistics(*s, ssd_device->ConvertHostLogicToDeviceAddress, ssd_device->FindNVMSubunitAccessBitmap);
 		stats.push_back(s);
 	}
 

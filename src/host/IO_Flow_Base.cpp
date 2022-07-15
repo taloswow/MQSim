@@ -7,7 +7,7 @@ namespace Host_Components
 	//unsigned int InputStreamBase::lastId = 0;
 IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA_type start_lsa_on_device, LHA_type end_lsa_on_device, uint16_t io_queue_id,
 						   uint16_t nvme_submission_queue_size, uint16_t nvme_completion_queue_size,
-						   IO_Flow_Priority_Class::Priority priority_class, sim_time_type stop_time, double initial_occupancy_ratio, unsigned int total_requets_to_be_generated,
+						   IO_Flow_PriorityClass::Priority priority_class, sim_time_type stop_time, double initial_occupancy_ratio, unsigned int total_requets_to_be_generated,
 						   HostInterface_Types SSD_device_type, PCIe_Root_Complex *pcie_root_complex, SATA_HBA *sata_hba,
 						   bool enabled_logging, sim_time_type logging_period, std::string logging_file_path) : MQSimEngine::Sim_Object(name), flow_id(flow_id), start_lsa_on_device(start_lsa_on_device), end_lsa_on_device(end_lsa_on_device), io_queue_id(io_queue_id),
 																												priority_class(priority_class), stop_time(stop_time), initial_occupancy_ratio(initial_occupancy_ratio), total_requests_to_be_generated(total_requets_to_be_generated), SSD_device_type(SSD_device_type), pcie_root_complex(pcie_root_complex), sata_hba(sata_hba),
@@ -147,7 +147,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		STAT_serviced_request_count_short_term = 0;
 	}
 
-	void IO_Flow_Base::SATA_consume_io_request(Host_IO_Request* request)
+	void IO_Flow_Base::SATAConsumeIORequest(Host_IO_Request* request)
 	{
 		sim_time_type device_response_time = Simulator->Time() - request->Enqueue_time;
 		sim_time_type request_delay = Simulator->Time() - request->Arrival_time;
@@ -236,7 +236,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		}
 
 		if (Simulator->Time() > next_logging_milestone) {
-			log_file << Simulator->Time() / SIM_TIME_TO_MICROSECONDS_COEFF << "\t" << Get_device_response_time_short_term() << "\t" << Get_end_to_end_request_delay_short_term() << std::endl;
+			log_file << Simulator->Time() / SIM_TIME_TO_MICROSECONDS_COEFF << "\t" << GetDeviceResponseTime_short_term() << "\t" << GetEndToEndRequestDelay_short_term() << std::endl;
 			STAT_sum_device_response_time_short_term = 0;
 			STAT_sum_request_delay_short_term = 0;
 			STAT_serviced_request_count_short_term = 0;
@@ -244,7 +244,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		}
 	}
 
-	void IO_Flow_Base::NVMe_consume_io_request(Completion_Queue_Entry* cqe)
+	void IO_Flow_Base::NVMeConsumeIORequest(Completion_Queue_Entry* cqe)
 	{
 		//Find the request and update statistics
 		Host_IO_Request* request = nvme_software_request_queue[cqe->Command_Identifier];
@@ -365,7 +365,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		}
 
 		if (Simulator->Time() > next_logging_milestone) {
-			log_file << Simulator->Time() / SIM_TIME_TO_MICROSECONDS_COEFF << "\t" << Get_device_response_time_short_term() << "\t" << Get_end_to_end_request_delay_short_term() << std::endl;
+			log_file << Simulator->Time() / SIM_TIME_TO_MICROSECONDS_COEFF << "\t" << GetDeviceResponseTime_short_term() << "\t" << GetEndToEndRequestDelay_short_term() << std::endl;
 			STAT_sum_device_response_time_short_term = 0;
 			STAT_sum_request_delay_short_term = 0;
 			STAT_serviced_request_count_short_term = 0;
@@ -373,7 +373,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		}
 	}
 	
-	Submission_Queue_Entry* IO_Flow_Base::NVMe_read_sqe(uint64_t address)
+	Submission_Queue_Entry* IO_Flow_Base::NVMeReadSqe(uint64_t address)
 	{
 		Submission_Queue_Entry* sqe = new Submission_Queue_Entry;
 		Host_IO_Request* request = request_queue_in_memory[(uint16_t)((address - nvme_queue_pair.Submission_queue_memory_base_address) / sizeof(Submission_Queue_Entry))];
@@ -402,7 +402,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		return sqe;
 	}
 
-	void IO_Flow_Base::Submit_io_request(Host_IO_Request* request)
+	void IO_Flow_Base::SubmitIORequest(Host_IO_Request* request)
 	{
 		switch (SSD_device_type) {
 			case HostInterface_Types::NVME:
@@ -425,12 +425,12 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 				break;
 			case HostInterface_Types::SATA:
 				request->Source_flow_id = flow_id;
-				sata_hba->Submit_io_request(request);
+				sata_hba->SubmitIORequest(request);
 				break;
 		}
 	}
 
-	void IO_Flow_Base::NVMe_update_and_submit_completion_queue_tail()
+	void IO_Flow_Base::NVMeUpdateAndSubmitCompletionQueueTail()
 	{
 		nvme_queue_pair.Completion_queue_head++;
 		if (nvme_queue_pair.Completion_queue_head == nvme_queue_pair.Completion_queue_size) {
@@ -439,32 +439,32 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		pcie_root_complex->Write_to_device(nvme_queue_pair.Completion_head_register_address_on_device, nvme_queue_pair.Completion_queue_head);//Based on NVMe protocol definition, the updated head pointer should be informed to the device
 	}
 
-	const NVMe_Queue_Pair* IO_Flow_Base::Get_nvme_queue_pair_info()
+	const NVMe_Queue_Pair* IO_Flow_Base::GetNVMeQueuePairInfo()
 	{
 		return &nvme_queue_pair;
 	}
 
-	LHA_type IO_Flow_Base::Get_start_lsa_on_device()
+	LHA_type IO_Flow_Base::GetStartLSAOnDevice()
 	{
 		return start_lsa_on_device;
 	}
 
-	LHA_type IO_Flow_Base::Get_end_lsa_address_on_device()
+	LHA_type IO_Flow_Base::GetEndLSAonDevice()
 	{
 		return end_lsa_on_device;
 	}
 
-	uint32_t IO_Flow_Base::Get_generated_request_count()
+	uint32_t IO_Flow_Base::GetGeneratedRequestCount()
 	{
 		return STAT_generated_request_count;
 	}
 
-	uint32_t IO_Flow_Base::Get_serviced_request_count()
+	uint32_t IO_Flow_Base::GetServicedRequestCount()
 	{
 		return STAT_serviced_request_count;
 	}
 
-	uint32_t IO_Flow_Base::Get_device_response_time()
+	uint32_t IO_Flow_Base::GetDeviceResponseTime()
 	{
 		if (STAT_serviced_request_count == 0) {
 			return 0;
@@ -473,17 +473,17 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		return (uint32_t)(STAT_sum_device_response_time / STAT_serviced_request_count / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_min_device_response_time()
+	uint32_t IO_Flow_Base::GetMinDeviceResponseTime()
 	{
 		return (uint32_t)(STAT_min_device_response_time / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_max_device_response_time()
+	uint32_t IO_Flow_Base::GetMaxDeviceResponseTime()
 	{
 		return (uint32_t)(STAT_max_device_response_time / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_end_to_end_request_delay()
+	uint32_t IO_Flow_Base::GetEndToEndRequestDelay()
 	{
 		if (STAT_serviced_request_count == 0) {
 			return 0;
@@ -492,17 +492,17 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		return (uint32_t)(STAT_sum_request_delay / STAT_serviced_request_count / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_min_end_to_end_request_delay()
+	uint32_t IO_Flow_Base::GetMinEndToEndRequestDelay()
 	{
 		return (uint32_t)(STAT_min_request_delay / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_max_end_to_end_request_delay()
+	uint32_t IO_Flow_Base::GetMaxEndToEndRequestDelay()
 	{
 		return (uint32_t)(STAT_max_request_delay / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_device_response_time_short_term()
+	uint32_t IO_Flow_Base::GetDeviceResponseTime_short_term()
 	{
 		if (STAT_serviced_request_count_short_term == 0) {
 			return 0;
@@ -511,7 +511,7 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 		return (uint32_t)(STAT_sum_device_response_time_short_term / STAT_serviced_request_count_short_term / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t IO_Flow_Base::Get_end_to_end_request_delay_short_term()
+	uint32_t IO_Flow_Base::GetEndToEndRequestDelay_short_term()
 	{
 		if (STAT_serviced_request_count == 0) {
 			return 0;
@@ -580,27 +580,27 @@ IO_Flow_Base::IO_Flow_Base(const sim_object_id_type &name, uint16_t flow_id, LHA
 
 
 		attr = "Device_Response_Time";
-		val = std::to_string(Get_device_response_time());
+		val = std::to_string(GetDeviceResponseTime());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Min_Device_Response_Time";
-		val = std::to_string(Get_min_device_response_time());
+		val = std::to_string(GetMinDeviceResponseTime());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Max_Device_Response_Time";
-		val = std::to_string(Get_max_device_response_time());
+		val = std::to_string(GetMaxDeviceResponseTime());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "End_to_End_Request_Delay";
-		val = std::to_string(Get_end_to_end_request_delay());
+		val = std::to_string(GetEndToEndRequestDelay());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Min_End_to_End_Request_Delay";
-		val = std::to_string(Get_min_end_to_end_request_delay());
+		val = std::to_string(GetMinEndToEndRequestDelay());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Max_End_to_End_Request_Delay";
-		val = std::to_string(Get_max_end_to_end_request_delay());
+		val = std::to_string(GetMaxEndToEndRequestDelay());
 		xmlwriter.WriteAttributeString(attr, val);
 
 		xmlwriter.WriteCloseTag();

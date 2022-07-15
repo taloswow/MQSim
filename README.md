@@ -120,7 +120,7 @@ You can define a trace-based workload for MQSim, using the <IO_Flow_Parameter_Se
 1.Request_Arrival_Time 2.Device_Number 3.Starting_Logical_Sector_Address 4.Request_Size_In_Sectors 5.Type_of_Requests[0 for write, 1 for read]
 
 The following parameters are used to define a trace-based workload:
-1. **Priority_Class:** the priority class of the I/O queue associated with this I/O request. Range = {URGENT, HIGH, MEDIUM, LOW}.
+1. **PriorityClass:** the priority class of the I/O queue associated with this I/O request. Range = {URGENT, HIGH, MEDIUM, LOW}.
 2. **Device_Level_Data_Caching_Mode:** the type of on-device data caching for this flow. Range={WRITE_CACHE, READ_CACHE, WRITE_READ_CACHE, TURNED_OFF}. If the caching mechanism mentioned above is set to SIMPLE, then only WRITE_CACHE and TURNED_OFF modes could be used.
 3. **Channel_IDs:** a comma-separated list of channel IDs that are allocated to this workload. This list is used for resource partitioning. If there are C channels in the SSD (defined in the SSD configuration file), then the channel ID list should include values in the range 0 to C-1. If no resource partitioning is required, then all workloads should have channel IDs 0 to C-1.
 4. **Chip_IDs:** a comma-separated list of chip IDs that are allocated to this workload. This list is used for resource partitioning. If there are W chips in each channel (defined in the SSD configuration file), then the chip ID list should include values in the range 0 to W-1. If no resource partitioning is required, then all workloads should have chip IDs 0 to W-1.
@@ -136,7 +136,7 @@ The following parameters are used to define a trace-based workload:
 You can define a synthetic workload for MQSim, using the <IO_Flow_Parameter_Set_Synthetic> XML tag. 
 
 The following parameters are used to define a trace-based workload:
-1. **Priority_Class:** same as trace-based parameters mentioned above.
+1. **PriorityClass:** same as trace-based parameters mentioned above.
 2. **Device_Level_Data_Caching_Mode:** same as trace-based parameters mentioned above.
 3. **Channel_IDs:** same as trace-based parameters mentioned above.
 4. **Chip_IDs:** same as trace-based parameters mentioned above.

@@ -138,7 +138,7 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 		IO_Flow_Parameter_Set_Synthetic* io_flow_1 = new IO_Flow_Parameter_Set_Synthetic;
 		io_flow_1->Device_Level_Data_Caching_Mode = SSD_Components::Caching_Mode::WRITE_CACHE;
 		io_flow_1->Type = Flow_Type::SYNTHETIC;
-		io_flow_1->Priority_Class = IO_Flow_Priority_Class::HIGH;
+		io_flow_1->PriorityClass = IO_Flow_PriorityClass::HIGH;
 		io_flow_1->Channel_No = 8;
 		io_flow_1->Channel_IDs = new flash_channel_ID_type[8];
 		io_flow_1->Channel_IDs[0] = 0; io_flow_1->Channel_IDs[1] = 1; io_flow_1->Channel_IDs[2] = 2; io_flow_1->Channel_IDs[3] = 3;
@@ -173,7 +173,7 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 		IO_Flow_Parameter_Set_Synthetic* io_flow_2 = new IO_Flow_Parameter_Set_Synthetic;
 		io_flow_2->Device_Level_Data_Caching_Mode = SSD_Components::Caching_Mode::WRITE_CACHE;
 		io_flow_2->Type = Flow_Type::SYNTHETIC;
-		io_flow_2->Priority_Class = IO_Flow_Priority_Class::HIGH;
+		io_flow_2->PriorityClass = IO_Flow_PriorityClass::HIGH;
 		io_flow_2->Channel_No = 8;
 		io_flow_2->Channel_IDs = new flash_channel_ID_type[8];
 		io_flow_2->Channel_IDs[0] = 0; io_flow_2->Channel_IDs[1] = 1; io_flow_2->Channel_IDs[2] = 2; io_flow_2->Channel_IDs[3] = 3;
@@ -244,10 +244,10 @@ void collect_results(SSD_Device& ssd, Host_System& host, const char* output_file
 
 	std::vector<Host_Components::IO_Flow_Base*> IO_flows = host.GetIOFlows();
 	for (unsigned int stream_id = 0; stream_id < IO_flows.size(); stream_id++) {
-		cout << "Flow " << IO_flows[stream_id]->ID() << " - total requests generated: " << IO_flows[stream_id]->Get_generated_request_count()
-			<< " total requests serviced:" << IO_flows[stream_id]->Get_serviced_request_count() << endl;
-		cout << "                   - device response time: " << IO_flows[stream_id]->Get_device_response_time() << " (us)"
-			<< " end-to-end request delay:" << IO_flows[stream_id]->Get_end_to_end_request_delay() << " (us)" << endl;
+		cout << "Flow " << IO_flows[stream_id]->ID() << " - total requests generated: " << IO_flows[stream_id]->GetGeneratedRequestCount()
+			<< " total requests serviced:" << IO_flows[stream_id]->GetServicedRequestCount() << endl;
+		cout << "                   - device response time: " << IO_flows[stream_id]->GetDeviceResponseTime() << " (us)"
+			<< " end-to-end request delay:" << IO_flows[stream_id]->GetEndToEndRequestDelay() << " (us)" << endl;
 	}
 }
 

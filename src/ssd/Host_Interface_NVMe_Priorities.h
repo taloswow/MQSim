@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-class IO_Flow_Priority_Class
+class IO_Flow_PriorityClass
 {
 public:
     enum Priority
@@ -53,7 +53,7 @@ public:
 
     static std::string to_string(unsigned int priority)
     {
-        return to_string(static_cast<IO_Flow_Priority_Class::Priority>(priority));
+        return to_string(static_cast<IO_Flow_PriorityClass::Priority>(priority));
     }
 
     static Priority to_priority(int priorityInt)

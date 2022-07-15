@@ -7,7 +7,7 @@ namespace Host_Components
 {
 IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t flow_id,
 									 LHA_type start_lsa_on_device, LHA_type end_lsa_on_device, double working_set_ratio, uint16_t io_queue_id,
-									 uint16_t nvme_submission_queue_size, uint16_t nvme_completion_queue_size, IO_Flow_Priority_Class::Priority priority_class,
+									 uint16_t nvme_submission_queue_size, uint16_t nvme_completion_queue_size, IO_Flow_PriorityClass::Priority priority_class,
 									 double read_ratio, Utils::Address_Distribution_Type address_distribution, double hot_region_ratio,
 									 Utils::Request_Size_Distribution_Type request_size_distribution, unsigned int average_request_size, unsigned int variance_request_size,
 									 Utils::Request_Generator_Type generator_type, sim_time_type Average_inter_arrival_time_nano_sec, unsigned int average_number_of_enqueued_requests,
@@ -71,7 +71,7 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		delete random_time_interval_generator;
 	}
 
-	Host_IO_Request* IO_Flow_Synthetic::Generate_next_request()
+	Host_IO_Request* IO_Flow_Synthetic::GenerateNextRequest()
 	{
 		if (stop_time > 0) {
 			if (Simulator->Time() > stop_time) {
@@ -166,30 +166,30 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		return request;
 	}
 
-	void IO_Flow_Synthetic::NVMe_consume_io_request(Completion_Queue_Entry* io_request)
+	void IO_Flow_Synthetic::NVMeConsumeIORequest(Completion_Queue_Entry* io_request)
 	{
-		IO_Flow_Base::NVMe_consume_io_request(io_request);
-		IO_Flow_Base::NVMe_update_and_submit_completion_queue_tail();
+		IO_Flow_Base::NVMeConsumeIORequest(io_request);
+		IO_Flow_Base::NVMeUpdateAndSubmitCompletionQueueTail();
 		if (generator_type == Utils::Request_Generator_Type::QUEUE_DEPTH) {
-			Host_IO_Request* request = Generate_next_request();
+			Host_IO_Request* request = GenerateNextRequest();
 			
-			/* In the demand based execution mode, the Generate_next_request() function may return NULL
+			/* In the demand based execution mode, the GenerateNextRequest() function may return NULL
 			* if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.*/
 			if (request != NULL) {
-				Submit_io_request(request);
+				SubmitIORequest(request);
 			}
 		}
 	}
 
-	void IO_Flow_Synthetic::SATA_consume_io_request(Host_IO_Request* io_request)
+	void IO_Flow_Synthetic::SATAConsumeIORequest(Host_IO_Request* io_request)
 	{
-		IO_Flow_Base::SATA_consume_io_request(io_request);
+		IO_Flow_Base::SATAConsumeIORequest(io_request);
 		if (generator_type == Utils::Request_Generator_Type::QUEUE_DEPTH) {
-			Host_IO_Request* request = Generate_next_request();
-			/* In the demand based execution mode, the Generate_next_request() function may return NULL
+			Host_IO_Request* request = GenerateNextRequest();
+			/* In the demand based execution mode, the GenerateNextRequest() function may return NULL
 			* if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.*/
 			if (request != NULL) {
-				Submit_io_request(request);
+				SubmitIORequest(request);
 			}
 		}
 	}
@@ -219,19 +219,19 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 	void IO_Flow_Synthetic::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event)
 	{
 		if (generator_type == Utils::Request_Generator_Type::BANDWIDTH) {
-			Host_IO_Request* req = Generate_next_request();
+			Host_IO_Request* req = GenerateNextRequest();
 			if (req != NULL) {
-				Submit_io_request(req);
+				SubmitIORequest(req);
 				Simulator->RegisterSimEvent(Simulator->Time() + (sim_time_type)random_time_interval_generator->Exponential((double)Average_inter_arrival_time_nano_sec), this, 0, 0);
 			}
 		} else {
 			for (unsigned int i = 0; i < average_number_of_enqueued_requests; i++) {
-				Submit_io_request(Generate_next_request());
+				SubmitIORequest(GenerateNextRequest());
 			}
 		}
 	}
 
-	void IO_Flow_Synthetic::Get_statistics(Utils::Workload_Statistics& stats, LPA_type(*ConvertHostLogicToDeviceAddress)(LHA_type lha),
+	void IO_Flow_Synthetic::GetStatistics(Utils::Workload_Statistics& stats, LPA_type(*ConvertHostLogicToDeviceAddress)(LHA_type lha),
 		page_status_type(*FindNVMSubunitAccessBitmap)(LHA_type lha))
 	{
 		stats.Type = Utils::Workload_Type::SYNTHETIC;

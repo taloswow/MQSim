@@ -19,7 +19,7 @@ class IO_Flow_Parameter_Set : public Parameter_Set_Base
 public:
 	SSD_Components::Caching_Mode Device_Level_Data_Caching_Mode;
 	Flow_Type Type;
-	IO_Flow_Priority_Class::Priority Priority_Class;
+	IO_Flow_PriorityClass::Priority PriorityClass;
 	// The priority class is only considered when the SSD device uses NVMe host interface
 	
 	flash_channel_ID_type* Channel_IDs;

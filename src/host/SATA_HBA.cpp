@@ -60,7 +60,7 @@ namespace Host_Components
 				available_command_ids.insert(cqe->Command_Identifier);
 				sata_ncq.Submission_queue_head = cqe->SQ_Head;
 
-				((*IO_flows)[request->Source_flow_id])->SATA_consume_io_request(request);
+				((*IO_flows)[request->Source_flow_id])->SATAConsumeIORequest(request);
 
 				Update_and_submit_ncq_completion_info();
 
@@ -124,7 +124,7 @@ namespace Host_Components
 		} //switch ((HBA_Sim_Events)event->Type)
 	}
 
-	void SATA_HBA::Submit_io_request(Host_IO_Request* request)
+	void SATA_HBA::SubmitIORequest(Host_IO_Request* request)
 	{
 		host_requests.push(request);
 		if (host_requests.size() == 1) {
@@ -132,7 +132,7 @@ namespace Host_Components
 		}
 	}
 
-	void SATA_HBA::SATA_consume_io_request(Completion_Queue_Entry* cqe)
+	void SATA_HBA::SATAConsumeIORequest(Completion_Queue_Entry* cqe)
 	{
 		consume_requests.push(cqe);
 		if (consume_requests.size() == 1) {

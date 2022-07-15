@@ -14,7 +14,7 @@ namespace SSD_Components
 class Input_Stream_NVMe : public Input_Stream_Base
 {
 public:
-	Input_Stream_NVMe(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
+	Input_Stream_NVMe(IO_Flow_PriorityClass::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 					  uint64_t submission_queue_base_address, uint16_t submission_queue_size,
 					  uint64_t completion_queue_base_address, uint16_t completion_queue_size) : Input_Stream_Base(),
 																								Priority_class(priority_class),
@@ -23,7 +23,7 @@ public:
 																								Completion_queue_base_address(completion_queue_base_address), Completion_queue_size(completion_queue_size),
 																								Submission_head(0), Submission_head_informed_to_host(0), Submission_tail(0), Completion_head(0), Completion_tail(0), On_the_fly_requests(0) {}
 	~Input_Stream_NVMe();
-	IO_Flow_Priority_Class::Priority Priority_class;
+	IO_Flow_PriorityClass::Priority Priority_class;
 	LHA_type Start_logical_sector_address;
 	LHA_type End_logical_sector_address;
 	uint64_t Submission_queue_base_address;
@@ -46,7 +46,7 @@ class Input_Stream_Manager_NVMe : public Input_Stream_Manager_Base
 public:
 	Input_Stream_Manager_NVMe(Host_Interface_Base *host_interface, uint16_t queue_fetch_szie);
 	unsigned int Queue_fetch_size;
-	stream_id_type Create_new_stream(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
+	stream_id_type Create_new_stream(IO_Flow_PriorityClass::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 									 uint64_t submission_queue_base_address, uint16_t submission_queue_size,
 									 uint64_t completion_queue_base_address, uint16_t completion_queue_size);
 	void Submission_queue_tail_pointer_update(stream_id_type stream_id, uint16_t tail_pointer_value);
@@ -56,7 +56,7 @@ public:
 	void Handle_serviced_request(User_Request *request);
 	uint16_t Get_submission_queue_depth(stream_id_type stream_id);
 	uint16_t Get_completion_queue_depth(stream_id_type stream_id);
-	IO_Flow_Priority_Class::Priority Get_priority_class(stream_id_type stream_id);
+	IO_Flow_PriorityClass::Priority Get_priority_class(stream_id_type stream_id);
 
 private:
 	void segment_user_request(User_Request *user_request);
@@ -88,7 +88,7 @@ public:
 	Host_Interface_NVMe(const sim_object_id_type &id, LHA_type max_logical_sector_address,
 						uint16_t submission_queue_depth, uint16_t completion_queue_depth,
 						unsigned int no_of_input_streams, uint16_t queue_fetch_size, unsigned int sectors_per_page, Data_Cache_Manager_Base *cache);
-	stream_id_type Create_new_stream(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
+	stream_id_type Create_new_stream(IO_Flow_PriorityClass::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 									 uint64_t submission_queue_base_address, uint64_t completion_queue_base_address);
 	void StartSimulation();
 	void ValidateSimulationConfig();

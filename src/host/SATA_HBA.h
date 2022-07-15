@@ -45,8 +45,8 @@ namespace Host_Components
 		void StartSimulation();
 		void ValidateSimulationConfig();
 		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
-		void Submit_io_request(Host_IO_Request* request);
-		void SATA_consume_io_request(Completion_Queue_Entry* cqe);
+		void SubmitIORequest(Host_IO_Request* request);
+		void SATAConsumeIORequest(Completion_Queue_Entry* cqe);
 		Submission_Queue_Entry* Read_ncq_entry(uint64_t address);
 		const NCQ_Control_Structure* Get_sata_ncq_info();
 		void Set_io_flows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows);

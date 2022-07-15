@@ -18,7 +18,7 @@ Input_Stream_Manager_NVMe::Input_Stream_Manager_NVMe(Host_Interface_Base *host_i
 {
 }
 
-stream_id_type Input_Stream_Manager_NVMe::Create_new_stream(IO_Flow_Priority_Class::Priority priority_class,
+stream_id_type Input_Stream_Manager_NVMe::Create_new_stream(IO_Flow_PriorityClass::Priority priority_class,
 															LHA_type start_logical_sector_address,
 															LHA_type end_logical_sector_address,
 															uint64_t submission_queue_base_address,
@@ -151,7 +151,7 @@ uint16_t Input_Stream_Manager_NVMe::Get_completion_queue_depth(stream_id_type st
 	return ((Input_Stream_NVMe *)this->input_streams[stream_id])->Completion_queue_size;
 }
 
-IO_Flow_Priority_Class::Priority Input_Stream_Manager_NVMe::Get_priority_class(stream_id_type stream_id)
+IO_Flow_PriorityClass::Priority Input_Stream_Manager_NVMe::Get_priority_class(stream_id_type stream_id)
 {
 	return ((Input_Stream_NVMe *)this->input_streams[stream_id])->Priority_class;
 }
@@ -385,7 +385,7 @@ Host_Interface_NVMe::Host_Interface_NVMe(const sim_object_id_type &id,
 	this->request_fetch_unit = new Request_Fetch_Unit_NVMe(this);
 }
 
-stream_id_type Host_Interface_NVMe::Create_new_stream(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
+stream_id_type Host_Interface_NVMe::Create_new_stream(IO_Flow_PriorityClass::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 													  uint64_t submission_queue_base_address, uint64_t completion_queue_base_address)
 {
 	return ((Input_Stream_Manager_NVMe *)input_stream_manager)->Create_new_stream(priority_class, start_logical_sector_address, end_logical_sector_address, submission_queue_base_address, submission_queue_depth, completion_queue_base_address, completion_queue_depth);

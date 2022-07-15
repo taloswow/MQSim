@@ -37,8 +37,8 @@ TSU_Priority_OutOfOrder::TSU_Priority_OutOfOrder(const sim_object_id_type &id,
     GCEraseTRQueue = new Flash_Transaction_Queue *[channel_count];
     MappingReadTRQueue = new Flash_Transaction_Queue *[channel_count];
     MappingWriteTRQueue = new Flash_Transaction_Queue *[channel_count];
-    nextPriorityClassRead = new IO_Flow_Priority_Class::Priority *[channel_count];
-    nextPriorityClassWrite = new IO_Flow_Priority_Class::Priority * [channel_count];
+    nextPriorityClassRead = new IO_Flow_PriorityClass::Priority *[channel_count];
+    nextPriorityClassWrite = new IO_Flow_PriorityClass::Priority * [channel_count];
     currentWeightRead = new int* [channel_count];
     currentWeightWrite = new int *[channel_count];
     for (unsigned int channelID = 0; channelID < channel_count; channelID++)
@@ -50,22 +50,22 @@ TSU_Priority_OutOfOrder::TSU_Priority_OutOfOrder(const sim_object_id_type &id,
         GCEraseTRQueue[channelID] = new Flash_Transaction_Queue[chip_no_per_channel];
         MappingReadTRQueue[channelID] = new Flash_Transaction_Queue[chip_no_per_channel];
         MappingWriteTRQueue[channelID] = new Flash_Transaction_Queue[chip_no_per_channel];
-        nextPriorityClassRead[channelID] = new IO_Flow_Priority_Class::Priority[chip_no_per_channel];
-        nextPriorityClassWrite[channelID] = new IO_Flow_Priority_Class::Priority[chip_no_per_channel];
+        nextPriorityClassRead[channelID] = new IO_Flow_PriorityClass::Priority[chip_no_per_channel];
+        nextPriorityClassWrite[channelID] = new IO_Flow_PriorityClass::Priority[chip_no_per_channel];
         currentWeightRead[channelID] = new int[chip_no_per_channel];
         currentWeightWrite[channelID] = new int[chip_no_per_channel];
         for (unsigned int chipId = 0; chipId < chip_no_per_channel; chipId++)
         {
-            UserReadTRQueue[channelID][chipId] = new Flash_Transaction_Queue[IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS];
-            UserWriteTRQueue[channelID][chipId] = new Flash_Transaction_Queue[IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS];
-            nextPriorityClassRead[channelID][chipId] = IO_Flow_Priority_Class::URGENT;
-            nextPriorityClassWrite[channelID][chipId] = IO_Flow_Priority_Class::URGENT;
-            currentWeightRead[channelID][chipId] = IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH);
-            currentWeightWrite[channelID][chipId] = IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH);
-            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
+            UserReadTRQueue[channelID][chipId] = new Flash_Transaction_Queue[IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS];
+            UserWriteTRQueue[channelID][chipId] = new Flash_Transaction_Queue[IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS];
+            nextPriorityClassRead[channelID][chipId] = IO_Flow_PriorityClass::URGENT;
+            nextPriorityClassWrite[channelID][chipId] = IO_Flow_PriorityClass::URGENT;
+            currentWeightRead[channelID][chipId] = IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH);
+            currentWeightWrite[channelID][chipId] = IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH);
+            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserReadTRQueue[channelID][chipId][priorityClass].Set_id("User_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_Priority_Class::to_string(priorityClass));
-                UserWriteTRQueue[channelID][chipId][priorityClass].Set_id("User_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_Priority_Class::to_string(priorityClass));
+                UserReadTRQueue[channelID][chipId][priorityClass].Set_id("User_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
+                UserWriteTRQueue[channelID][chipId][priorityClass].Set_id("User_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
             }
 
             GCReadTRQueue[channelID][chipId].Set_id("GC_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
@@ -132,9 +132,9 @@ void TSU_Priority_OutOfOrder::ReportResultsInXML(std::string name_prefix, Utils:
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
+            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserReadTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Read_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
+                UserReadTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Read_TR_Queue.Priority." + IO_Flow_PriorityClass::to_string(priorityClass), xmlwriter);
             }
         }
     }
@@ -143,9 +143,9 @@ void TSU_Priority_OutOfOrder::ReportResultsInXML(std::string name_prefix, Utils:
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
+            for (unsigned int priorityClass = 0; priorityClass < IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserWriteTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Write_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
+                UserWriteTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Write_TR_Queue.Priority." + IO_Flow_PriorityClass::to_string(priorityClass), xmlwriter);
             }
         }
     }
@@ -222,13 +222,13 @@ void TSU_Priority_OutOfOrder::Schedule()
             {
             case Transaction_Source_Type::CACHE:
             case Transaction_Source_Type::USERIO:
-                if ((*it)->Priority_class != IO_Flow_Priority_Class::UNDEFINED)
+                if ((*it)->Priority_class != IO_Flow_PriorityClass::UNDEFINED)
                 {
                     UserReadTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][static_cast<int>((*it)->Priority_class)].push_back((*it));
                 }
                 else
                 {
-                    UserReadTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][IO_Flow_Priority_Class::HIGH].push_back((*it));
+                    UserReadTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][IO_Flow_PriorityClass::HIGH].push_back((*it));
                 }
                 break;
             case Transaction_Source_Type::MAPPING:
@@ -246,13 +246,13 @@ void TSU_Priority_OutOfOrder::Schedule()
             {
             case Transaction_Source_Type::CACHE:
             case Transaction_Source_Type::USERIO:
-                if ((*it)->Priority_class != IO_Flow_Priority_Class::UNDEFINED)
+                if ((*it)->Priority_class != IO_Flow_PriorityClass::UNDEFINED)
                 {
                     UserWriteTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][static_cast<int>((*it)->Priority_class)].push_back((*it));
                 }
                 else
                 {
-                    UserWriteTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][IO_Flow_Priority_Class::HIGH].push_back((*it));
+                    UserWriteTRQueue[(*it)->Address.ChannelID][(*it)->Address.ChipID][IO_Flow_PriorityClass::HIGH].push_back((*it));
                 }
                 break;
             case Transaction_Source_Type::MAPPING:
@@ -300,29 +300,29 @@ void TSU_Priority_OutOfOrder::Schedule()
 
 Flash_Transaction_Queue *TSU_Priority_OutOfOrder::get_next_read_service_queue(NVM::FlashMemory::Flash_Chip *chip)
 {
-    if (UserReadTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_Priority_Class::URGENT].size() > 0)
+    if (UserReadTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_PriorityClass::URGENT].size() > 0)
     {
-        return &UserReadTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_Priority_Class::URGENT];
+        return &UserReadTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_PriorityClass::URGENT];
     }
 
     int numberOfTries = 0;
-    while(numberOfTries < IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH))
+    while(numberOfTries < IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH))
     {
-        nextPriorityClassRead[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::to_priority((nextPriorityClassRead[chip->ChannelID][chip->ChipID] + 1) % IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS);
-        if (nextPriorityClassRead[chip->ChannelID][chip->ChipID] == IO_Flow_Priority_Class::URGENT)
+        nextPriorityClassRead[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::to_priority((nextPriorityClassRead[chip->ChannelID][chip->ChipID] + 1) % IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS);
+        if (nextPriorityClassRead[chip->ChannelID][chip->ChipID] == IO_Flow_PriorityClass::URGENT)
         {
-            nextPriorityClassRead[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::HIGH;
+            nextPriorityClassRead[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::HIGH;
         }
-        if (nextPriorityClassRead[chip->ChannelID][chip->ChipID] == IO_Flow_Priority_Class::HIGH)
+        if (nextPriorityClassRead[chip->ChannelID][chip->ChipID] == IO_Flow_PriorityClass::HIGH)
         {
             numberOfTries++;
             currentWeightRead[chip->ChannelID][chip->ChipID]--;
             if (currentWeightRead[chip->ChannelID][chip->ChipID] <= 0)
             {
-                currentWeightRead[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH);
+                currentWeightRead[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH);
             }
         }
-        if (IO_Flow_Priority_Class::get_scheduling_weight(nextPriorityClassRead[chip->ChannelID][chip->ChipID]) >= currentWeightRead[chip->ChannelID][chip->ChipID]
+        if (IO_Flow_PriorityClass::get_scheduling_weight(nextPriorityClassRead[chip->ChannelID][chip->ChipID]) >= currentWeightRead[chip->ChannelID][chip->ChipID]
             && UserReadTRQueue[chip->ChannelID][chip->ChipID][nextPriorityClassRead[chip->ChannelID][chip->ChipID]].size() > 0)
         {
             return &UserReadTRQueue[chip->ChannelID][chip->ChipID][nextPriorityClassRead[chip->ChannelID][chip->ChipID]];
@@ -436,29 +436,29 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
 
 Flash_Transaction_Queue *TSU_Priority_OutOfOrder::get_next_write_service_queue(NVM::FlashMemory::Flash_Chip *chip)
 {
-    if (UserWriteTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_Priority_Class::URGENT].size() > 0)
+    if (UserWriteTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_PriorityClass::URGENT].size() > 0)
     {
-        return &UserWriteTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_Priority_Class::URGENT];
+        return &UserWriteTRQueue[chip->ChannelID][chip->ChipID][IO_Flow_PriorityClass::URGENT];
     }
 
     int numberOfTries = 0;
-    while (numberOfTries < IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH))
+    while (numberOfTries < IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH))
     {
-        nextPriorityClassWrite[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::to_priority((nextPriorityClassWrite[chip->ChannelID][chip->ChipID] + 1) % IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS);
-        if (nextPriorityClassWrite[chip->ChannelID][chip->ChipID] == IO_Flow_Priority_Class::URGENT)
+        nextPriorityClassWrite[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::to_priority((nextPriorityClassWrite[chip->ChannelID][chip->ChipID] + 1) % IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS);
+        if (nextPriorityClassWrite[chip->ChannelID][chip->ChipID] == IO_Flow_PriorityClass::URGENT)
         {
-            nextPriorityClassWrite[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::HIGH;
+            nextPriorityClassWrite[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::HIGH;
         }
-        if (nextPriorityClassWrite[chip->ChannelID][chip->ChipID] == IO_Flow_Priority_Class::HIGH)
+        if (nextPriorityClassWrite[chip->ChannelID][chip->ChipID] == IO_Flow_PriorityClass::HIGH)
         {
             numberOfTries++;
             currentWeightWrite[chip->ChannelID][chip->ChipID]--;
             if (currentWeightWrite[chip->ChannelID][chip->ChipID] <= 0)
             {
-                currentWeightWrite[chip->ChannelID][chip->ChipID] = IO_Flow_Priority_Class::get_scheduling_weight(IO_Flow_Priority_Class::HIGH);
+                currentWeightWrite[chip->ChannelID][chip->ChipID] = IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH);
             }
         }
-        if (IO_Flow_Priority_Class::get_scheduling_weight(nextPriorityClassWrite[chip->ChannelID][chip->ChipID]) >= currentWeightWrite[chip->ChannelID][chip->ChipID]
+        if (IO_Flow_PriorityClass::get_scheduling_weight(nextPriorityClassWrite[chip->ChannelID][chip->ChipID]) >= currentWeightWrite[chip->ChannelID][chip->ChipID]
             && UserWriteTRQueue[chip->ChannelID][chip->ChipID][nextPriorityClassWrite[chip->ChannelID][chip->ChipID]].size() > 0)
         {
             return &UserWriteTRQueue[chip->ChannelID][chip->ChipID][nextPriorityClassWrite[chip->ChannelID][chip->ChipID]];

@@ -8,19 +8,19 @@
 // All serialization and deserialization functions should be replaced by a C++ reflection implementation
 void IO_Flow_Parameter_Set::XMLSerialize(Utils::XmlWriter& xmlwriter)
 {
-	std::string attr = "Priority_Class";
+	std::string attr = "PriorityClass";
 	std::string val;
-	switch (Priority_Class) {
-		case IO_Flow_Priority_Class::URGENT:
+	switch (PriorityClass) {
+		case IO_Flow_PriorityClass::URGENT:
 			val = "URGENT";
 			break;
-		case IO_Flow_Priority_Class::HIGH:
+		case IO_Flow_PriorityClass::HIGH:
 			val = "HIGH";
 			break;
-		case IO_Flow_Priority_Class::MEDIUM:
+		case IO_Flow_PriorityClass::MEDIUM:
 			val = "MEDIUM";
 			break;
-		case IO_Flow_Priority_Class::LOW:
+		case IO_Flow_PriorityClass::LOW:
 			val = "LOW";
 			break;
 		default:
@@ -110,18 +110,18 @@ void IO_Flow_Parameter_Set::XMLDeserialize(rapidxml::xml_node<> *node)
 					PRINT_ERROR("Wrong caching mode definition for input flow")
 				}
 			}
-			else if (strcmp(param->name(), "Priority_Class") == 0)
+			else if (strcmp(param->name(), "PriorityClass") == 0)
 			{
 				std::string val = param->value();
 				std::transform(val.begin(), val.end(), val.begin(), ::toupper);
 				if (strcmp(val.c_str(), "URGENT") == 0) {
-					Priority_Class = IO_Flow_Priority_Class::URGENT;
+					PriorityClass = IO_Flow_PriorityClass::URGENT;
 				} else if (strcmp(val.c_str(), "HIGH") == 0) {
-					Priority_Class = IO_Flow_Priority_Class::HIGH;
+					PriorityClass = IO_Flow_PriorityClass::HIGH;
 				} else if (strcmp(val.c_str(), "MEDIUM") == 0) {
-					Priority_Class = IO_Flow_Priority_Class::MEDIUM;
+					PriorityClass = IO_Flow_PriorityClass::MEDIUM;
 				} else if (strcmp(val.c_str(), "LOW") == 0) {
-					Priority_Class = IO_Flow_Priority_Class::LOW;
+					PriorityClass = IO_Flow_PriorityClass::LOW;
 				} else {
 					PRINT_ERROR("Wrong priority class definition for input flow")
 				}
