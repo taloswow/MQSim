@@ -2,6 +2,7 @@
 #define PCIE_ROOT_COMPLEX_H
 
 #include "../ssd/Host_Interface_Defs.h"
+// Import order necessary! can lead to errors
 
 #include "Host_Defs.h"
 #include "PCIe_Message.h"
@@ -26,7 +27,7 @@ namespace Host_Components
 			switch (messages->Type)
 			{
 			case PCIe_Message_Type::READ_REQ:
-				Read_from_memory(messages->Address, (unsigned int)(intptr_t)messages->Payload);
+				ReadFromMemory(messages->Address, (unsigned int)(intptr_t)messages->Payload);
 				break;
 			case PCIe_Message_Type::WRITE_REQ:
 				WriteToMemory(messages->Address, messages->Payload);
@@ -46,7 +47,7 @@ namespace Host_Components
 		std::vector<Host_Components::IO_Flow_Base*>* IO_flows;
 		
 		void WriteToMemory(const uint64_t address, const void* payload);
-		void Read_from_memory(const uint64_t address, const unsigned int size);
+		void ReadFromMemory(const uint64_t address, const unsigned int size);
 	};
 }
 

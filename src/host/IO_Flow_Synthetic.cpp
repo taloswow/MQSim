@@ -67,47 +67,47 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name,
 			seed(seed),
 			generate_aligned_addresses(generate_aligned_addresses),
 			alignment_value(alignment_value)
-{
-	// If read ratio is 0, then we change its value to a negative one so that
-	// in request generation we never generate a read request
-	if (read_ratio == 0.0)
 	{
-		read_ratio = -1.0;
-	}
-	random_request_type_generator_seed = seed++;
-	random_request_type_generator = new Utils::RandomGenerator(random_request_type_generator_seed);
-	random_address_generator_seed = seed++;
-	random_address_generator = new Utils::RandomGenerator(random_address_generator_seed);
-	if (this->start_lsa_on_device > this->end_lsa_on_device)
-	{
-		throw std::logic_error("Problem in IO Flow Synthetic, the start LBA address is greater than the end LBA address");
-	}
+		// If read ratio is 0, then we change its value to a negative one so that
+		// in request generation we never generate a read request
+		if (read_ratio == 0.0)
+		{
+			read_ratio = -1.0;
+		}
+		random_request_type_generator_seed = seed++;
+		random_request_type_generator = new Utils::RandomGenerator(random_request_type_generator_seed);
+		random_address_generator_seed = seed++;
+		random_address_generator = new Utils::RandomGenerator(random_address_generator_seed);
+		if (this->start_lsa_on_device > this->end_lsa_on_device)
+		{
+			throw std::logic_error("Problem in IO Flow Synthetic, the start LBA address is greater than the end LBA address");
+		}
 
-	if (address_distribution == Utils::Address_Distribution_Type::RANDOM_HOTCOLD)
-	{
-		random_hot_address_generator_seed = seed++;
-		random_hot_address_generator = new Utils::RandomGenerator(random_hot_address_generator_seed);
-		random_hot_cold_generator_seed = seed++;
-		random_hot_cold_generator = new Utils::RandomGenerator(random_hot_cold_generator_seed);
-		hot_region_end_lsa = this->start_lsa_on_device + (LHA_type)((double)(this->end_lsa_on_device - this->start_lsa_on_device) * hot_region_ratio);
-	}
+		if (address_distribution == Utils::Address_Distribution_Type::RANDOM_HOTCOLD)
+		{
+			random_hot_address_generator_seed = seed++;
+			random_hot_address_generator = new Utils::RandomGenerator(random_hot_address_generator_seed);
+			random_hot_cold_generator_seed = seed++;
+			random_hot_cold_generator = new Utils::RandomGenerator(random_hot_cold_generator_seed);
+			hot_region_end_lsa = this->start_lsa_on_device + (LHA_type)((double)(this->end_lsa_on_device - this->start_lsa_on_device) * hot_region_ratio);
+		}
 
-	if (request_size_distribution == Utils::Request_Size_Distribution_Type::NORMAL)
-	{
-		random_request_size_generator_seed = seed++;
-		random_request_size_generator = new Utils::RandomGenerator(random_request_size_generator_seed);
-	}
+		if (request_size_distribution == Utils::Request_Size_Distribution_Type::NORMAL)
+		{
+			random_request_size_generator_seed = seed++;
+			random_request_size_generator = new Utils::RandomGenerator(random_request_size_generator_seed);
+		}
 
-	if (generator_type == Utils::Request_Generator_Type::BANDWIDTH)
-	{
-		random_time_interval_generator_seed = seed++;
-		random_time_interval_generator = new Utils::RandomGenerator(random_time_interval_generator_seed);
-	}
+		if (generator_type == Utils::Request_Generator_Type::BANDWIDTH)
+		{
+			random_time_interval_generator_seed = seed++;
+			random_time_interval_generator = new Utils::RandomGenerator(random_time_interval_generator_seed);
+		}
 
-	if (this->working_set_ratio == 0)
-	{
-		PRINT_ERROR("The working set ratio is set to zero for workload " << name)
-	}
+		if (this->working_set_ratio == 0)
+		{
+			PRINT_ERROR("The working set ratio is set to zero for workload " << name)
+		}
 	}
 
 	IO_Flow_Synthetic::~IO_Flow_Synthetic()
@@ -222,8 +222,8 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name,
 		if (generator_type == Utils::Request_Generator_Type::QUEUE_DEPTH) {
 			Host_IO_Request* request = GenerateNextRequest();
 			
-			/* In the demand based execution mode, the GenerateNextRequest() function may return NULL
-			* if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.*/
+			// In the demand based execution mode, the GenerateNextRequest() function may return NULL
+			// if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.
 			if (request != NULL) {
 				SubmitIORequest(request);
 			}
@@ -235,8 +235,8 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name,
 		IO_Flow_Base::SATAConsumeIORequest(io_request);
 		if (generator_type == Utils::Request_Generator_Type::QUEUE_DEPTH) {
 			Host_IO_Request* request = GenerateNextRequest();
-			/* In the demand based execution mode, the GenerateNextRequest() function may return NULL
-			* if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.*/
+			// In the demand based execution mode, the GenerateNextRequest() function may return NULL
+			// if 1) the simulation stop is met, or 2) the number of generated I/O requests reaches its threshold.
 			if (request != NULL) {
 				SubmitIORequest(request);
 			}

@@ -1,6 +1,5 @@
 #include "PCIe_Root_Complex.h"
 
-
 namespace Host_Components
 {
 	PCIe_Root_Complex::PCIe_Root_Complex(PCIe_Link* pcie_link,
@@ -46,7 +45,7 @@ namespace Host_Components
 		pcie_link->Deliver(pcie_message);
 	}
 
-	void PCIe_Root_Complex::Read_from_memory(const uint64_t address, const unsigned int read_size)
+	void PCIe_Root_Complex::ReadFromMemory(const uint64_t address, const unsigned int read_size)
 	{
 		PCIe_Message* new_pcie_message = new Host_Components::PCIe_Message;
 		new_pcie_message->Type = PCIe_Message_Type::READ_COMP;

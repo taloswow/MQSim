@@ -39,7 +39,7 @@ private:
 	Host_Components::SATA_HBA* SATA_hba;
 	std::vector<Host_Components::IO_Flow_Base*> IO_flows;
 	SSD_Device* ssd_device;
-	std::vector<Utils::Workload_Statistics*> get_workloads_statistics();
+	std::vector<Utils::Workload_Statistics*> GetWorkloadsStatistics();
 	bool preconditioning_required;
 };
 

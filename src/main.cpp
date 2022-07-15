@@ -23,20 +23,21 @@ void CommandLineArgs(char* argv[], string& input_file_path, string& workload_fil
 		char file_path_switch[] = "-i";
 		if (arg.compare(0, strlen(file_path_switch), file_path_switch) == 0) {
 			input_file_path.assign(argv[++arg_cntr]);
-			//cout << input_file_path << endl;
+			// cout << input_file_path << endl;
 			continue;
 		}
 
 		char workload_path_switch[] = "-w";
 		if (arg.compare(0, strlen(workload_path_switch), workload_path_switch) == 0) {
 			workload_file_path.assign(argv[++arg_cntr]);
-			//cout << workload_file_path << endl;
+			// cout << workload_file_path << endl;
 			continue;
 		}
 	}
 }
 
-void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Parameter_Set* exec_params)
+void ReadConfigurationParameters(const string ssd_config_file_path,
+		Execution_Parameter_Set* exec_params)
 {
 	ifstream ssd_config_file;
 	ssd_config_file.open(ssd_config_file_path.c_str());
@@ -53,12 +54,12 @@ void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Pa
 		xmlwriter.Close();
 		PRINT_MESSAGE("[====================] Done!\n")
 	} else {
-		//Read input workload parameters
+		// Read input workload parameters
 		string line((std::istreambuf_iterator<char>(ssd_config_file)),
 			std::istreambuf_iterator<char>());
 		ssd_config_file >> line;
 		if (line.compare("USE_INTERNAL_PARAMS") != 0) {
-			rapidxml::xml_document<> doc;    // character type defaults to char
+			rapidxml::xml_document<> doc; // character type defaults to char
 			char* temp_string = new char[line.length() + 1];
 			strcpy(temp_string, line.c_str());
 			doc.parse<0>(temp_string);
@@ -86,7 +87,7 @@ void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Pa
 	ssd_config_file.close();
 }
 
-std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(const string workload_defs_file_path)
+std::vector<std::vector<IO_Flow_Parameter_Set*>*>* ReadWorkloadDefinitions(const string workload_defs_file_path)
 {
 	std::vector<std::vector<IO_Flow_Parameter_Set*>*>* io_scenarios = new std::vector<std::vector<IO_Flow_Parameter_Set*>*>;
 
@@ -229,7 +230,7 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 	return io_scenarios;
 }
 
-void collect_results(SSD_Device& ssd, Host_System& host, const char* output_file_path)
+void CollectResults(SSD_Device& ssd, Host_System& host, const char* output_file_path)
 {
 	Utils::XmlWriter xmlwriter;
 	xmlwriter.Open(output_file_path);
@@ -251,7 +252,7 @@ void collect_results(SSD_Device& ssd, Host_System& host, const char* output_file
 	}
 }
 
-void print_help()
+void PrintHelp()
 {
 	cout << "MQSim - SSD simulator with both NVMe and SATA host interface behavior, see ReadMe.md for details" << endl <<
 		"Standalone Usage:" << endl <<
@@ -263,7 +264,7 @@ int main(int argc, char* argv[])
 	string ssd_config_file_path, workload_defs_file_path;
 	if (argc != 5) {
 		// MQSim expects 2 arguments: 1) the path to the SSD configuration definition file, and 2) the path to the workload definition file
-		print_help();
+		PrintHelp();
 		return 1;
 	}
 
@@ -271,7 +272,7 @@ int main(int argc, char* argv[])
 
 	Execution_Parameter_Set* exec_params = new Execution_Parameter_Set;
 	ReadConfigurationParameters(ssd_config_file_path, exec_params);
-	std::vector<std::vector<IO_Flow_Parameter_Set*>*>* io_scenarios = read_workload_definitions(workload_defs_file_path);
+	std::vector<std::vector<IO_Flow_Parameter_Set*>*>* io_scenarios = ReadWorkloadDefinitions(workload_defs_file_path);
 
 	int cntr = 1;
 	for (auto io_scen = io_scenarios->begin(); io_scen != io_scenarios->end(); io_scen++, cntr++) {
@@ -281,7 +282,7 @@ int main(int argc, char* argv[])
 		PRINT_MESSAGE("******************************")
 		PRINT_MESSAGE("Executing scenario " << cntr << " out of " << io_scenarios->size() << " .......")
 
-		//The simulator should always be reset, before starting the actual simulation
+		// The simulator should always be reset, before starting the actual simulation
 		Simulator->Reset();
 
 		exec_params->Host_Configuration.IO_Flow_Definitions.clear();
@@ -289,8 +290,10 @@ int main(int argc, char* argv[])
 			exec_params->Host_Configuration.IO_Flow_Definitions.push_back(*io_flow_def);
 		}
 
-		SSD_Device ssd(&exec_params->SSD_Device_Configuration, &exec_params->Host_Configuration.IO_Flow_Definitions);//Create SSD_Device based on the specified parameters
-		exec_params->Host_Configuration.Input_file_path = workload_defs_file_path.substr(0, workload_defs_file_path.find_last_of("."));//Create Host_System based on the specified parameters
+		SSD_Device ssd(&exec_params->SSD_Device_Configuration, &exec_params->Host_Configuration.IO_Flow_Definitions);
+		// Create SSD_Device based on the specified parameters
+		exec_params->Host_Configuration.Input_file_path = workload_defs_file_path.substr(0, workload_defs_file_path.find_last_of("."));
+		// Create Host_System based on the specified parameters
 		Host_System host(&exec_params->Host_Configuration, exec_params->SSD_Device_Configuration.Enabled_Preconditioning, ssd.Host_interface);
 		host.AttachSSDDevice(&ssd);
 
@@ -304,7 +307,7 @@ int main(int argc, char* argv[])
 		PRINT_MESSAGE("");
 
 		PRINT_MESSAGE("Writing results to output file .......");
-		collect_results(ssd, host, (workload_defs_file_path.substr(0, workload_defs_file_path.find_last_of(".")) + "_scenario_" + std::to_string(cntr) + ".xml").c_str());
+		CollectResults(ssd, host, (workload_defs_file_path.substr(0, workload_defs_file_path.find_last_of(".")) + "_scenario_" + std::to_string(cntr) + ".xml").c_str());
 	}
     cout << "Simulation complete; Press any key to exit." << endl;
 

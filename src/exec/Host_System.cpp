@@ -12,7 +12,8 @@
 Host_System::Host_System(Host_Parameter_Set* parameters,
 		bool preconditioning_required,
 		SSD_Components::Host_Interface_Base* ssd_host_interface):
-	MQSimEngine::Sim_Object("Host"), preconditioning_required(preconditioning_required)
+	MQSimEngine::Sim_Object("Host"),
+	preconditioning_required(preconditioning_required)
 {
 	Simulator->AddObject(this);
 
@@ -134,7 +135,7 @@ void Host_System::StartSimulation()
 	}
 
 	if (preconditioning_required) {
-		std::vector<Utils::Workload_Statistics*> workload_stats = get_workloads_statistics();
+		std::vector<Utils::Workload_Statistics*> workload_stats = GetWorkloadsStatistics();
 		ssd_device->PerformPreconditioning(workload_stats);
 		for (auto &stat : workload_stats) {
 			delete stat;
@@ -178,7 +179,7 @@ void Host_System::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& 
 	xmlwriter.WriteCloseTag();
 }
 
-std::vector<Utils::Workload_Statistics*> Host_System::get_workloads_statistics()
+std::vector<Utils::Workload_Statistics*> Host_System::GetWorkloadsStatistics()
 {
 	std::vector<Utils::Workload_Statistics*> stats;
 
