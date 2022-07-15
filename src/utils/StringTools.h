@@ -34,7 +34,7 @@ namespace Utils
 			}
 		}
 
-		static void RemoveCR(std::string& str)//remove carriage return in linux
+		static void RemoveCR(std::string& str) // remove carriage return in linux
 		{
 			if (str[str.size() - 1] == '\r') {
 				str.erase(str.size() - 1, 1);

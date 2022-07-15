@@ -1,7 +1,9 @@
 // The Engine is the main part running the actual simulation
 
-#include <stdexcept>
 #include "Engine.h"
+
+#include <stdexcept>
+
 #include "../utils/Logical_Address_Partitioning_Unit.h"
 
 namespace MQSimEngine

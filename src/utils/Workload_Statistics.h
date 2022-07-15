@@ -24,18 +24,21 @@ namespace Utils
 		uint64_t Accessed_sub_units;
 	};
 
-	//Parameters defined in: B. Van Houdt, "On the necessity of hot and cold data identification to reduce the write amplification in flash-based SSDs", Perf. Eval., 2014.
+	// Parameters defined in: B. Van Houdt, "On the necessity of hot and cold data identification to reduce the write amplification in flash-based SSDs", Perf. Eval., 2014.
 	struct Workload_Statistics
 	{
 		Utils::Workload_Type Type;
 		stream_id_type Stream_id;
-		double Initial_occupancy_ratio;//Ratio of the logical storage space that is fill with data in steady-state
+		double Initial_occupancy_ratio;
+		// Ratio of the logical storage space that is fill with data in steady-state
+
 		unsigned int Replay_no;
 		unsigned int Total_generated_requests;
 
 		int random_request_type_generator_seed;
 		double Read_ratio;
-		std::vector<sim_time_type> Write_arrival_time, Read_arrival_time;//Histogram with 1us resolution
+		std::vector<sim_time_type> Write_arrival_time, Read_arrival_time;
+		// Histogram with 1us resolution
 
 		Utils::Address_Distribution_Type Address_distribution_type;
 		double Working_set_ratio;
@@ -44,8 +47,12 @@ namespace Utils
 		- M. Rosenblum and J. K. Ousterhout, "The design and implementation of a log-structured file system", ACM CSUR, 1992.
 		A fraction f of the complete address space corresponds to hot data and the remaining fraction to cold data. The fraction
 		of write operations to the hot data is denoted as r*/
-		double Ratio_of_hot_addresses_to_whole_working_set;//The f parameter in the Rosenblum hot/cold model
-		double Ratio_of_traffic_accessing_hot_region;//The r parameter in the Rosenblum hot/cold model
+		double Ratio_of_hot_addresses_to_whole_working_set;
+		// The f parameter in the Rosenblum hot/cold model
+
+		double Ratio_of_traffic_accessing_hot_region;
+		// The r parameter in the Rosenblum hot/cold model
+
 		int random_address_generator_seed;
 		int random_hot_cold_generator_seed;
 		int random_hot_address_generator_seed;
@@ -66,7 +73,8 @@ namespace Utils
 		int random_request_size_generator_seed;
 		unsigned int Average_request_size_sector;
 		unsigned int STDEV_reuqest_size;
-		std::vector<unsigned int> Write_size_histogram, Read_size_histogram;//Histogram with 1 sector resolution
+		std::vector<unsigned int> Write_size_histogram, Read_size_histogram;
+		// Histogram with 1 sector resolution
 	};
 }
 

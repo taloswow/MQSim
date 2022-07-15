@@ -1,8 +1,9 @@
 #ifndef SIM_REPORTER_H
 #define SIM_REPORTER_H
 
-#include "../utils/XMLWriter.h"
 #include <string>
+
+#include "../utils/XMLWriter.h"
 
 namespace MQSimEngine
 {

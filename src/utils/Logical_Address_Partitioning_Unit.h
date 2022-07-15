@@ -17,17 +17,28 @@ namespace Utils
 	{
 	public:
 		static void Reset();
-		static void AllocateLogicalAddressForFlows(HostInterface_Types hostinterface_type, unsigned int concurrent_stream_no,
-			unsigned int channel_count, unsigned int chip_no_per_channel, unsigned int die_no_per_chip, unsigned int plane_no_per_die,
-			std::vector<std::vector<flash_channel_ID_type>> stream_channel_ids, std::vector<std::vector<flash_chip_ID_type>> stream_chip_ids,
-			std::vector<std::vector<flash_die_ID_type>> stream_die_ids, std::vector<std::vector<flash_plane_ID_type>> stream_plane_ids,
-			unsigned int block_no_per_plane, unsigned int page_no_per_block, unsigned int sector_no_per_page, double overprovisioning_ratio);
+		static void AllocateLogicalAddressForFlows(HostInterface_Types hostinterface_type,
+				unsigned int concurrent_stream_no,
+				unsigned int channel_count,
+				unsigned int chip_no_per_channel,
+				unsigned int die_no_per_chip,
+				unsigned int plane_no_per_die,
+				std::vector<std::vector<flash_channel_ID_type>> stream_channel_ids,
+				std::vector<std::vector<flash_chip_ID_type>> stream_chip_ids,
+				std::vector<std::vector<flash_die_ID_type>> stream_die_ids,
+				std::vector<std::vector<flash_plane_ID_type>> stream_plane_ids,
+				unsigned int block_no_per_plane,
+				unsigned int page_no_per_block,
+				unsigned int sector_no_per_page, double overprovisioning_ratio);
 		static LHA_type StartLhaAvilableToFlow(stream_id_type stream_id);
 		static LHA_type EndLhaAvilableToFlow(stream_id_type stream_id);
 		static LHA_type LHACountAllocateToFlowFromHostView(stream_id_type stream_id);
 		static LHA_type LHACountAllocateToFlowFromDeviceView(stream_id_type stream_id);
 		static PDA_type PDACountAllocateToFlow(stream_id_type stream_id);
-		static double GetShareOfPhysicalPagesInPlane(flash_channel_ID_type channel_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id);
+		static double GetShareOfPhysicalPagesInPlane(flash_channel_ID_type channel_id,
+				flash_chip_ID_type chip_id,
+				flash_die_ID_type die_id,
+				flash_plane_ID_type plane_id);
 		static LHA_type GetTotalDeviceLHACount();
 	private:
 		static HostInterface_Types hostinterface_type;
