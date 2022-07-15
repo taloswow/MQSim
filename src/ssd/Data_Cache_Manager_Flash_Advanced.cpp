@@ -97,7 +97,7 @@ namespace SSD_Components
 		flash_controller->ConnectToTransactionServicedSignal(HandleTransactionServicedSignalFromPHY);
 	}
 
-	void Data_Cache_Manager_Flash_Advanced::Do_warmup(std::vector<Utils::Workload_Statistics*> workload_stats)
+	void Data_Cache_Manager_Flash_Advanced::DoWarmup(std::vector<Utils::Workload_Statistics*> workload_stats)
 	{
 		double total_write_arrival_rate = 0, total_read_arrival_rate = 0;
 		switch (sharing_mode) {
@@ -204,7 +204,7 @@ namespace SSD_Components
 					while (it != user_request->Transaction_list.end()) {
 						NVM_Transaction_Flash_RD* tr = (NVM_Transaction_Flash_RD*)(*it);
 						if (per_stream_cache[tr->Stream_id]->Exists(tr->Stream_id, tr->LPA)) {
-							page_status_type available_sectors_bitmap = per_stream_cache[tr->Stream_id]->Get_slot(tr->Stream_id, tr->LPA).State_bitmap_of_existing_sectors & tr->read_sectors_bitmap;
+							page_status_type available_sectors_bitmap = per_stream_cache[tr->Stream_id]->GetSlot(tr->Stream_id, tr->LPA).State_bitmap_of_existing_sectors & tr->read_sectors_bitmap;
 							if (available_sectors_bitmap == tr->read_sectors_bitmap) {
 								user_request->Sectors_serviced_from_cache += count_sector_no_from_status_bitmap(tr->read_sectors_bitmap);
 								user_request->Transaction_list.erase(it++);//the ++ operation should happen here, otherwise the iterator will be part of the list after erasing it from the list
@@ -285,17 +285,17 @@ namespace SSD_Components
 			if (per_stream_cache[tr->Stream_id]->Exists(tr->Stream_id, tr->LPA)) {
 				/*MQSim should get rid of writting stale data to the cache.
 				* This situation may result from out-of-order transaction execution*/
-				Data_Cache_Slot_Type slot = per_stream_cache[tr->Stream_id]->Get_slot(tr->Stream_id, tr->LPA);
+				Data_Cache_Slot_Type slot = per_stream_cache[tr->Stream_id]->GetSlot(tr->Stream_id, tr->LPA);
 				sim_time_type timestamp = slot.Timestamp;
 				NVM::memory_content_type content = slot.Content;
 				if (tr->DataTimeStamp > timestamp) {
 					timestamp = tr->DataTimeStamp;
 					content = tr->Content;
 				}
-				per_stream_cache[tr->Stream_id]->Update_data(tr->Stream_id, tr->LPA, content, timestamp, tr->write_sectors_bitmap | slot.State_bitmap_of_existing_sectors);
+				per_stream_cache[tr->Stream_id]->UpdataData(tr->Stream_id, tr->LPA, content, timestamp, tr->write_sectors_bitmap | slot.State_bitmap_of_existing_sectors);
 			} else {//the logical address is not in the cache
 				if (!per_stream_cache[tr->Stream_id]->CheckFreeSlotAvailability()) {
-					Data_Cache_Slot_Type evicted_slot = per_stream_cache[tr->Stream_id]->EvictOneSlot_lru();
+					Data_Cache_Slot_Type evicted_slot = per_stream_cache[tr->Stream_id]->EvictOneSlotLRU();
 					if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 						evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::CACHE,
 							tr->Stream_id, count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
@@ -304,12 +304,12 @@ namespace SSD_Components
 						//DEBUG2("Evicting page" << evicted_slot.LPA << " from write buffer ")
 					}
 				}
-				per_stream_cache[tr->Stream_id]->Insert_write_data(tr->Stream_id, tr->LPA, tr->Content, tr->DataTimeStamp, tr->write_sectors_bitmap);
+				per_stream_cache[tr->Stream_id]->InsertWriteData(tr->Stream_id, tr->LPA, tr->Content, tr->DataTimeStamp, tr->write_sectors_bitmap);
 			}
 			dram_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
 			//hot/cold data separation
 			if (bloom_filter[tr->Stream_id].find(tr->LPA) == bloom_filter[tr->Stream_id].end()) {
-				per_stream_cache[tr->Stream_id]->Change_slot_status_to_writeback(tr->Stream_id, tr->LPA); //Eagerly write back cold data
+				per_stream_cache[tr->Stream_id]->ChangeSlotStatusToWriteback(tr->Stream_id, tr->LPA); //Eagerly write back cold data
 				flash_written_back_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
 				bloom_filter[user_request->Stream_id].insert(tr->LPA);
 				writeback_transactions.push_back(tr);
@@ -360,7 +360,7 @@ namespace SSD_Components
 		}
 
 		if (transaction->Source == Transaction_Source_Type::USERIO) {
-			_my_instance->broadcast_user_memory_transaction_serviced_signal(transaction);
+			_my_instance->BroadcastUserMemoryTransactionServicedSignal(transaction);
 		}
 
 		/* This is an update read (a read that is generated for a write request that partially updates page data).
@@ -377,7 +377,7 @@ namespace SSD_Components
 				case Caching_Mode::WRITE_CACHE:
 					transaction->UserIORequest->Transaction_list.remove(transaction);
 					if (_my_instance->is_user_request_finished(transaction->UserIORequest)) {
-						_my_instance->broadcast_user_request_serviced_signal(transaction->UserIORequest);
+						_my_instance->BroadcastUserRequestServicedSignal(transaction->UserIORequest);
 					}
 					break;
 				case Caching_Mode::READ_CACHE:
@@ -386,7 +386,7 @@ namespace SSD_Components
 					if (((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Exists(transaction->Stream_id, transaction->LPA)) {
 						/*MQSim should get rid of writting stale data to the cache.
 						* This situation may result from out-of-order transaction execution*/
-						Data_Cache_Slot_Type slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Get_slot(transaction->Stream_id, transaction->LPA);
+						Data_Cache_Slot_Type slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->GetSlot(transaction->Stream_id, transaction->LPA);
 						sim_time_type timestamp = slot.Timestamp;
 						NVM::memory_content_type content = slot.Content;
 						if (((NVM_Transaction_Flash_RD*)transaction)->DataTimeStamp > timestamp) {
@@ -394,12 +394,12 @@ namespace SSD_Components
 							content = ((NVM_Transaction_Flash_RD*)transaction)->Content;
 						}
 
-						((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Update_data(transaction->Stream_id, transaction->LPA, content,
+						((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->UpdataData(transaction->Stream_id, transaction->LPA, content,
 							timestamp, ((NVM_Transaction_Flash_RD*)transaction)->read_sectors_bitmap | slot.State_bitmap_of_existing_sectors);
 					} else  {
 						if (!((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->CheckFreeSlotAvailability()) {
 							std::list<NVM_Transaction*>* evicted_cache_slots = new std::list<NVM_Transaction*>;
-							Data_Cache_Slot_Type evicted_slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->EvictOneSlot_lru();
+							Data_Cache_Slot_Type evicted_slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->EvictOneSlotLRU();
 							if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 								Memory_Transfer_Info* transfer_info = new Memory_Transfer_Info;
 								transfer_info->Size_in_bytes = count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE;
@@ -418,7 +418,7 @@ namespace SSD_Components
 								((Data_Cache_Manager_Flash_Advanced*)_my_instance)->service_dram_access_request(transfer_info);
 							}
 						}
-						((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Insert_read_data(transaction->Stream_id, transaction->LPA,
+						((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->InsertReadData(transaction->Stream_id, transaction->LPA,
 							((NVM_Transaction_Flash_RD*)transaction)->Content, ((NVM_Transaction_Flash_RD*)transaction)->DataTimeStamp, ((NVM_Transaction_Flash_RD*)transaction)->read_sectors_bitmap);
 
 						Memory_Transfer_Info* transfer_info = new Memory_Transfer_Info;
@@ -430,7 +430,7 @@ namespace SSD_Components
 
 					transaction->UserIORequest->Transaction_list.remove(transaction);
 					if (_my_instance->is_user_request_finished(transaction->UserIORequest)) {
-						_my_instance->broadcast_user_request_serviced_signal(transaction->UserIORequest);
+						_my_instance->BroadcastUserRequestServicedSignal(transaction->UserIORequest);
 					}
 					break;
 				}
@@ -442,7 +442,7 @@ namespace SSD_Components
 				case Caching_Mode::READ_CACHE:
 					transaction->UserIORequest->Transaction_list.remove(transaction);
 					if (_my_instance->is_user_request_finished(transaction->UserIORequest)) {
-						_my_instance->broadcast_user_request_serviced_signal(transaction->UserIORequest);
+						_my_instance->BroadcastUserRequestServicedSignal(transaction->UserIORequest);
 					}
 					break;
 				case Caching_Mode::WRITE_CACHE:
@@ -455,11 +455,11 @@ namespace SSD_Components
 					((Data_Cache_Manager_Flash_Advanced*)_my_instance)->back_pressure_buffer_depth[sharing_id] -= transaction->Data_and_metadata_size_in_byte / SECTOR_SIZE_IN_BYTE + (transaction->Data_and_metadata_size_in_byte % SECTOR_SIZE_IN_BYTE == 0 ? 0 : 1);
 
 					if (((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Exists(transaction->Stream_id, ((NVM_Transaction_Flash_WR*)transaction)->LPA)) {
-						Data_Cache_Slot_Type slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Get_slot(transaction->Stream_id, ((NVM_Transaction_Flash_WR*)transaction)->LPA);
+						Data_Cache_Slot_Type slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->GetSlot(transaction->Stream_id, ((NVM_Transaction_Flash_WR*)transaction)->LPA);
 						sim_time_type timestamp = slot.Timestamp;
 						NVM::memory_content_type content = slot.Content;
 						if (((NVM_Transaction_Flash_WR*)transaction)->DataTimeStamp >= timestamp) {
-							((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Remove_slot(transaction->Stream_id, ((NVM_Transaction_Flash_WR*)transaction)->LPA);
+							((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->RemoveSlot(transaction->Stream_id, ((NVM_Transaction_Flash_WR*)transaction)->LPA);
 						}
 					}
 					
@@ -483,7 +483,7 @@ namespace SSD_Components
 						std::list<NVM_Transaction*>* evicted_cache_slots = new std::list<NVM_Transaction*>;
 						while (!((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Empty())
 						{
-							DataCacheSlotType evicted_slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->Evict_one_dirty_slot();
+							DataCacheSlotType evicted_slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->EvictOneDirtySlot();
 							if (evicted_slot.Status != CacheSlotStatus::EMPTY)
 							{
 								evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::CACHE,
@@ -523,7 +523,7 @@ namespace SSD_Components
 				dram_execution_queue[request_info->Stream_id].push(request_info);
 			}
 		} else {
-			Simulator->RegisterSimEvent(Simulator->Time() + estimate_dram_access_time(request_info->Size_in_bytes, dram_row_size,
+			Simulator->RegisterSimEvent(Simulator->Time() + EstimateDRAMAccessTime(request_info->Size_in_bytes, dram_row_size,
 				dram_busrt_size, dram_burst_transfer_time_ddr, dram_tRCD, dram_tCL, dram_tRP),
 				this, request_info, static_cast<int>(request_info->next_event_type));
 			memory_channel_is_busy = true;
@@ -542,7 +542,7 @@ namespace SSD_Components
 			case Data_Cache_Simulation_Event_Type::MEMORY_WRITE_FOR_USERIO_FINISHED:
 				((User_Request*)(transfer_info)->Related_request)->Sectors_serviced_from_cache -= transfer_info->Size_in_bytes / SECTOR_SIZE_IN_BYTE;
 				if (is_user_request_finished((User_Request*)(transfer_info)->Related_request))
-					broadcast_user_request_serviced_signal(((User_Request*)(transfer_info)->Related_request));
+					BroadcastUserRequestServicedSignal(((User_Request*)(transfer_info)->Related_request));
 				break;
 			case Data_Cache_Simulation_Event_Type::MEMORY_READ_FOR_CACHE_EVICTION_FINISHED://Reading data from DRAM and writing it back to the flash storage
 				static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(*((std::list<NVM_Transaction*>*)(transfer_info->Related_request)));
@@ -558,7 +558,7 @@ namespace SSD_Components
 			if (dram_execution_queue[0].size() > 0)	{
 				Memory_Transfer_Info* transfer_info = dram_execution_queue[0].front();
 				dram_execution_queue[0].pop();
-				Simulator->RegisterSimEvent(Simulator->Time() + estimate_dram_access_time(transfer_info->Size_in_bytes, dram_row_size, dram_busrt_size,
+				Simulator->RegisterSimEvent(Simulator->Time() + EstimateDRAMAccessTime(transfer_info->Size_in_bytes, dram_row_size, dram_busrt_size,
 					dram_burst_transfer_time_ddr, dram_tRCD, dram_tCL, dram_tRP),
 					this, transfer_info, static_cast<int>(transfer_info->next_event_type));
 				memory_channel_is_busy = true;
@@ -570,7 +570,7 @@ namespace SSD_Components
 				if (dram_execution_queue[dram_execution_list_turn].size() > 0) {
 					Memory_Transfer_Info* transfer_info = dram_execution_queue[dram_execution_list_turn].front();
 					dram_execution_queue[dram_execution_list_turn].pop();
-					Simulator->RegisterSimEvent(Simulator->Time() + estimate_dram_access_time(transfer_info->Size_in_bytes, dram_row_size, dram_busrt_size,
+					Simulator->RegisterSimEvent(Simulator->Time() + EstimateDRAMAccessTime(transfer_info->Size_in_bytes, dram_row_size, dram_busrt_size,
 						dram_burst_transfer_time_ddr, dram_tRCD, dram_tCL, dram_tRP),
 						this, transfer_info, static_cast<int>(transfer_info->next_event_type));
 					memory_channel_is_busy = true;

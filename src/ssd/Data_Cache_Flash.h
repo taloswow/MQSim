@@ -4,10 +4,12 @@
 #include <list>
 #include <queue>
 #include <unordered_map>
-#include "../nvm_chip/flash_memory/FlashTypes.h"
+
 #include "SSD_Defs.h"
 #include "Data_Cache_Manager_Base.h"
 #include "NVM_Transaction_Flash.h"
+
+#include "../nvm_chip/flash_memory/FlashTypes.h"
 
 namespace SSD_Components
 {
@@ -19,7 +21,8 @@ namespace SSD_Components
 		data_cache_content_type Content;
 		data_timestamp_type Timestamp;
 		Cache_Slot_Status Status;
-		std::list<std::pair<LPA_type, Data_Cache_Slot_Type*>>::iterator lru_list_ptr;//used for fast implementation of LRU
+		std::list<std::pair<LPA_type, Data_Cache_Slot_Type*>>::iterator lru_list_ptr;
+		// used for fast implementation of LRU
 	};
 
 	enum class Data_Cache_Simulation_Event_Type {
@@ -47,14 +50,26 @@ namespace SSD_Components
 		bool CheckFreeSlotAvailability(unsigned int no_of_slots);
 		bool Empty();
 		bool Full();
-		Data_Cache_Slot_Type Get_slot(const stream_id_type stream_id, const LPA_type lpn);
-		Data_Cache_Slot_Type Evict_one_dirty_slot();
-		Data_Cache_Slot_Type EvictOneSlot_lru();
-		void Change_slot_status_to_writeback(const stream_id_type stream_id, const LPA_type lpn);
-		void Remove_slot(const stream_id_type stream_id, const LPA_type lpn);
-		void Insert_read_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content, const data_timestamp_type timestamp, const page_status_type state_bitmap_of_read_sectors);
-		void Insert_write_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content, const data_timestamp_type timestamp, const page_status_type state_bitmap_of_write_sectors);
-		void Update_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content, const data_timestamp_type timestamp, const page_status_type state_bitmap_of_write_sectors);
+		Data_Cache_Slot_Type GetSlot(const stream_id_type stream_id, const LPA_type lpn);
+		Data_Cache_Slot_Type EvictOneDirtySlot();
+		Data_Cache_Slot_Type EvictOneSlotLRU();
+		void ChangeSlotStatusToWriteback(const stream_id_type stream_id, const LPA_type lpn);
+		void RemoveSlot(const stream_id_type stream_id, const LPA_type lpn);
+		void InsertReadData(const stream_id_type stream_id,
+				const LPA_type lpn,
+				const data_cache_content_type content,
+				const data_timestamp_type timestamp,
+				const page_status_type state_bitmap_of_read_sectors);
+		void InsertWriteData(const stream_id_type stream_id,
+				const LPA_type lpn,
+				const data_cache_content_type content,
+				const data_timestamp_type timestamp,
+				const page_status_type state_bitmap_of_write_sectors);
+		void UpdataData(const stream_id_type stream_id,
+				const LPA_type lpn,
+				const data_cache_content_type content,
+				const data_timestamp_type timestamp,
+				const page_status_type state_bitmap_of_write_sectors);
 	private:
 		std::unordered_map<LPA_type, Data_Cache_Slot_Type*> slots;
 		std::list<std::pair<LPA_type, Data_Cache_Slot_Type*>> lru_list;

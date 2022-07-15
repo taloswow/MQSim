@@ -1,6 +1,6 @@
 #include "Data_Cache_Flash.h"
-#include <assert.h>
 
+#include <assert.h>
 
 namespace SSD_Components
 {
@@ -23,7 +23,7 @@ namespace SSD_Components
 		}
 	}
 
-	Data_Cache_Slot_Type Data_Cache_Flash::Get_slot(const stream_id_type stream_id, const LPA_type lpn)
+	Data_Cache_Slot_Type Data_Cache_Flash::GetSlot(const stream_id_type stream_id, const LPA_type lpn)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
 		auto it = slots.find(key);
@@ -55,7 +55,7 @@ namespace SSD_Components
 		return slots.size() == capacity_in_pages;
 	}
 
-	Data_Cache_Slot_Type Data_Cache_Flash::Evict_one_dirty_slot()
+	Data_Cache_Slot_Type Data_Cache_Flash::EvictOneDirtySlot()
 	{
 		assert(slots.size() > 0);
 		auto itr = lru_list.rbegin();
@@ -79,7 +79,7 @@ namespace SSD_Components
 		return evicted_item;
 	}
 
-	Data_Cache_Slot_Type Data_Cache_Flash::EvictOneSlot_lru()
+	Data_Cache_Slot_Type Data_Cache_Flash::EvictOneSlotLRU()
 	{
 		assert(slots.size() > 0);
 		slots.erase(lru_list.back().first);
@@ -90,7 +90,7 @@ namespace SSD_Components
 		return evicted_item;
 	}
 
-	void Data_Cache_Flash::Change_slot_status_to_writeback(const stream_id_type stream_id, const LPA_type lpn)
+	void Data_Cache_Flash::ChangeSlotStatusToWriteback(const stream_id_type stream_id, const LPA_type lpn)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
 		auto it = slots.find(key);
@@ -98,7 +98,7 @@ namespace SSD_Components
 		it->second->Status = Cache_Slot_Status::DIRTY_FLASH_WRITEBACK;
 	}
 
-	void Data_Cache_Flash::Insert_read_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
+	void Data_Cache_Flash::InsertReadData(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
 		const data_timestamp_type timestamp, const page_status_type state_bitmap_of_read_sectors)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
@@ -121,7 +121,7 @@ namespace SSD_Components
 		slots[key] = cache_slot;
 	}
 
-	void Data_Cache_Flash::Insert_write_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
+	void Data_Cache_Flash::InsertWriteData(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
 		const data_timestamp_type timestamp, const page_status_type state_bitmap_of_write_sectors)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
@@ -145,7 +145,7 @@ namespace SSD_Components
 		slots[key] = cache_slot;
 	}
 
-	void Data_Cache_Flash::Update_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
+	void Data_Cache_Flash::UpdataData(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content,
 		const data_timestamp_type timestamp, const page_status_type state_bitmap_of_write_sectors)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
@@ -162,7 +162,7 @@ namespace SSD_Components
 		}
 	}
 
-	void Data_Cache_Flash::Remove_slot(const stream_id_type stream_id, const LPA_type lpn)
+	void Data_Cache_Flash::RemoveSlot(const stream_id_type stream_id, const LPA_type lpn)
 	{
 		LPA_type key = LPN_TO_UNIQUE_KEY(stream_id, lpn);
 		auto it = slots.find(key);

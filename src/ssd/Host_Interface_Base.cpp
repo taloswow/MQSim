@@ -47,8 +47,8 @@ namespace SSD_Components
 	void Host_Interface_Base::SetupTriggers()
 	{
 		Sim_Object::SetupTriggers();
-		cache->Connect_to_user_request_serviced_signal(handle_user_request_serviced_signal_from_cache);
-		cache->Connect_to_user_memory_transaction_serviced_signal(handle_user_memory_transaction_serviced_signal_from_cache);
+		cache->ConnectToUserRequestServicedSignal(handle_user_request_serviced_signal_from_cache);
+		cache->ConnectToUserMemoryTransactionServicedSignal(handle_user_memory_transaction_serviced_signal_from_cache);
 	}
 
 	void Host_Interface_Base::ValidateSimulationConfig()

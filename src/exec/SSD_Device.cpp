@@ -350,7 +350,7 @@ SSD_Device::SSD_Device(Device_Parameter_Set *parameters, std::vector<IO_Flow_Par
 			break;
 		}
 		Simulator->AddObject(device->Host_interface);
-		dcm->Set_host_interface(device->Host_interface);
+		dcm->SetHostInterface(device->Host_interface);
 		break;
 	}
 	default:
@@ -391,7 +391,7 @@ void SSD_Device::PerformPreconditioning(std::vector<Utils::Workload_Statistics *
 		time_t start_time = time(0);
 		PRINT_MESSAGE("SSD Device preconditioning started .........");
 		this->Firmware->Perform_precondition(workload_stats);
-		this->Cache_manager->Do_warmup(workload_stats);
+		this->Cache_manager->DoWarmup(workload_stats);
 		time_t end_time = time(0);
 		uint64_t duration = (uint64_t)difftime(end_time, start_time);
 		PRINT_MESSAGE("Finished preconditioning. Duration of preconditioning: " << duration / 3600 << ":" << (duration % 3600) / 60 << ":" << ((duration % 3600) % 60));
