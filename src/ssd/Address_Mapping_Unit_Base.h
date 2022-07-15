@@ -66,7 +66,7 @@ namespace SSD_Components
 				std::vector<double>& steady_state_distribution) = 0;
 		virtual int BringToCMTForPrecondtioning(stream_id_type stream_id,
 				LPA_type lpa) = 0;
-		//Used for warming up the cached mapping table during preconditioning
+		// Used for warming up the cached mapping table during preconditioning
 
 		virtual void StoreMappingTableOnFlashAtStart() = 0;
 		// It should only be invoked at the begenning of the simulation
@@ -177,15 +177,15 @@ namespace SSD_Components
 		bool fold_large_addresses;
 		bool mapping_table_stored_on_flash;
 
-		virtual bool query_cmt(NVM_Transaction_Flash* transaction) = 0;
-		virtual PPA_type online_create_entry_for_reads(LPA_type lpa,
+		virtual bool QueryCMT(NVM_Transaction_Flash* transaction) = 0;
+		virtual PPA_type OnlineCreateEntryForReads(LPA_type lpa,
 				const stream_id_type stream_id,
 				NVM::FlashMemory::Physical_Page_Address& read_address,
 				uint64_t read_sectors_bitmap) = 0;
-		virtual void manage_user_transaction_facing_barrier(NVM_Transaction_Flash* transaction) = 0;
-		virtual void manage_mapping_transaction_facing_barrier(stream_id_type stream_id, MVPN_type mvpn, bool read) = 0;
-		virtual bool is_lpa_locked_for_gc(stream_id_type stream_id, LPA_type lpa) = 0;
-		virtual bool is_mvpn_locked_for_gc(stream_id_type stream_id, MVPN_type mvpn) = 0;
+		virtual void ManageUserTransactionFacingBarrier(NVM_Transaction_Flash* transaction) = 0;
+		virtual void ManageMappingTransactionFacingBarrier(stream_id_type stream_id, MVPN_type mvpn, bool read) = 0;
+		virtual bool IsLPALockedForGC(stream_id_type stream_id, LPA_type lpa) = 0;
+		virtual bool IsMVONLockedForGC(stream_id_type stream_id, MVPN_type mvpn) = 0;
 	};
 }
 

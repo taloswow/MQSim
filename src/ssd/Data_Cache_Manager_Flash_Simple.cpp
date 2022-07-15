@@ -43,7 +43,7 @@ namespace SSD_Components
 	void Data_Cache_Manager_Flash_Simple::SetupTriggers()
 	{
 		Data_Cache_Manager_Base::SetupTriggers();
-		flash_controller->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
+		flash_controller->ConnectToTransactionServicedSignal(HandleTransactionServicedSignalFromPHY);
 	}
 
 	void Data_Cache_Manager_Flash_Simple::Do_warmup(std::vector<Utils::Workload_Statistics*> workload_stats)
@@ -146,8 +146,8 @@ namespace SSD_Components
 				}
 				data_cache->Update_data(tr->Stream_id, tr->LPA, content, timestamp, tr->write_sectors_bitmap | slot.State_bitmap_of_existing_sectors);
 			} else { //the logical address is not in the cache
-				if (!data_cache->Check_free_slot_availability()) {
-					Data_Cache_Slot_Type evicted_slot = data_cache->Evict_one_slot_lru();
+				if (!data_cache->CheckFreeSlotAvailability()) {
+					Data_Cache_Slot_Type evicted_slot = data_cache->EvictOneSlot_lru();
 					if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 						evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::CACHE,
 							tr->Stream_id, count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
@@ -205,7 +205,7 @@ namespace SSD_Components
 		}
 	}
 
-	void Data_Cache_Manager_Flash_Simple::handle_transaction_serviced_signal_from_PHY(NVM_Transaction_Flash* transaction)
+	void Data_Cache_Manager_Flash_Simple::HandleTransactionServicedSignalFromPHY(NVM_Transaction_Flash* transaction)
 	{
 		//First check if the transaction source is a user request or the cache itself
 		if (transaction->Source != Transaction_Source_Type::USERIO && transaction->Source != Transaction_Source_Type::CACHE) {

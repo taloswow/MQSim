@@ -68,7 +68,7 @@ namespace SSD_Components
 		bool force_gc;
 		double gc_threshold;//As the ratio of free pages to the total number of physical pages
 		unsigned int block_pool_gc_threshold;
-		static void handle_transaction_serviced_signal_from_PHY(NVM_Transaction_Flash* transaction);
+		static void HandleTransactionServicedSignalFromPHY(NVM_Transaction_Flash* transaction);
 		bool is_safe_gc_wl_candidate(const PlaneBookKeepingType* pbke, const flash_block_ID_type gc_wl_candidate_block_id);//Checks if block_address is a safe candidate for gc execution, i.e., 1) it is not a write frontier, and 2) there is no ongoing program operation
 		bool check_static_wl_required(const NVM::FlashMemory::Physical_Page_Address plane_address);
 		void run_static_wearleveling(const NVM::FlashMemory::Physical_Page_Address plane_address);

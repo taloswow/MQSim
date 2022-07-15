@@ -43,13 +43,13 @@ namespace SSD_Components
 		Data_Cache_Flash(unsigned int capacity_in_pages = 0);
 		~Data_Cache_Flash();
 		bool Exists(const stream_id_type streamID, const LPA_type lpn);
-		bool Check_free_slot_availability();
-		bool Check_free_slot_availability(unsigned int no_of_slots);
+		bool CheckFreeSlotAvailability();
+		bool CheckFreeSlotAvailability(unsigned int no_of_slots);
 		bool Empty();
 		bool Full();
 		Data_Cache_Slot_Type Get_slot(const stream_id_type stream_id, const LPA_type lpn);
 		Data_Cache_Slot_Type Evict_one_dirty_slot();
-		Data_Cache_Slot_Type Evict_one_slot_lru();
+		Data_Cache_Slot_Type EvictOneSlot_lru();
 		void Change_slot_status_to_writeback(const stream_id_type stream_id, const LPA_type lpn);
 		void Remove_slot(const stream_id_type stream_id, const LPA_type lpn);
 		void Insert_read_data(const stream_id_type stream_id, const LPA_type lpn, const data_cache_content_type content, const data_timestamp_type timestamp, const page_status_type state_bitmap_of_read_sectors);

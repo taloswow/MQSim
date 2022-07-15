@@ -86,7 +86,7 @@ protected:
 	virtual bool service_write_transaction(NVM::FlashMemory::Flash_Chip *chip) = 0;
 	virtual bool service_erase_transaction(NVM::FlashMemory::Flash_Chip *chip) = 0;
 	bool issue_command_to_chip(Flash_Transaction_Queue *sourceQueue1, Flash_Transaction_Queue *sourceQueue2, Transaction_Type transactionType, bool suspensionRequired);
-	static void handle_transaction_serviced_signal_from_PHY(NVM_Transaction_Flash *transaction);
+	static void HandleTransactionServicedSignalFromPHY(NVM_Transaction_Flash *transaction);
 	static void handle_channel_idle_signal(flash_channel_ID_type);
 	static void handle_chip_idle_signal(NVM::FlashMemory::Flash_Chip *chip);
 	int opened_scheduling_reqs;

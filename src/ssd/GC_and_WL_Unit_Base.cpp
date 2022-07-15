@@ -36,10 +36,10 @@ namespace SSD_Components
 	void GC_and_WL_Unit_Base::SetupTriggers()
 	{
 		Sim_Object::SetupTriggers();
-		flash_controller->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
+		flash_controller->ConnectToTransactionServicedSignal(HandleTransactionServicedSignalFromPHY);
 	}
 
-	void GC_and_WL_Unit_Base::handle_transaction_serviced_signal_from_PHY(NVM_Transaction_Flash* transaction)
+	void GC_and_WL_Unit_Base::HandleTransactionServicedSignalFromPHY(NVM_Transaction_Flash* transaction)
 	{
 		PlaneBookKeepingType* pbke = &(_my_instance->block_manager->plane_manager[transaction->Address.ChannelID][transaction->Address.ChipID][transaction->Address.DieID][transaction->Address.PlaneID]);
 

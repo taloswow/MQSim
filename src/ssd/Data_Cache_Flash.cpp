@@ -35,12 +35,12 @@ namespace SSD_Components
 		return *(it->second);
 	}
 
-	bool Data_Cache_Flash::Check_free_slot_availability()
+	bool Data_Cache_Flash::CheckFreeSlotAvailability()
 	{
 		return slots.size() < capacity_in_pages;
 	}
 
-	bool Data_Cache_Flash::Check_free_slot_availability(unsigned int no_of_slots)
+	bool Data_Cache_Flash::CheckFreeSlotAvailability(unsigned int no_of_slots)
 	{
 		return slots.size() + no_of_slots <= capacity_in_pages;
 	}
@@ -79,7 +79,7 @@ namespace SSD_Components
 		return evicted_item;
 	}
 
-	Data_Cache_Slot_Type Data_Cache_Flash::Evict_one_slot_lru()
+	Data_Cache_Slot_Type Data_Cache_Flash::EvictOneSlot_lru()
 	{
 		assert(slots.size() > 0);
 		slots.erase(lru_list.back().first);
