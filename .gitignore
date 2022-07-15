@@ -1,3 +1,4 @@
 MQSim
 build/
 workload_scenario_*.xml
+test.sh

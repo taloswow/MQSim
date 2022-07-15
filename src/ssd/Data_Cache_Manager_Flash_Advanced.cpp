@@ -194,7 +194,7 @@ namespace SSD_Components
 		if (user_request->Type == UserRequestType::READ) {
 			switch (caching_mode_per_input_stream[user_request->Stream_id]) {
 				case Caching_Mode::TURNED_OFF:
-					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_dispatch(user_request->Transaction_list);
+					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(user_request->Transaction_list);
 					return;
 				case Caching_Mode::WRITE_CACHE:
 				case Caching_Mode::READ_CACHE:
@@ -230,7 +230,7 @@ namespace SSD_Components
 						service_dram_access_request(transfer_info);
 					}
 					if (user_request->Transaction_list.size() > 0) {
-						static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_dispatch(user_request->Transaction_list);
+						static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(user_request->Transaction_list);
 					}
 
 					return;
@@ -243,7 +243,7 @@ namespace SSD_Components
 			{
 				case Caching_Mode::TURNED_OFF:
 				case Caching_Mode::READ_CACHE:
-					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_dispatch(user_request->Transaction_list);
+					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(user_request->Transaction_list);
 					return;
 				case Caching_Mode::WRITE_CACHE://The data cache manger unit performs like a destage buffer
 				case Caching_Mode::WRITE_READ_CACHE:
@@ -342,7 +342,7 @@ namespace SSD_Components
 
 		//If any writeback should be performed, then issue flash write transactions
 		if (writeback_transactions.size() > 0) {
-					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_dispatch(writeback_transactions);
+					static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(writeback_transactions);
 		}
 		
 		//Reset control data structures used for hot/cold separation 
@@ -545,7 +545,7 @@ namespace SSD_Components
 					broadcast_user_request_serviced_signal(((User_Request*)(transfer_info)->Related_request));
 				break;
 			case Data_Cache_Simulation_Event_Type::MEMORY_READ_FOR_CACHE_EVICTION_FINISHED://Reading data from DRAM and writing it back to the flash storage
-				static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->Translate_lpa_to_ppa_and_dispatch(*((std::list<NVM_Transaction*>*)(transfer_info->Related_request)));
+				static_cast<FTL*>(nvm_firmware)->Address_Mapping_Unit->TranslateLPAtoPPAAndDispatch(*((std::list<NVM_Transaction*>*)(transfer_info->Related_request)));
 				delete (std::list<NVM_Transaction*>*)transfer_info->Related_request;
 				break;
 			case Data_Cache_Simulation_Event_Type::MEMORY_WRITE_FOR_CACHE_FINISHED://The recently read data from flash is written back to memory to support future user read requests

@@ -30,17 +30,17 @@ namespace SSD_Components
 	{
 	}
 
-	unsigned int Address_Mapping_Unit_Base::Get_device_physical_pages_count()
+	unsigned int Address_Mapping_Unit_Base::GetDevicePhysicalPagesCount()
 	{
 		return total_physical_pages_no;
 	}
 
-	bool Address_Mapping_Unit_Base::Is_ideal_mapping_table()
+	bool Address_Mapping_Unit_Base::IsIdealMappingTable()
 	{
 		return ideal_mapping_table;
 	}
 
-	CMT_Sharing_Mode Address_Mapping_Unit_Base::Get_CMT_sharing_mode()
+	CMT_Sharing_Mode Address_Mapping_Unit_Base::GetCMTSharingMode()
 	{
 		return sharing_mode;
 	}

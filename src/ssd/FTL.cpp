@@ -46,7 +46,7 @@ namespace SSD_Components
 	}
 	void FTL::Perform_precondition(std::vector<Utils::Workload_Statistics*> workload_stats)
 	{
-		Address_Mapping_Unit->Store_mapping_table_on_flash_at_start();
+		Address_Mapping_Unit->StoreMappingTableOnFlashAtStart();
 
 		double overall_rate = 0;
 		for (auto const &stat : workload_stats)
@@ -79,7 +79,7 @@ namespace SSD_Components
 
 		for (auto &stat : workload_stats)
 		{
-			LPA_type no_of_logical_pages_in_steadystate = (LPA_type)(stat->Initial_occupancy_ratio * Address_Mapping_Unit->Get_logical_pages_count(stat->Stream_id));
+			LPA_type no_of_logical_pages_in_steadystate = (LPA_type)(stat->Initial_occupancy_ratio * Address_Mapping_Unit->GetLogicalPagesCount(stat->Stream_id));
 
 			//Step 1: generate LPAs that are accessed in the steady-state
 			Utils::Address_Distribution_Type decision_dist_type = stat->Address_distribution_type;
@@ -631,16 +631,16 @@ namespace SSD_Components
 			if (sum > 1.001 || sum < 0.99) {
 				PRINT_ERROR("Wrong probability distribution function for the number of valid pages in flash blocks in the steady-state! It is not safe to continue preconditioning!")
 			}
-			Address_Mapping_Unit->Allocate_address_for_preconditioning(stat->Stream_id, lpa_set_for_preconditioning, steadystate_block_status_probability);
+			Address_Mapping_Unit->AllocateAddressForPreconditioning(stat->Stream_id, lpa_set_for_preconditioning, steadystate_block_status_probability);
 
 			//Step 4: Touch the LPAs and bring them to CMT to warmup address mapping unit
-			if (!Address_Mapping_Unit->Is_ideal_mapping_table()) {
+			if (!Address_Mapping_Unit->IsIdealMappingTable()) {
 				//Step 4-1: Determine how much share of the entire CMT should be filled based on the flow arrival rate and access pattern
 				unsigned int no_of_entries_in_cmt = 0;
 				LPA_type min_LPA = Convert_host_logical_address_to_device_address(stat->Min_LHA);
 				LPA_type max_LPA = Convert_host_logical_address_to_device_address(stat->Max_LHA);
 
-				switch (Address_Mapping_Unit->Get_CMT_sharing_mode()) {
+				switch (Address_Mapping_Unit->GetCMTSharingMode()) {
 					case CMT_Sharing_Mode::SHARED: {
 						double flow_rate = 0;
 						if (stat->Type == Utils::Workload_Type::SYNTHETIC) {
@@ -662,11 +662,11 @@ namespace SSD_Components
 							flow_rate = 1.0 / double(stat->Average_inter_arrival_time_nano_sec) * SIM_TIME_TO_SECONDS_COEFF * stat->Average_request_size_sector;
 						}
 
-						no_of_entries_in_cmt = (unsigned int)(double(flow_rate) / double(overall_rate) * Address_Mapping_Unit->Get_cmt_capacity());
+						no_of_entries_in_cmt = (unsigned int)(double(flow_rate) / double(overall_rate) * Address_Mapping_Unit->GetCMTCapacity());
 						break;
 					}
 					case CMT_Sharing_Mode::EQUAL_SIZE_PARTITIONING:
-						no_of_entries_in_cmt = (unsigned int)(1.0 / double(workload_stats.size()) * Address_Mapping_Unit->Get_cmt_capacity());
+						no_of_entries_in_cmt = (unsigned int)(1.0 / double(workload_stats.size()) * Address_Mapping_Unit->GetCMTCapacity());
 						if (max_LPA - min_LPA + 1 < LPA_type(no_of_entries_in_cmt)) {
 							no_of_entries_in_cmt = (unsigned int)(max_LPA - min_LPA + 1);
 						}
@@ -690,8 +690,8 @@ namespace SSD_Components
 							entries_to_bring_into_cmt = hot_region_last_index_in_histogram;
 						}
 						auto itr = trace_lpas_sorted_histogram.begin();
-						while (Address_Mapping_Unit->Get_current_cmt_occupancy_for_stream(stat->Stream_id) < entries_to_bring_into_cmt) {
-							Address_Mapping_Unit->Bring_to_CMT_for_preconditioning(stat->Stream_id, (*itr).second);
+						while (Address_Mapping_Unit->GetCurrentCMTOccupancyForStream(stat->Stream_id) < entries_to_bring_into_cmt) {
+							Address_Mapping_Unit->BringToCMTForPrecondtioning(stat->Stream_id, (*itr).second);
 							trace_lpas_sorted_histogram.erase(itr++);
 						}
 
@@ -699,8 +699,8 @@ namespace SSD_Components
 						no_of_entries_in_cmt -= entries_to_bring_into_cmt;
 						auto itr2 = trace_lpas_sorted_histogram.begin();
 						std::advance(itr2, hot_region_last_index_in_histogram);
-						while (Address_Mapping_Unit->Get_current_cmt_occupancy_for_stream(stat->Stream_id) < no_of_entries_in_cmt) {
-							Address_Mapping_Unit->Bring_to_CMT_for_preconditioning(stat->Stream_id, (*itr2++).second);
+						while (Address_Mapping_Unit->GetCurrentCMTOccupancyForStream(stat->Stream_id) < no_of_entries_in_cmt) {
+							Address_Mapping_Unit->BringToCMTForPrecondtioning(stat->Stream_id, (*itr2++).second);
 							if (itr2 == trace_lpas_sorted_histogram.end()) {
 								break;
 							}
@@ -715,8 +715,8 @@ namespace SSD_Components
 						if (itr != lpa_set_for_preconditioning.begin()) {
 							itr--;
 						}
-						while (Address_Mapping_Unit->Get_current_cmt_occupancy_for_stream(stat->Stream_id) < no_of_entries_in_cmt) {
-							Address_Mapping_Unit->Bring_to_CMT_for_preconditioning(stat->Stream_id, (*itr).first);
+						while (Address_Mapping_Unit->GetCurrentCMTOccupancyForStream(stat->Stream_id) < no_of_entries_in_cmt) {
+							Address_Mapping_Unit->BringToCMTForPrecondtioning(stat->Stream_id, (*itr).first);
 							if (itr == lpa_set_for_preconditioning.begin()) {
 								itr = lpa_set_for_preconditioning.end();
 								itr--;
@@ -731,9 +731,9 @@ namespace SSD_Components
 						int random_walker = int(random_generator.Uniform(0, uint32_t(trace_lpas_sorted_histogram.size()) - 2));
 						int random_step = random_generator.Uniform_uint(0, (uint32_t)(trace_lpas_sorted_histogram.size()) / no_of_entries_in_cmt);
 						auto itr = trace_lpas_sorted_histogram.begin();
-						while (Address_Mapping_Unit->Get_current_cmt_occupancy_for_stream(stat->Stream_id) < no_of_entries_in_cmt) {
+						while (Address_Mapping_Unit->GetCurrentCMTOccupancyForStream(stat->Stream_id) < no_of_entries_in_cmt) {
 							std::advance(itr, random_step);
-							Address_Mapping_Unit->Bring_to_CMT_for_preconditioning(stat->Stream_id, (*itr).second);
+							Address_Mapping_Unit->BringToCMTForPrecondtioning(stat->Stream_id, (*itr).second);
 							if (trace_lpas_sorted_histogram.size() > 1) {
 								trace_lpas_sorted_histogram.erase(itr++);
 								if (random_walker + random_step >= int(trace_lpas_sorted_histogram.size() - 1) || random_walker + random_step < 0) {
