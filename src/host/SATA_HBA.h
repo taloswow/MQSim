@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <set>
 #include <list>
+
 #include "../sim/Sim_Defs.h"
 #include "../sim/Sim_Object.h"
 #include "Host_IO_Request.h"
@@ -18,7 +19,7 @@ namespace Host_Components
 						if (Q.Submission_queue_tail == Q.Submission_queue_size)\
 							Q.Submission_queue_tail = 0;
 
-	struct NCQ_Control_Structure //SATA native command queue
+	struct NCQ_Control_Structure // SATA native command queue
 	{
 		uint16_t Submission_queue_head;
 		uint16_t Submission_queue_tail;
@@ -30,7 +31,8 @@ namespace Host_Components
 		uint16_t Completion_queue_size;
 		uint64_t Completion_head_register_address_on_device;
 		uint64_t Completion_queue_memory_base_address;
-		std::unordered_map<sim_time_type, Host_IO_Request*> queue;//Contains the I/O requests that are enqueued in the NCQ
+		std::unordered_map<sim_time_type, Host_IO_Request*> queue;
+		// Contains the I/O requests that are enqueued in the NCQ
 	};
 
 	enum class HBA_Sim_Events {SUBMIT_IO_REQUEST, CONSUME_IO_REQUEST};
@@ -40,27 +42,35 @@ namespace Host_Components
 	class SATA_HBA : MQSimEngine::Sim_Object
 	{
 	public:
-		SATA_HBA(sim_object_id_type id, uint16_t ncq_size, sim_time_type hba_processing_delay, PCIe_Root_Complex* pcie_root_complex, std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
+		SATA_HBA(sim_object_id_type id,
+				uint16_t ncq_size,
+				sim_time_type hba_processing_delay,
+				PCIe_Root_Complex* pcie_root_complex,
+				std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
 		~SATA_HBA();
 		void StartSimulation();
 		void ValidateSimulationConfig();
 		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 		void SubmitIORequest(Host_IO_Request* request);
 		void SATAConsumeIORequest(Completion_Queue_Entry* cqe);
-		Submission_Queue_Entry* Read_ncq_entry(uint64_t address);
-		const NCQ_Control_Structure* Get_sata_ncq_info();
-		void Set_io_flows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
-		void Set_root_complex(PCIe_Root_Complex*);
+		Submission_Queue_Entry* ReadNCQEntry(uint64_t address);
+		const NCQ_Control_Structure* GetSataNCQInfo();
+		void SetIOFlows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
+		void SetRootComplex(PCIe_Root_Complex*);
 	private:
 		uint16_t ncq_size;
-		sim_time_type hba_processing_delay;//This estimates the processing delay of the whole SATA software and hardware layers to send/receive a SATA message
+		sim_time_type hba_processing_delay;
+		// This estimates the processing delay of the whole SATA software
+		// and hardware layers to send/receive a SATA message
 		PCIe_Root_Complex * pcie_root_complex;
 		std::vector<Host_Components::IO_Flow_Base*>* IO_flows;
 		NCQ_Control_Structure sata_ncq;
 		std::set<uint16_t> available_command_ids;
 		std::vector<Host_IO_Request*> request_queue_in_memory;
-		std::list<Host_IO_Request*> waiting_requests_for_submission;//The I/O requests that are still waiting (since the I/O queue is full) to be enqueued in the I/O queue 
-		void Update_and_submit_ncq_completion_info();
+		std::list<Host_IO_Request*> waiting_requests_for_submission;
+		// The I/O requests that are still waiting (since the I/O queue is full)
+		// to be enqueued in the I/O queue 
+		void UpdateAndSubmitNCQCompletionInfo();
 		std::queue<Completion_Queue_Entry*> consume_requests;
 		std::queue<Host_IO_Request*> host_requests;
 	};

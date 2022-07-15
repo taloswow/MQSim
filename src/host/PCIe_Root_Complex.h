@@ -2,13 +2,13 @@
 #define PCIE_ROOT_COMPLEX_H
 
 #include "../ssd/Host_Interface_Defs.h"
+
 #include "Host_Defs.h"
 #include "PCIe_Message.h"
 #include "PCIe_Link.h"
 #include "Host_IO_Request.h"
 #include "IO_Flow_Base.h"
 #include "SATA_HBA.h"
-
 
 namespace Host_Components
 {
@@ -20,7 +20,8 @@ namespace Host_Components
 	public:
 		PCIe_Root_Complex(PCIe_Link* pcie_link, HostInterface_Types SSD_device_type, SATA_HBA* sata_hba, std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
 		
-		void Consume_pcie_message(PCIe_Message* messages)//Modern processors support DDIO, where all writes to memory are going through LLC
+		void ConsumePCIeMessage(PCIe_Message* messages)
+		// Modern processors support DDIO, where all writes to memory are going through LLC
 		{
 			switch (messages->Type)
 			{
@@ -28,7 +29,7 @@ namespace Host_Components
 				Read_from_memory(messages->Address, (unsigned int)(intptr_t)messages->Payload);
 				break;
 			case PCIe_Message_Type::WRITE_REQ:
-				Write_to_memory(messages->Address, messages->Payload);
+				WriteToMemory(messages->Address, messages->Payload);
 				break;
 			default:
 				break;
@@ -36,15 +37,15 @@ namespace Host_Components
 			delete messages;
 		}
 		
-		void Write_to_device(uint64_t address, uint16_t write_value);
-		void Set_io_flows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
+		void WriteToDevice(uint64_t address, uint16_t write_value);
+		void SetIOFlows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows);
 	private:
 		PCIe_Link* pcie_link;
 		HostInterface_Types SSD_device_type;
 		SATA_HBA * sata_hba;
 		std::vector<Host_Components::IO_Flow_Base*>* IO_flows;
 		
-		void Write_to_memory(const uint64_t address, const void* payload);
+		void WriteToMemory(const uint64_t address, const void* payload);
 		void Read_from_memory(const uint64_t address, const unsigned int size);
 	};
 }

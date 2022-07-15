@@ -72,11 +72,11 @@ namespace Host_Components
 		LHA_type GetStartLSAOnDevice();
 		LHA_type GetEndLSAonDevice();
 		uint32_t GetGeneratedRequestCount();
-		uint32_t GetServicedRequestCount();       // in microseconds
-		uint32_t GetDeviceResponseTime();         // in microseconds
-		uint32_t GetMinDeviceResponseTime();     // in microseconds
-		uint32_t GetMaxDeviceResponseTime();     // in microseconds
-		uint32_t GetEndToEndRequestDelay();     // in microseconds
+		uint32_t GetServicedRequestCount();    // in microseconds
+		uint32_t GetDeviceResponseTime();      // in microseconds
+		uint32_t GetMinDeviceResponseTime();   // in microseconds
+		uint32_t GetMaxDeviceResponseTime();   // in microseconds
+		uint32_t GetEndToEndRequestDelay();    // in microseconds
 		uint32_t GetMinEndToEndRequestDelay(); // in microseconds
 		uint32_t GetMaxEndToEndRequestDelay(); // in microseconds
 		void ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter);
@@ -137,8 +137,8 @@ namespace Host_Components
 		sim_time_type next_logging_milestone;
 		std::string logging_file_path;
 		std::ofstream log_file;
-		uint32_t GetDeviceResponseTime_short_term();     // in microseconds
-		uint32_t GetEndToEndRequestDelay_short_term(); // in microseconds
+		uint32_t GetDeviceResponseTimeShortTerm();     // in microseconds
+		uint32_t GetEndToEndRequestDelayShortTerm(); // in microseconds
 		sim_time_type STAT_sum_device_response_time_short_term, STAT_sum_request_delay_short_term;
 		unsigned int STAT_serviced_request_count_short_term;
 

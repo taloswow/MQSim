@@ -1,17 +1,53 @@
 #include "IO_Flow_Trace_Based.h"
-#include "../utils/StringTools.h"
+
 #include "ASCII_Trace_Definition.h"
+
+#include "../utils/StringTools.h"
 #include "../utils/DistributionTypes.h"
 
 namespace Host_Components
 {
-IO_Flow_Trace_Based::IO_Flow_Trace_Based(const sim_object_id_type &name, uint16_t flow_id, LHA_type start_lsa_on_device, LHA_type end_lsa_on_device, uint16_t io_queue_id,
-										 uint16_t nvme_submission_queue_size, uint16_t nvme_completion_queue_size, IO_Flow_PriorityClass::Priority priority_class, double initial_occupancy_ratio,
-										 std::string trace_file_path, Trace_Time_Unit time_unit, unsigned int total_replay_count, unsigned int percentage_to_be_simulated,
-										 HostInterface_Types SSD_device_type, PCIe_Root_Complex *pcie_root_complex, SATA_HBA *sata_hba,
-										 bool enabled_logging, sim_time_type logging_period, std::string logging_file_path) : IO_Flow_Base(name, flow_id, start_lsa_on_device, end_lsa_on_device, io_queue_id, nvme_submission_queue_size, nvme_completion_queue_size, priority_class, 0, initial_occupancy_ratio, 0, SSD_device_type, pcie_root_complex, sata_hba, enabled_logging, logging_period, logging_file_path),
-																															  trace_file_path(trace_file_path), time_unit(time_unit), total_replay_no(total_replay_count), percentage_to_be_simulated(percentage_to_be_simulated),
-																															  total_requests_in_file(0), time_offset(0)
+IO_Flow_Trace_Based::IO_Flow_Trace_Based(const sim_object_id_type &name,
+		uint16_t flow_id,
+		LHA_type start_lsa_on_device,
+		LHA_type end_lsa_on_device,
+		uint16_t io_queue_id,
+		uint16_t nvme_submission_queue_size,
+		uint16_t nvme_completion_queue_size,
+		IO_Flow_PriorityClass::Priority priority_class,
+		double initial_occupancy_ratio,
+		std::string trace_file_path,
+		Trace_Time_Unit time_unit,
+		unsigned int total_replay_count,
+		unsigned int percentage_to_be_simulated,
+		HostInterface_Types SSD_device_type,
+		PCIe_Root_Complex *pcie_root_complex,
+		SATA_HBA *sata_hba,
+		bool enabled_logging,
+		sim_time_type logging_period,
+		std::string logging_file_path) : IO_Flow_Base(
+			name,
+			flow_id,
+			start_lsa_on_device,
+			end_lsa_on_device,
+			io_queue_id,
+			nvme_submission_queue_size,
+			nvme_completion_queue_size,
+			priority_class,
+			0,
+			initial_occupancy_ratio,
+			0,
+			SSD_device_type,
+			pcie_root_complex,
+			sata_hba,
+			enabled_logging,
+			logging_period,
+			logging_file_path),
+		trace_file_path(trace_file_path),
+		time_unit(time_unit),
+		total_replay_no(total_replay_count),
+		percentage_to_be_simulated(percentage_to_be_simulated),
+		total_requests_in_file(0), time_offset(0)
 {
 	if (percentage_to_be_simulated > 100)
 	{
@@ -167,7 +203,7 @@ void IO_Flow_Trace_Based::GetStatistics(Utils::Workload_Statistics &stats, LPA_t
 										 page_status_type (*FindNVMSubunitAccessBitmap)(LHA_type lha))
 {
 	stats.Type = Utils::Workload_Type::TRACE_BASED;
-	stats.Stream_id = io_queue_id - 1; //In MQSim, there is a simple relation between stream id and the io_queue_id of NVMe
+	stats.Stream_id = io_queue_id - 1; // In MQSim, there is a simple relation between stream id and the io_queue_id of NVMe
 	stats.Min_LHA = start_lsa_on_device;
 	stats.Max_LHA = end_lsa_on_device;
 	for (int i = 0; i < MAX_ARRIVAL_TIME_HISTOGRAM + 1; i++)
@@ -211,7 +247,7 @@ void IO_Flow_Trace_Based::GetStatistics(Utils::Workload_Statistics &stats, LPA_t
 		{
 			PRINT_ERROR("Unexpected request arrival time: " << last_request_arrival_time << "\nMQSim expects request arrival times to be monotonic increasing in the input trace!")
 		}
-		sim_time_type diff = (last_request_arrival_time - prev_time) / 1000; //The arrival rate histogram is stored in the microsecond unit
+		sim_time_type diff = (last_request_arrival_time - prev_time) / 1000; // The arrival rate histogram is stored in the microsecond unit
 		sum_inter_arrival += last_request_arrival_time - prev_time;
 
 		unsigned int LBA_count = std::strtoul(line_splitted[ASCIITraceSizeColumn].c_str(), &pEnd, 0);
@@ -231,7 +267,7 @@ void IO_Flow_Trace_Based::GetStatistics(Utils::Workload_Statistics &stats, LPA_t
 			end_LBA = start_lsa_on_device + (end_LBA - end_lsa_on_device) - 1;
 		}
 
-		//Address access pattern statistics
+		// Address access pattern statistics
 		while (start_LBA <= end_LBA)
 		{
 			LPA_type device_address = ConvertHostLogicToDeviceAddress(start_LBA);
@@ -284,7 +320,7 @@ void IO_Flow_Trace_Based::GetStatistics(Utils::Workload_Statistics &stats, LPA_t
 			}
 		}
 
-		//Request size statistics
+		// Request size statistics
 		if (line_splitted[ASCIITraceTypeColumn].compare(ASCIITraceWriteCode) == 0)
 		{
 			if (diff < MAX_ARRIVAL_TIME_HISTOGRAM)

@@ -3,14 +3,21 @@
 
 namespace Host_Components
 {
-	PCIe_Root_Complex::PCIe_Root_Complex(PCIe_Link* pcie_link, HostInterface_Types SSD_device_type, SATA_HBA* sata_hba, std::vector<Host_Components::IO_Flow_Base*>* IO_flows) :
-		pcie_link(pcie_link), SSD_device_type(SSD_device_type), sata_hba(sata_hba), IO_flows(IO_flows) {}
+	PCIe_Root_Complex::PCIe_Root_Complex(PCIe_Link* pcie_link,
+			HostInterface_Types SSD_device_type,
+			SATA_HBA* sata_hba,
+			std::vector<Host_Components::IO_Flow_Base*>* IO_flows) :
+		pcie_link(pcie_link),
+		SSD_device_type(SSD_device_type),
+		sata_hba(sata_hba),
+		IO_flows(IO_flows) {}
 
-	void PCIe_Root_Complex::Write_to_memory(const uint64_t address, const void* payload)
+	void PCIe_Root_Complex::WriteToMemory(const uint64_t address, const void* payload)
 	{
-		//This is a request to write back a read request data into memory (in modern systems the write is done to LLC)
+		// This is a request to write back a read request data into memory
+		// (in modern systems the write is done to LLC)
 		if (address >= DATA_MEMORY_REGION) {
-			//nothing to do
+			// nothing to do
 		} else {
 			switch (SSD_device_type) {
 				case HostInterface_Types::NVME:
@@ -28,7 +35,7 @@ namespace Host_Components
 		}
 	}
 
-	void PCIe_Root_Complex::Write_to_device(uint64_t address, uint16_t write_value)
+	void PCIe_Root_Complex::WriteToDevice(uint64_t address, uint16_t write_value)
 	{
 		PCIe_Message* pcie_message = new Host_Components::PCIe_Message;
 		pcie_message->Type = PCIe_Message_Type::WRITE_REQ;
@@ -46,11 +53,12 @@ namespace Host_Components
 		new_pcie_message->Destination = Host_Components::PCIe_Destination_Type::DEVICE;
 		new_pcie_message->Address = address;
 
-		//This is a request to read the data of a write request
+		// This is a request to read the data of a write request
 		if (address >= DATA_MEMORY_REGION) {
-			//nothing to do
+			// nothing to do
 			new_pcie_message->Payload_size = read_size;
-			new_pcie_message->Payload = NULL;//No need to transfer data in the standalone mode of MQSim
+			new_pcie_message->Payload = NULL;
+			// No need to transfer data in the standalone mode of MQSim
 		} else {
 			switch (SSD_device_type) {
 				case HostInterface_Types::NVME:
@@ -61,7 +69,7 @@ namespace Host_Components
 					break;
 				}
 				case HostInterface_Types::SATA:
-					new_pcie_message->Payload = sata_hba->Read_ncq_entry(address);
+					new_pcie_message->Payload = sata_hba->ReadNCQEntry(address);
 					new_pcie_message->Payload_size = sizeof(Submission_Queue_Entry);
 					break;
 			}
@@ -70,7 +78,7 @@ namespace Host_Components
 		pcie_link->Deliver(new_pcie_message);
 	}
 	
-	void PCIe_Root_Complex::Set_io_flows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows)
+	void PCIe_Root_Complex::SetIOFlows(std::vector<Host_Components::IO_Flow_Base*>* IO_flows)
 	{
 		this->IO_flows = IO_flows;
 	}

@@ -17,10 +17,10 @@ namespace Host_Components
 	{
 	public:
 		PCIe_Switch(PCIe_Link* pcie_link, SSD_Components::Host_Interface_Base* host_interface);//, SSD_Components::Host_Interface_Base* host_interface
-		void Deliver_to_device(PCIe_Message*);
-		void Send_to_host(PCIe_Message*);
+		void DeliverToDevice(PCIe_Message*);
+		void SendToHost(PCIe_Message*);
 		void AttachSSDDevice(SSD_Components::Host_Interface_Base* host_interface);
-		bool Is_ssd_connected();
+		bool IsSSDConnected();
 	private:
 		PCIe_Link* pcie_link;
 		SSD_Components::Host_Interface_Base* host_interface;

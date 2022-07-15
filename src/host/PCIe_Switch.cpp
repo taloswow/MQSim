@@ -7,12 +7,12 @@ namespace Host_Components
 	{
 	}
 
-	void PCIe_Switch::Deliver_to_device(PCIe_Message* message)
+	void PCIe_Switch::DeliverToDevice(PCIe_Message* message)
 	{
-		host_interface->Consume_pcie_message(message);
+		host_interface->ConsumePCIeMessage(message);
 	}
 
-	void PCIe_Switch::Send_to_host(PCIe_Message* message)
+	void PCIe_Switch::SendToHost(PCIe_Message* message)
 	{
 		pcie_link->Deliver(message);
 	}
@@ -22,7 +22,7 @@ namespace Host_Components
 		this->host_interface = host_interface;
 	}
 
-	bool PCIe_Switch::Is_ssd_connected()
+	bool PCIe_Switch::IsSSDConnected()
 	{
 		return this->host_interface != NULL;
 	}

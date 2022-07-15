@@ -110,7 +110,7 @@ namespace SSD_Components
 			connected_user_request_arrived_signal_handlers.push_back(function);
 		}
 
-		void Consume_pcie_message(Host_Components::PCIe_Message* message)
+		void ConsumePCIeMessage(Host_Components::PCIe_Message* message)
 		{
 			if (message->Type == Host_Components::PCIe_Message_Type::READ_COMP) {
 				request_fetch_unit->Process_pcie_read_message(message->Address, message->Payload, message->Payload_size);

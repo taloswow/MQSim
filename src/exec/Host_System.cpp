@@ -25,9 +25,9 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 
 	this->Link = new Host_Components::PCIe_Link(this->ID() + ".PCIeLink", NULL, NULL, parameters->PCIe_Lane_Bandwidth, parameters->PCIe_Lane_Count);
 	this->PCIe_root_complex = new Host_Components::PCIe_Root_Complex(this->Link, ssd_host_interface->GetType(), this->SATA_hba, NULL);
-	this->Link->Set_root_complex(this->PCIe_root_complex);
+	this->Link->SetRootComplex(this->PCIe_root_complex);
 	this->PCIe_switch = new Host_Components::PCIe_Switch(this->Link, ssd_host_interface);
-	this->Link->Set_pcie_switch(this->PCIe_switch);
+	this->Link->SetPCIeSwitch(this->PCIe_switch);
 	Simulator->AddObject(this->Link);
 
 	// Create IO flows
@@ -83,10 +83,10 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 		}
 		Simulator->AddObject(io_flow);
 	}
-	this->PCIe_root_complex->Set_io_flows(&this->IO_flows);
+	this->PCIe_root_complex->SetIOFlows(&this->IO_flows);
 	if (((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetType() == HostInterface_Types::SATA) {
-		this->SATA_hba->Set_io_flows(&this->IO_flows);
-		this->SATA_hba->Set_root_complex(this->PCIe_root_complex);
+		this->SATA_hba->SetIOFlows(&this->IO_flows);
+		this->SATA_hba->SetRootComplex(this->PCIe_root_complex);
 	}
 }
 
@@ -128,7 +128,7 @@ void Host_System::StartSimulation()
 			break;
 		case HostInterface_Types::SATA:
 			((SSD_Components::Host_Interface_SATA*) ssd_device->Host_interface)->Set_ncq_address(
-				SATA_hba->Get_sata_ncq_info()->Submission_queue_memory_base_address, SATA_hba->Get_sata_ncq_info()->Completion_queue_memory_base_address);
+				SATA_hba->GetSataNCQInfo()->Submission_queue_memory_base_address, SATA_hba->GetSataNCQInfo()->Completion_queue_memory_base_address);
 		default:
 			break;
 	}
@@ -156,7 +156,7 @@ void Host_System::ValidateSimulationConfig()
 	if (this->PCIe_switch == NULL) {
 		PRINT_ERROR("PCIe Switch is not set for host system")
 	}
-	if (!this->PCIe_switch->Is_ssd_connected()) {
+	if (!this->PCIe_switch->IsSSDConnected()) {
 		PRINT_ERROR("No SSD is connected to the host system")
 	}
 }
