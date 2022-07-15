@@ -14,5 +14,5 @@ jobs:
                         persist-credentials: false
                 - name: Build
                   run: make
-                - name: Execute
-                  run: ./MQSim -i ssdconfig.xml -w workload.xml
+                - name: Execute and check
+                  run: ./test_MQSim.sh
