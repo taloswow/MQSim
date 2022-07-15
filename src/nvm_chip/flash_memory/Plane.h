@@ -1,10 +1,11 @@
 #ifndef PLANE_H
 #define PLANE_H
 
-#include "../NVM_Types.h"
 #include "FlashTypes.h"
 #include "Block.h"
 #include "Flash_Command.h"
+
+#include "../NVM_Types.h"
 
 namespace NVM
 {

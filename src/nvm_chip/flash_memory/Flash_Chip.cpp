@@ -183,7 +183,7 @@ namespace NVM
 					for (unsigned int planeCntr = 0; planeCntr < command->Address.size(); planeCntr++) {
 						STAT_readCount++;
 						targetDie->Planes[command->Address[planeCntr].PlaneID]->Read_count++;
-						targetDie->Planes[command->Address[planeCntr].PlaneID]->Blocks[command->Address[planeCntr].BlockID]->Pages[command->Address[planeCntr].PageID].Read_metadata(command->Meta_data[planeCntr]);
+						targetDie->Planes[command->Address[planeCntr].PlaneID]->Blocks[command->Address[planeCntr].BlockID]->Pages[command->Address[planeCntr].PageID].ReadMetadata(command->Meta_data[planeCntr]);
 					}
 					break;
 				case CMD_PROGRAM_PAGE:
@@ -194,7 +194,7 @@ namespace NVM
 					for (unsigned int planeCntr = 0; planeCntr < command->Address.size(); planeCntr++) {
 						STAT_progamCount++;
 						targetDie->Planes[command->Address[planeCntr].PlaneID]->Progam_count++;
-						targetDie->Planes[command->Address[planeCntr].PlaneID]->Blocks[command->Address[planeCntr].BlockID]->Pages[command->Address[planeCntr].PageID].Write_metadata(command->Meta_data[planeCntr]);
+						targetDie->Planes[command->Address[planeCntr].PlaneID]->Blocks[command->Address[planeCntr].BlockID]->Pages[command->Address[planeCntr].PageID].WriteMetadata(command->Meta_data[planeCntr]);
 					}
 					break;
 				case CMD_ERASE_BLOCK:

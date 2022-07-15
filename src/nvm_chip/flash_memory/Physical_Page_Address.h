@@ -1,8 +1,9 @@
 #ifndef PHYSICAL_PAGE_ADDRESS_H
 #define PHYSICAL_PAGE_ADDRESS_H
 
-#include "../NVM_Memory_Address.h"
 #include "FlashTypes.h"
+
+#include "../NVM_Memory_Address.h"
 
 namespace NVM
 {

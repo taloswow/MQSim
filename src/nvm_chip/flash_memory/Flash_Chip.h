@@ -4,14 +4,15 @@
 #include <vector>
 #include <stdexcept>
 
+#include "FlashTypes.h"
+#include "Die.h"
+#include "Flash_Command.h"
+
 #include "../../sim/Sim_Defs.h"
 #include "../../sim/Sim_Event.h"
 #include "../../sim/Engine.h"
 #include "../../sim/Sim_Reporter.h"
 #include "../NVM_Chip.h"
-#include "FlashTypes.h"
-#include "Die.h"
-#include "Flash_Command.h"
 
 namespace NVM
 {

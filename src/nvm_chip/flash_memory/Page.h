@@ -22,12 +22,12 @@ namespace NVM
 			
 			PageMetadata Metadata;
 
-			void Write_metadata(const PageMetadata& metadata)
+			void WriteMetadata(const PageMetadata& metadata)
 			{
 				this->Metadata.LPA = metadata.LPA;
 			}
 			
-			void Read_metadata(PageMetadata& metadata)
+			void ReadMetadata(PageMetadata& metadata)
 			{
 				metadata.LPA = this->Metadata.LPA;
 			}
