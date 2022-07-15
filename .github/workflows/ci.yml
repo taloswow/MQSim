@@ -1,0 +1,16 @@
+# Run a short sanity test to see if it compiles properly and gets default test values]
+
+name: ci
+on: [push, pull_request]
+
+jobs:
+        sanity-test:
+                name: Short sanity test of MQSIM
+                runs-on: ubuntu-latest
+                steps:
+                - name: Checkout
+                  uses: actions/checkout@v2
+                  with:
+                        persist-credentials: false
+                - name: Build
+                  run: make
