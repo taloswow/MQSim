@@ -35,7 +35,7 @@ namespace SSD_Components
 			Caching_Mode* caching_mode_per_input_stream, Cache_Sharing_Mode sharing_mode, 
 			unsigned int stream_count, unsigned int sector_no_per_page, unsigned int back_pressure_buffer_max_depth);
 		~Data_Cache_Manager_Flash_Advanced();
-		void Execute_simulator_event(MQSimEngine::Sim_Event* ev);
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev);
 		void Setup_triggers();
 		void Do_warmup(std::vector<Utils::Workload_Statistics*> workload_stats);
 	private:

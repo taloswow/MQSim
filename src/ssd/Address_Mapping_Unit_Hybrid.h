@@ -15,8 +15,8 @@ namespace SSD_Components
 			double Overprovisioning_ratio, CMT_Sharing_Mode sharing_mode = CMT_Sharing_Mode::SHARED, bool fold_large_addresses = true);
 		void Setup_triggers();
 		void StartSimulation();
-		void Validate_simulation_config();
-		void Execute_simulator_event(MQSimEngine::Sim_Event*);
+		void ValidateSimulationConfig();
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 
 		void AllocateAddressForPreconditioning(const stream_id_type stream_id, std::map<LPA_type, page_status_type>& lpa_list, std::vector<double>& steady_state_distribution);
 		int BringToCMTForPrecondtioning(stream_id_type stream_id, LPA_type lpa);

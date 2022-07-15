@@ -143,8 +143,8 @@ namespace SSD_Components
 		~Address_Mapping_Unit_Page_Level();
 		void Setup_triggers();
 		void StartSimulation();
-		void Validate_simulation_config();
-		void Execute_simulator_event(MQSimEngine::Sim_Event*);
+		void ValidateSimulationConfig();
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 
 		void AllocateAddressForPreconditioning(const stream_id_type stream_id, std::map<LPA_type, page_status_type>& lpa_list, std::vector<double>& steady_state_distribution);
 		int BringToCMTForPrecondtioning(stream_id_type stream_id, LPA_type lpa);

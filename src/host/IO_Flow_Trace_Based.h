@@ -22,10 +22,10 @@ public:
 	void NVMe_consume_io_request(Completion_Queue_Entry *);
 	void SATA_consume_io_request(Host_IO_Request *);
 	void StartSimulation();
-	void Validate_simulation_config();
-	void Execute_simulator_event(MQSimEngine::Sim_Event *);
-	void Get_statistics(Utils::Workload_Statistics &stats, LPA_type (*Convert_host_logical_address_to_device_address)(LHA_type lha),
-						page_status_type (*Find_NVM_subunit_access_bitmap)(LHA_type lha));
+	void ValidateSimulationConfig();
+	void ExecuteSimulatorEvent(MQSimEngine::Sim_Event *);
+	void Get_statistics(Utils::Workload_Statistics &stats, LPA_type (*ConvertHostLogicToDeviceAddress)(LHA_type lha),
+						page_status_type (*FindNVMSubunitAccessBitmap)(LHA_type lha));
 
 private:
 	Trace_Time_Unit time_unit;

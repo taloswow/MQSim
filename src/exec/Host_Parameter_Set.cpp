@@ -1,16 +1,18 @@
 #include <algorithm>
+
 #include "Host_Parameter_Set.h"
 
-
-double Host_Parameter_Set::PCIe_Lane_Bandwidth = 0.4;//uint is GB/s
+double Host_Parameter_Set::PCIe_Lane_Bandwidth = 0.4; // uint is GB/s
 unsigned int Host_Parameter_Set::PCIe_Lane_Count = 4;
-sim_time_type Host_Parameter_Set::SATA_Processing_Delay;//The overall hardware and software processing delay to send/receive a SATA message in nanoseconds
+sim_time_type Host_Parameter_Set::SATA_Processing_Delay;
+// The overall hardware and software processing delay to send/receive a SATA message in nanoseconds
+
 bool Host_Parameter_Set::Enable_ResponseTime_Logging = false;
-sim_time_type Host_Parameter_Set::ResponseTime_Logging_Period_Length = 400000;//nanoseconds
+sim_time_type Host_Parameter_Set::ResponseTime_Logging_Period_Length = 400000; // in nanoseconds
 std::string Host_Parameter_Set::Input_file_path;
 std::vector<IO_Flow_Parameter_Set*> Host_Parameter_Set::IO_Flow_Definitions;
 
-void Host_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
+void Host_Parameter_Set::XMLSerialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "Host_Parameter_Set";
@@ -39,7 +41,7 @@ void Host_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 	xmlwriter.WriteCloseTag();
 }
 
-void Host_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)
+void Host_Parameter_Set::XMLDeserialize(rapidxml::xml_node<> *node)
 {
 	try {
 		for (auto param = node->first_node(); param; param = param->next_sibling()) {

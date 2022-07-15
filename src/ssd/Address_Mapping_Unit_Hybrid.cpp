@@ -12,8 +12,8 @@ namespace SSD_Components
 			block_no_per_plane, page_no_per_block, sectors_per_page, page_size_in_byte, overprovisioning_ratio, sharing_mode, fold_out_of_range_addresses) {}
 	void Address_Mapping_Unit_Hybrid::Setup_triggers() {}
 	void Address_Mapping_Unit_Hybrid::StartSimulation() {}
-	void Address_Mapping_Unit_Hybrid::Validate_simulation_config() {}
-	void Address_Mapping_Unit_Hybrid::Execute_simulator_event(MQSimEngine::Sim_Event* event) {}
+	void Address_Mapping_Unit_Hybrid::ValidateSimulationConfig() {}
+	void Address_Mapping_Unit_Hybrid::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event) {}
 
 	void Address_Mapping_Unit_Hybrid::AllocateAddressForPreconditioning(const stream_id_type stream_id, std::map<LPA_type, page_status_type>& lpa_list, std::vector<double>& steady_state_distribution) {}
 	int Address_Mapping_Unit_Hybrid::BringToCMTForPrecondtioning(stream_id_type stream_id, LPA_type lpa) { return 0; }

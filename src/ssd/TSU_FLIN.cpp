@@ -141,9 +141,9 @@ namespace SSD_Components
 		Simulator->RegisterSimEvent(flow_classification_epoch, this, 0, 0);
 	}
 
-	void TSU_FLIN::Validate_simulation_config() {}
+	void TSU_FLIN::ValidateSimulationConfig() {}
 
-	void TSU_FLIN::Execute_simulator_event(MQSimEngine::Sim_Event* event) 
+	void TSU_FLIN::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event) 
 	{
 		//Flow classification as described in Section 5.1 of FLIN paper in ISCA 2018
 		for (unsigned int channel_id = 0; channel_id < channel_count; channel_id++)
@@ -586,7 +586,7 @@ namespace SSD_Components
 		return true;
 	}
 
-	void TSU_FLIN::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter) {}
+	void TSU_FLIN::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter) {}
 
 }
 */

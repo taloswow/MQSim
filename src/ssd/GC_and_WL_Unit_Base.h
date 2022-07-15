@@ -47,8 +47,8 @@ namespace SSD_Components
 			bool dynamic_wearleveling_enabled, bool static_wearleveling_enabled, unsigned int static_wearleveling_threshold, int seed);
 		void Setup_triggers();
 		void StartSimulation();
-		void Validate_simulation_config();
-		void Execute_simulator_event(MQSimEngine::Sim_Event*);
+		void ValidateSimulationConfig();
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 
 		virtual bool GC_is_in_urgent_mode(const NVM::FlashMemory::Flash_Chip*) = 0;
 		virtual void Check_gc_required(const unsigned int BlockPoolSize, const NVM::FlashMemory::Physical_Page_Address& planeAddress) = 0;

@@ -76,9 +76,9 @@ namespace NVM
 			}
 			void Change_memory_status_preconditioning(const NVM_Memory_Address* address, const void* status_info);
 			void StartSimulation();
-			void Validate_simulation_config();
+			void ValidateSimulationConfig();
 			void Setup_triggers();
-			void Execute_simulator_event(MQSimEngine::Sim_Event*);
+			void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 			typedef void(*ChipReadySignalHandlerType) (Flash_Chip* targetChip, Flash_Command* command);
 			void Connect_to_chip_ready_signal(ChipReadySignalHandlerType);
 			
@@ -116,7 +116,7 @@ namespace NVM
 			void Resume(flash_die_ID_type dieID);
 			sim_time_type GetSuspendProgramTime();
 			sim_time_type GetSuspendEraseTime();
-			void Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter);
+			void ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter);
 			LPA_type Get_metadata(flash_die_ID_type die_id, flash_plane_ID_type plane_id, flash_block_ID_type block_id, flash_page_ID_type page_id);//A simplification to decrease the complexity of GC execution! The GC unit may need to know the metadata of a page to decide if a page is valid or invalid. 
 		private:
 			Flash_Technology_Type flash_technology;

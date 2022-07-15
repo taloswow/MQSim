@@ -31,7 +31,7 @@ namespace SSD_Components
 
 	void Data_Cache_Manager_Base::StartSimulation() {}
 	
-	void Data_Cache_Manager_Base::Validate_simulation_config() {}
+	void Data_Cache_Manager_Base::ValidateSimulationConfig() {}
 
 	void Data_Cache_Manager_Base::Connect_to_user_request_serviced_signal(UserRequestServicedSignalHanderType function)
 	{

@@ -1,5 +1,6 @@
-#include "../sim/Engine.h"
 #include "Host_System.h"
+
+#include "../sim/Engine.h"
 #include "../ssd/Host_Interface_Base.h"
 #include "../ssd/Host_Interface_NVMe.h"
 #include "../host/PCIe_Root_Complex.h"
@@ -8,17 +9,20 @@
 #include "../utils/StringTools.h"
 #include "../utils/Logical_Address_Partitioning_Unit.h"
 
-Host_System::Host_System(Host_Parameter_Set* parameters, bool preconditioning_required, SSD_Components::Host_Interface_Base* ssd_host_interface):
+Host_System::Host_System(Host_Parameter_Set* parameters,
+		bool preconditioning_required,
+		SSD_Components::Host_Interface_Base* ssd_host_interface):
 	MQSimEngine::Sim_Object("Host"), preconditioning_required(preconditioning_required)
 {
 	Simulator->AddObject(this);
 
-	//Create the main components of the host system
+	// Create the main components of the host system
 	if (((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetType() == HostInterface_Types::SATA) {
 		this->SATA_hba = new Host_Components::SATA_HBA(ID() + ".SATA_HBA", ((SSD_Components::Host_Interface_SATA*)ssd_host_interface)->Get_ncq_depth(), parameters->SATA_Processing_Delay, NULL, NULL);
 	} else {
 		this->SATA_hba = NULL;
 	}
+
 	this->Link = new Host_Components::PCIe_Link(this->ID() + ".PCIeLink", NULL, NULL, parameters->PCIe_Lane_Bandwidth, parameters->PCIe_Lane_Count);
 	this->PCIe_root_complex = new Host_Components::PCIe_Root_Complex(this->Link, ssd_host_interface->GetType(), this->SATA_hba, NULL);
 	this->Link->Set_root_complex(this->PCIe_root_complex);
@@ -26,12 +30,12 @@ Host_System::Host_System(Host_Parameter_Set* parameters, bool preconditioning_re
 	this->Link->Set_pcie_switch(this->PCIe_switch);
 	Simulator->AddObject(this->Link);
 
-	//Create IO flows
+	// Create IO flows
 	LHA_type address_range_per_flow = ssd_host_interface->Get_max_logical_sector_address() / parameters->IO_Flow_Definitions.size();
 	for (uint16_t flow_id = 0; flow_id < parameters->IO_Flow_Definitions.size(); flow_id++) {
 		Host_Components::IO_Flow_Base* io_flow = NULL;
-		//No flow should ask for I/O queue id 0, it is reserved for NVMe Admin command queue pair
-		//Hence, we use flow_id + 1 (which is equal to 1, 2, ...) as the requested I/O queue id
+		// No flow should ask for I/O queue id 0, it is reserved for NVMe Admin command queue pair
+		// Hence, we use flow_id + 1 (which is equal to 1, 2, ...) as the requested I/O queue id
 		uint16_t nvme_sq_size = 0, nvme_cq_size = 0;
 		switch (((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetType()) {
 			case HostInterface_Types::NVME:
@@ -99,14 +103,14 @@ Host_System::~Host_System()
 	}
 }
 
-void Host_System::Attach_ssd_device(SSD_Device* ssd_device)
+void Host_System::AttachSSDDevice(SSD_Device* ssd_device)
 {
-	ssd_device->Attach_to_host(this->PCIe_switch);
-	this->PCIe_switch->Attach_ssd_device(ssd_device->Host_interface);
+	ssd_device->AttachToHost(this->PCIe_switch);
+	this->PCIe_switch->AttachSSDDevice(ssd_device->Host_interface);
 	this->ssd_device = ssd_device;
 }
 
-const std::vector<Host_Components::IO_Flow_Base*> Host_System::Get_io_flows()
+const std::vector<Host_Components::IO_Flow_Base*> Host_System::GetIOFlows()
 {
 	return IO_flows;
 }
@@ -131,14 +135,14 @@ void Host_System::StartSimulation()
 
 	if (preconditioning_required) {
 		std::vector<Utils::Workload_Statistics*> workload_stats = get_workloads_statistics();
-		ssd_device->Perform_preconditioning(workload_stats);
+		ssd_device->PerformPreconditioning(workload_stats);
 		for (auto &stat : workload_stats) {
 			delete stat;
 		}
 	}
 }
 
-void Host_System::Validate_simulation_config() 
+void Host_System::ValidateSimulationConfig() 
 {
 	if (this->IO_flows.size() == 0) {
 		PRINT_ERROR("No IO flow is set for host system")
@@ -157,18 +161,18 @@ void Host_System::Validate_simulation_config()
 	}
 }
 
-void Host_System::Execute_simulator_event(MQSimEngine::Sim_Event* event)
+void Host_System::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event)
 {
 }
 
-void Host_System::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+void Host_System::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = ID();
 	xmlwriter.WriteOpenTag(tmp);
 
 	for (auto &flow : IO_flows) {
-		flow->Report_results_in_XML("Host", xmlwriter);
+		flow->ReportResultsInXML("Host", xmlwriter);
 	}
 
 	xmlwriter.WriteCloseTag();
@@ -180,7 +184,7 @@ std::vector<Utils::Workload_Statistics*> Host_System::get_workloads_statistics()
 
 	for (auto &workload : IO_flows) {
 		Utils::Workload_Statistics* s = new Utils::Workload_Statistics;
-		workload->Get_statistics(*s, ssd_device->Convert_host_logical_address_to_device_address, ssd_device->Find_NVM_subunit_access_bitmap);
+		workload->Get_statistics(*s, ssd_device->ConvertHostLogicToDeviceAddress, ssd_device->FindNVMSubunitAccessBitmap);
 		stats.push_back(s);
 	}
 

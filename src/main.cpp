@@ -49,7 +49,7 @@ void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Pa
 		Utils::XmlWriter xmlwriter;
 		string tmp;
 		xmlwriter.Open(ssd_config_file_path.c_str());
-		exec_params->XML_serialize(xmlwriter);
+		exec_params->XMLSerialize(xmlwriter);
 		xmlwriter.Close();
 		PRINT_MESSAGE("[====================] Done!\n")
 	} else {
@@ -65,7 +65,7 @@ void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Pa
 			rapidxml::xml_node<> *mqsim_config = doc.first_node("Execution_Parameter_Set");
 			if (mqsim_config != NULL) {
 				exec_params = new Execution_Parameter_Set;
-				exec_params->XML_deserialize(mqsim_config);
+				exec_params->XMLDeserialize(mqsim_config);
 			} else {
 				PRINT_MESSAGE("Error in the SSD configuration file!")
 				PRINT_MESSAGE("Using MQSim's default configuration.")
@@ -77,7 +77,7 @@ void ReadConfigurationParameters(const string ssd_config_file_path, Execution_Pa
 			Utils::XmlWriter xmlwriter;
 			string tmp;
 			xmlwriter.Open(ssd_config_file_path.c_str());
-			exec_params->XML_serialize(xmlwriter);
+			exec_params->XMLSerialize(xmlwriter);
 			xmlwriter.Close();
 			PRINT_MESSAGE("[====================] Done!\n")
 		}
@@ -114,10 +114,10 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 						IO_Flow_Parameter_Set* flow;
 						if (strcmp(flow_def->name(), "IO_Flow_Parameter_Set_Synthetic") == 0) {
 							flow = new IO_Flow_Parameter_Set_Synthetic;
-							((IO_Flow_Parameter_Set_Synthetic*)flow)->XML_deserialize(flow_def);
+							((IO_Flow_Parameter_Set_Synthetic*)flow)->XMLDeserialize(flow_def);
 						} else if (strcmp(flow_def->name(), "IO_Flow_Parameter_Set_Trace_Based") == 0) {
 							flow = new IO_Flow_Parameter_Set_Trace_Based;
-							((IO_Flow_Parameter_Set_Trace_Based*)flow)->XML_deserialize(flow_def);
+							((IO_Flow_Parameter_Set_Trace_Based*)flow)->XMLDeserialize(flow_def);
 						}
 						scenario_definition->push_back(flow);
 					}
@@ -217,8 +217,8 @@ std::vector<std::vector<IO_Flow_Parameter_Set*>*>* read_workload_definitions(con
 		tmp = "IO_Scenario";
 		xmlwriter.WriteOpenTag(tmp);
 
-		io_flow_1->XML_serialize(xmlwriter);
-		io_flow_2->XML_serialize(xmlwriter);
+		io_flow_1->XMLSerialize(xmlwriter);
+		io_flow_2->XMLSerialize(xmlwriter);
 
 		xmlwriter.WriteCloseTag();
 		xmlwriter.WriteCloseTag();
@@ -237,12 +237,12 @@ void collect_results(SSD_Device& ssd, Host_System& host, const char* output_file
 	std::string tmp("MQSim_Results");
 	xmlwriter.WriteOpenTag(tmp);
 	
-	host.Report_results_in_XML("", xmlwriter);
-	ssd.Report_results_in_XML("", xmlwriter);
+	host.ReportResultsInXML("", xmlwriter);
+	ssd.ReportResultsInXML("", xmlwriter);
 
 	xmlwriter.WriteCloseTag();
 
-	std::vector<Host_Components::IO_Flow_Base*> IO_flows = host.Get_io_flows();
+	std::vector<Host_Components::IO_Flow_Base*> IO_flows = host.GetIOFlows();
 	for (unsigned int stream_id = 0; stream_id < IO_flows.size(); stream_id++) {
 		cout << "Flow " << IO_flows[stream_id]->ID() << " - total requests generated: " << IO_flows[stream_id]->Get_generated_request_count()
 			<< " total requests serviced:" << IO_flows[stream_id]->Get_serviced_request_count() << endl;
@@ -292,7 +292,7 @@ int main(int argc, char* argv[])
 		SSD_Device ssd(&exec_params->SSD_Device_Configuration, &exec_params->Host_Configuration.IO_Flow_Definitions);//Create SSD_Device based on the specified parameters
 		exec_params->Host_Configuration.Input_file_path = workload_defs_file_path.substr(0, workload_defs_file_path.find_last_of("."));//Create Host_System based on the specified parameters
 		Host_System host(&exec_params->Host_Configuration, exec_params->SSD_Device_Configuration.Enabled_Preconditioning, ssd.Host_interface);
-		host.Attach_ssd_device(&ssd);
+		host.AttachSSDDevice(&ssd);
 
 		Simulator->StartSimulation();
 

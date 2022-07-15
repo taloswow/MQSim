@@ -49,7 +49,7 @@ namespace SSD_Components
 		list<NVM_Transaction_Flash*>::pop_front();
 	}
 
-	void Flash_Transaction_Queue::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+	void Flash_Transaction_Queue::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix;
 		xmlwriter.WriteStartElementTag(tmp);

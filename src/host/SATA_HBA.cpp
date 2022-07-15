@@ -42,11 +42,11 @@ namespace Host_Components
 	{
 	}
 
-	void SATA_HBA::Validate_simulation_config()
+	void SATA_HBA::ValidateSimulationConfig()
 	{
 	}
 
-	void SATA_HBA::Execute_simulator_event(MQSimEngine::Sim_Event* event)
+	void SATA_HBA::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event)
 	{
 		switch ((HBA_Sim_Events)event->Type)
 		{

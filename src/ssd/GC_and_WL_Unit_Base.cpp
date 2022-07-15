@@ -170,11 +170,11 @@ namespace SSD_Components
 	{
 	}
 
-	void GC_and_WL_Unit_Base::Validate_simulation_config()
+	void GC_and_WL_Unit_Base::ValidateSimulationConfig()
 	{
 	}
 
-	void GC_and_WL_Unit_Base::Execute_simulator_event(MQSimEngine::Sim_Event* ev)
+	void GC_and_WL_Unit_Base::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev)
 	{
 	}
 

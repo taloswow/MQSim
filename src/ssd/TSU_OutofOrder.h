@@ -38,9 +38,9 @@ public:
 	void Schedule();
 
 	void StartSimulation();
-	void Validate_simulation_config();
-	void Execute_simulator_event(MQSimEngine::Sim_Event *);
-	void Report_results_in_XML(std::string name_prefix, Utils::XmlWriter &xmlwriter);
+	void ValidateSimulationConfig();
+	void ExecuteSimulatorEvent(MQSimEngine::Sim_Event *);
+	void ReportResultsInXML(std::string name_prefix, Utils::XmlWriter &xmlwriter);
 
 private:
 	Flash_Transaction_Queue **UserReadTRQueue;

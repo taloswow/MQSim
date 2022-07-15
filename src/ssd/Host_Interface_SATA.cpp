@@ -296,9 +296,9 @@ namespace SSD_Components
 		((Input_Stream_Manager_SATA*)this->input_stream_manager)->Set_ncq_address(submission_queue_base_address, completion_queue_base_address);
 	}
 
-	void Host_Interface_SATA::Validate_simulation_config()
+	void Host_Interface_SATA::ValidateSimulationConfig()
 	{
-		Host_Interface_Base::Validate_simulation_config();
+		Host_Interface_Base::ValidateSimulationConfig();
 		if (this->input_stream_manager == NULL) {
 			throw std::logic_error("Input stream manager is not set for Host Interface");
 		}
@@ -309,9 +309,9 @@ namespace SSD_Components
 
 	void Host_Interface_SATA::StartSimulation() {}
 
-	void Host_Interface_SATA::Execute_simulator_event(MQSimEngine::Sim_Event* event) {}
+	void Host_Interface_SATA::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event) {}
 
-	void Host_Interface_SATA::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+	void Host_Interface_SATA::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix + ".HostInterface";
 		xmlwriter.WriteOpenTag(tmp);

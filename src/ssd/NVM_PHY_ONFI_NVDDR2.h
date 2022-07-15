@@ -91,12 +91,12 @@ namespace SSD_Components
 		NVM_PHY_ONFI_NVDDR2(const sim_object_id_type& id, ONFI_Channel_NVDDR2** channels,
 			unsigned int ChannelCount, unsigned int chip_no_per_channel, unsigned int DieNoPerChip, unsigned int PlaneNoPerDie);
 		void Setup_triggers();
-		void Validate_simulation_config();
+		void ValidateSimulationConfig();
 		void StartSimulation();
 
 		void Send_command_to_chip(std::list<NVM_Transaction_Flash*>& transactionList);
 		void Change_flash_page_status_for_preconditioning(const NVM::FlashMemory::Physical_Page_Address& page_address, const LPA_type lpa);
-		void Execute_simulator_event(MQSimEngine::Sim_Event*);
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 		BusChannelStatus Get_channel_status(flash_channel_ID_type channelID);
 		NVM::FlashMemory::Flash_Chip* Get_chip(flash_channel_ID_type channel_id, flash_chip_ID_type chip_id);
 		LPA_type Get_metadata(flash_channel_ID_type channe_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id, flash_block_ID_type block_id, flash_page_ID_type page_id);//A simplification to decrease the complexity of GC execution! The GC unit may need to know the metadata of a page to decide if a page is valid or invalid. 

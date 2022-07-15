@@ -29,7 +29,7 @@ namespace SSD_Components
 		virtual ~Data_Cache_Manager_Base();
 		void Setup_triggers();
 		void StartSimulation();
-		void Validate_simulation_config();
+		void ValidateSimulationConfig();
 
 		typedef void(*UserRequestServicedSignalHanderType) (User_Request*);
 		void Connect_to_user_request_serviced_signal(UserRequestServicedSignalHanderType);

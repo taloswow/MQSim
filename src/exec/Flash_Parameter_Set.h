@@ -1,9 +1,10 @@
 #ifndef FLASH_PARAMETER_SET_H
 #define FLASH_PARAMETER_SET_H
 
+#include "Parameter_Set_Base.h"
+
 #include "../sim/Sim_Defs.h"
 #include "../nvm_chip/flash_memory/FlashTypes.h"
-#include "Parameter_Set_Base.h"
 
 class Flash_Parameter_Set : Parameter_Set_Base
 {
@@ -26,8 +27,8 @@ public:
 	static unsigned int Page_No_Per_Block;//Page no per block
 	static unsigned int Page_Capacity;//Flash page capacity in bytes
 	static unsigned int Page_Metadat_Capacity;//Flash page metadata capacity in bytes
-	void XML_serialize(Utils::XmlWriter& xmlwriter);
-	void XML_deserialize(rapidxml::xml_node<> *node);
+	void XMLSerialize(Utils::XmlWriter& xmlwriter);
+	void XMLDeserialize(rapidxml::xml_node<> *node);
 };
 
 #endif // !FLASH_PARAMETER_SET_H

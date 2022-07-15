@@ -57,7 +57,7 @@ namespace NVM
 		{
 		}
 
-		void Flash_Chip::Validate_simulation_config()
+		void Flash_Chip::ValidateSimulationConfig()
 		{
 			if (Dies == NULL || die_no == 0) {
 				PRINT_ERROR("Flash chip " << ID() << ": has no dies!")
@@ -81,7 +81,7 @@ namespace NVM
 			MQSimEngine::Sim_Object::Setup_triggers();
 		}
 		
-		void Flash_Chip::Execute_simulator_event(MQSimEngine::Sim_Event* ev)
+		void Flash_Chip::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev)
 		{
 			Chip_Sim_Event_Type eventType = (Chip_Sim_Event_Type)ev->Type;
 			Flash_Command* command = (Flash_Command*)ev->Parameters;
@@ -266,7 +266,7 @@ namespace NVM
 			return _suspendEraseLatency;
 		}
 
-		void Flash_Chip::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+		void Flash_Chip::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 		{
 			std::string tmp = name_prefix;
 			xmlwriter.WriteStartElementTag(tmp + ".FlashChips");

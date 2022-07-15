@@ -212,11 +212,11 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		}
 	}
 
-	void IO_Flow_Synthetic::Validate_simulation_config()
+	void IO_Flow_Synthetic::ValidateSimulationConfig()
 	{
 	}
 
-	void IO_Flow_Synthetic::Execute_simulator_event(MQSimEngine::Sim_Event* event)
+	void IO_Flow_Synthetic::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event)
 	{
 		if (generator_type == Utils::Request_Generator_Type::BANDWIDTH) {
 			Host_IO_Request* req = Generate_next_request();
@@ -231,8 +231,8 @@ IO_Flow_Synthetic::IO_Flow_Synthetic(const sim_object_id_type &name, uint16_t fl
 		}
 	}
 
-	void IO_Flow_Synthetic::Get_statistics(Utils::Workload_Statistics& stats, LPA_type(*Convert_host_logical_address_to_device_address)(LHA_type lha),
-		page_status_type(*Find_NVM_subunit_access_bitmap)(LHA_type lha))
+	void IO_Flow_Synthetic::Get_statistics(Utils::Workload_Statistics& stats, LPA_type(*ConvertHostLogicToDeviceAddress)(LHA_type lha),
+		page_status_type(*FindNVMSubunitAccessBitmap)(LHA_type lha))
 	{
 		stats.Type = Utils::Workload_Type::SYNTHETIC;
 		stats.generator_type = generator_type;

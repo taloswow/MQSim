@@ -1,11 +1,12 @@
 #include "IO_Flow_Parameter_Set.h"
+
 #include <string>
 #include <set>
 #include <cstring>
 #include <algorithm>
 
-//All serialization and deserialization functions should be replaced by a C++ reflection implementation
-void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
+// All serialization and deserialization functions should be replaced by a C++ reflection implementation
+void IO_Flow_Parameter_Set::XMLSerialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string attr = "Priority_Class";
 	std::string val;
@@ -90,7 +91,7 @@ void IO_Flow_Parameter_Set::XML_serialize(Utils::XmlWriter& xmlwriter)
 	xmlwriter.WriteAttributeString(attr, val);
 }
 
-void IO_Flow_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)
+void IO_Flow_Parameter_Set::XMLDeserialize(rapidxml::xml_node<> *node)
 {
 	try {
 		for (auto param = node->first_node(); param; param = param->next_sibling()) {
@@ -218,12 +219,12 @@ void IO_Flow_Parameter_Set::XML_deserialize(rapidxml::xml_node<> *node)
 	}
 }
 
-void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
+void IO_Flow_Parameter_Set_Synthetic::XMLSerialize(Utils::XmlWriter& xmlwriter)
 {
 	std::string tmp;
 	tmp = "IO_Flow_Parameter_Set_Synthetic";
 	xmlwriter.WriteOpenTag(tmp);
-	IO_Flow_Parameter_Set::XML_serialize(xmlwriter);
+	IO_Flow_Parameter_Set::XMLSerialize(xmlwriter);
 
 	std::string attr = "Working_Set_Percentage";
 	std::string val = std::to_string(Working_Set_Percentage);
@@ -320,9 +321,9 @@ void IO_Flow_Parameter_Set_Synthetic::XML_serialize(Utils::XmlWriter& xmlwriter)
 	xmlwriter.WriteCloseTag();
 }
 
-void IO_Flow_Parameter_Set_Synthetic::XML_deserialize(rapidxml::xml_node<> *node)
+void IO_Flow_Parameter_Set_Synthetic::XMLDeserialize(rapidxml::xml_node<> *node)
 {
-	IO_Flow_Parameter_Set::XML_deserialize(node);
+	IO_Flow_Parameter_Set::XMLDeserialize(node);
 	try {
 		for (auto param = node->first_node(); param; param = param->next_sibling()) {
 			if (strcmp(param->name(), "Working_Set_Percentage") == 0) {
@@ -401,12 +402,12 @@ void IO_Flow_Parameter_Set_Synthetic::XML_deserialize(rapidxml::xml_node<> *node
 	}
 }
 
-void IO_Flow_Parameter_Set_Trace_Based::XML_serialize(Utils::XmlWriter& xmlwriter)
+void IO_Flow_Parameter_Set_Trace_Based::XMLSerialize(Utils::XmlWriter& xmlwriter)
 {
 
 	std::string tmp = "IO_Flow_Parameter_Set_Trace_Based";
 	xmlwriter.WriteOpenTag(tmp);
-	IO_Flow_Parameter_Set::XML_serialize(xmlwriter);
+	IO_Flow_Parameter_Set::XMLSerialize(xmlwriter);
 
 	std::string attr = "File_Path";
 	std::string val = File_Path;
@@ -437,9 +438,9 @@ void IO_Flow_Parameter_Set_Trace_Based::XML_serialize(Utils::XmlWriter& xmlwrite
 	xmlwriter.WriteCloseTag();
 }
 
-void IO_Flow_Parameter_Set_Trace_Based::XML_deserialize(rapidxml::xml_node<> *node)
+void IO_Flow_Parameter_Set_Trace_Based::XMLDeserialize(rapidxml::xml_node<> *node)
 {
-	IO_Flow_Parameter_Set::XML_deserialize(node);
+	IO_Flow_Parameter_Set::XMLDeserialize(node);
 
 	try {
 		for (auto param = node->first_node(); param; param = param->next_sibling()) {

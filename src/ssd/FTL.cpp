@@ -32,9 +32,9 @@ namespace SSD_Components
 		Stats::Clear_stats(channel_no, chip_no_per_channel, die_no_per_chip, plane_no_per_die, block_no_per_plane, page_no_per_block, max_allowed_block_erase_count);
 	}
 
-	void FTL::Validate_simulation_config()
+	void FTL::ValidateSimulationConfig()
 	{
-		NVM_Firmware::Validate_simulation_config();
+		NVM_Firmware::ValidateSimulationConfig();
 		if (this->Data_cache_manager == NULL)
 			throw std::logic_error("The cache manager is not set for FTL!");
 		if (this->Address_Mapping_Unit == NULL)
@@ -88,7 +88,7 @@ namespace SSD_Components
 			unsigned int hot_region_last_index_in_histogram = 0;//only used for trace workloads to detect hot addresses
 			LHA_type min_lha = stat->Min_LHA;
 			LHA_type max_lha = stat->Max_LHA - 1;
-			LPA_type min_lpa = Convert_host_logical_address_to_device_address(min_lha);
+			LPA_type min_lpa = ConvertHostLogicToDeviceAddress(min_lha);
 			if (stat->generate_aligned_addresses)
 			{
 				if (min_lha % stat->alignment_value != 0)
@@ -97,8 +97,8 @@ namespace SSD_Components
 					max_lha -= min_lha % stat->alignment_value;
 			}
 
-			LPA_type max_lpa = Convert_host_logical_address_to_device_address(max_lha) - 1;
-			total_accessed_cmt_entries += (unsigned int)(Convert_host_logical_address_to_device_address(max_lha) / page_size_in_sectors - Convert_host_logical_address_to_device_address(min_lha) / page_size_in_sectors) + 1;
+			LPA_type max_lpa = ConvertHostLogicToDeviceAddress(max_lha) - 1;
+			total_accessed_cmt_entries += (unsigned int)(ConvertHostLogicToDeviceAddress(max_lha) / page_size_in_sectors - ConvertHostLogicToDeviceAddress(min_lha) / page_size_in_sectors) + 1;
 			bool hot_range_finished = false;//Used for fast address generation in hot/cold traffic mode
 			LHA_type hot_region_end_lsa = 0, hot_lha_used_for_generation = 0;//Used for fast address generation in hot/cold traffic mode
 			LPA_type last_hot_lpa = 0;
@@ -129,7 +129,7 @@ namespace SSD_Components
 					random_hot_address_generator = new Utils::RandomGenerator(stat->random_hot_address_generator_seed);
 					random_hot_cold_generator = new Utils::RandomGenerator(stat->random_hot_cold_generator_seed);
 					hot_region_end_lsa = min_lha + (LHA_type)((double)(max_lha - min_lha) * stat->Ratio_of_hot_addresses_to_whole_working_set);
-					last_hot_lpa = Convert_host_logical_address_to_device_address(hot_region_end_lsa) - 1;//Be conservative and not include the last_hot_address itself
+					last_hot_lpa = ConvertHostLogicToDeviceAddress(hot_region_end_lsa) - 1;//Be conservative and not include the last_hot_address itself
 					hot_lha_used_for_generation = min_lha;
 					//Check if enough LPAs could be generated within the working set of the flow
 					if ((last_hot_lpa - min_lpa) < no_of_logical_pages_in_steadystate)
@@ -142,7 +142,7 @@ namespace SSD_Components
 							if (max_lha % stat->alignment_value != 0)
 								max_lha -= min_lha % stat->alignment_value;
 						
-						max_lpa = Convert_host_logical_address_to_device_address(max_lha);
+						max_lpa = ConvertHostLogicToDeviceAddress(max_lha);
 					}
 					break;
 				}
@@ -158,7 +158,7 @@ namespace SSD_Components
 						if (stat->generate_aligned_addresses)
 							if (max_lha % stat->alignment_value != 0)
 								max_lha -= min_lha % stat->alignment_value;
-						max_lpa = Convert_host_logical_address_to_device_address(max_lha);
+						max_lpa = ConvertHostLogicToDeviceAddress(max_lha);
 
 						if ((max_lpa - min_lpa) < no_of_logical_pages_in_steadystate)
 							no_of_logical_pages_in_steadystate = max_lpa - min_lpa + 1;
@@ -175,7 +175,7 @@ namespace SSD_Components
 						if (stat->generate_aligned_addresses)
 							if (max_lha % stat->alignment_value != 0)
 								max_lha -= min_lha % stat->alignment_value;
-						max_lpa = Convert_host_logical_address_to_device_address(max_lha);
+						max_lpa = ConvertHostLogicToDeviceAddress(max_lha);
 
 						if ((max_lpa - min_lpa) < 1.1 * no_of_logical_pages_in_steadystate)
 						{
@@ -286,7 +286,7 @@ namespace SSD_Components
 					LHA_type lsa = start_LBA - min_lha;
 					unsigned int transaction_size = 0;
 					page_status_type access_status_bitmap = 0;
-					LPA_type max_lpa_within_device = Convert_host_logical_address_to_device_address(stat->Max_LHA) - Convert_host_logical_address_to_device_address(stat->Min_LHA);
+					LPA_type max_lpa_within_device = ConvertHostLogicToDeviceAddress(stat->Max_LHA) - ConvertHostLogicToDeviceAddress(stat->Min_LHA);
 					while (handled_sectors_count < size)
 					{
 						transaction_size = page_size_in_sectors - (unsigned int)(lsa % page_size_in_sectors);
@@ -294,8 +294,8 @@ namespace SSD_Components
 						{
 							transaction_size = size - handled_sectors_count;
 						}
-						LPA_type lpa = Convert_host_logical_address_to_device_address(lsa);
-						page_status_type access_status_bitmap = Find_NVM_subunit_access_bitmap(lsa);
+						LPA_type lpa = ConvertHostLogicToDeviceAddress(lsa);
+						page_status_type access_status_bitmap = FindNVMSubunitAccessBitmap(lsa);
 
 						lsa = lsa + transaction_size;
 						handled_sectors_count += transaction_size;
@@ -413,8 +413,8 @@ namespace SSD_Components
 							transaction_size = size - handled_sectors_count;
 						}
 
-						LPA_type lpa = Convert_host_logical_address_to_device_address(internal_lsa);
-						page_status_type access_status_bitmap = Find_NVM_subunit_access_bitmap(internal_lsa);
+						LPA_type lpa = ConvertHostLogicToDeviceAddress(internal_lsa);
+						page_status_type access_status_bitmap = FindNVMSubunitAccessBitmap(internal_lsa);
 
 						if (lpa_set_for_preconditioning.find(lpa) != lpa_set_for_preconditioning.end()) {
 							lpa_set_for_preconditioning[lpa] = access_status_bitmap;
@@ -637,8 +637,8 @@ namespace SSD_Components
 			if (!Address_Mapping_Unit->IsIdealMappingTable()) {
 				//Step 4-1: Determine how much share of the entire CMT should be filled based on the flow arrival rate and access pattern
 				unsigned int no_of_entries_in_cmt = 0;
-				LPA_type min_LPA = Convert_host_logical_address_to_device_address(stat->Min_LHA);
-				LPA_type max_LPA = Convert_host_logical_address_to_device_address(stat->Max_LHA);
+				LPA_type min_LPA = ConvertHostLogicToDeviceAddress(stat->Min_LHA);
+				LPA_type max_LPA = ConvertHostLogicToDeviceAddress(stat->Max_LHA);
 
 				switch (Address_Mapping_Unit->GetCMTSharingMode()) {
 					case CMT_Sharing_Mode::SHARED: {
@@ -710,7 +710,7 @@ namespace SSD_Components
 					case Utils::Address_Distribution_Type::STREAMING:
 					{
 						LPA_type lpa;
-						LPA_type first_lpa_streaming = Convert_host_logical_address_to_device_address(stat->First_Accessed_Address);
+						LPA_type first_lpa_streaming = ConvertHostLogicToDeviceAddress(stat->First_Accessed_Address);
 						auto itr = lpa_set_for_preconditioning.find(lpa);
 						if (itr != lpa_set_for_preconditioning.begin()) {
 							itr--;
@@ -752,7 +752,7 @@ namespace SSD_Components
 		}
 	}
 	
-	void FTL::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+	void FTL::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 		std::string tmp = name_prefix + ".FTL";
 		xmlwriter.WriteStartElementTag(tmp);
@@ -892,16 +892,16 @@ namespace SSD_Components
 	{
 	}
 
-	void FTL::Execute_simulator_event(MQSimEngine::Sim_Event*)
+	void FTL::ExecuteSimulatorEvent(MQSimEngine::Sim_Event*)
 	{
 	}
 
-	LPA_type FTL::Convert_host_logical_address_to_device_address(LHA_type lha)
+	LPA_type FTL::ConvertHostLogicToDeviceAddress(LHA_type lha)
 	{
 		return lha / page_size_in_sectors;
 	}
 
-	page_status_type FTL::Find_NVM_subunit_access_bitmap(LHA_type lha)
+	page_status_type FTL::FindNVMSubunitAccessBitmap(LHA_type lha)
 	{
 		return ((page_status_type)~(0xffffffffffffffff << (int)1)) << (int)(lha % page_size_in_sectors);
 	}

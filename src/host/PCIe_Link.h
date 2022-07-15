@@ -26,8 +26,8 @@ namespace Host_Components
 			int ph_overhead = 2);
 		void Deliver(PCIe_Message*);
 		void StartSimulation();
-		void Validate_simulation_config();
-		void Execute_simulator_event(MQSimEngine::Sim_Event*);
+		void ValidateSimulationConfig();
+		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);
 		void Set_root_complex(PCIe_Root_Complex*);
 		void Set_pcie_switch(PCIe_Switch*);
 	private:

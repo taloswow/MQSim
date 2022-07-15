@@ -102,7 +102,7 @@ namespace SSD_Components
 			unsigned int sectors_per_page, Data_Cache_Manager_Base* cache);
 		virtual ~Host_Interface_Base();
 		void Setup_triggers();
-		void Validate_simulation_config();
+		void ValidateSimulationConfig();
 
 		typedef void(*UserRequestArrivedSignalHandlerType) (User_Request*);
 		void Connect_to_user_request_arrived_signal(UserRequestArrivedSignalHandlerType function)
@@ -126,7 +126,7 @@ namespace SSD_Components
 		HostInterface_Types GetType() { return type; }
 		void Attach_to_device(Host_Components::PCIe_Switch* pcie_switch);
 		LHA_type Get_max_logical_sector_address();
-		unsigned int Get_no_of_LHAs_in_an_NVM_write_unit();
+		unsigned int GetNoOfLHAsInAnNVMWriteUnit();
 	protected:
 		HostInterface_Types type;
 		LHA_type max_logical_sector_address;

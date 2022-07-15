@@ -391,9 +391,9 @@ stream_id_type Host_Interface_NVMe::Create_new_stream(IO_Flow_Priority_Class::Pr
 	return ((Input_Stream_Manager_NVMe *)input_stream_manager)->Create_new_stream(priority_class, start_logical_sector_address, end_logical_sector_address, submission_queue_base_address, submission_queue_depth, completion_queue_base_address, completion_queue_depth);
 }
 
-void Host_Interface_NVMe::Validate_simulation_config()
+void Host_Interface_NVMe::ValidateSimulationConfig()
 {
-	Host_Interface_Base::Validate_simulation_config();
+	Host_Interface_Base::ValidateSimulationConfig();
 	if (this->input_stream_manager == NULL)
 	{
 		throw std::logic_error("Input stream manager is not set for Host Interface");
@@ -408,7 +408,7 @@ void Host_Interface_NVMe::StartSimulation()
 {
 }
 
-void Host_Interface_NVMe::Execute_simulator_event(MQSimEngine::Sim_Event *event) {}
+void Host_Interface_NVMe::ExecuteSimulatorEvent(MQSimEngine::Sim_Event *event) {}
 
 uint16_t Host_Interface_NVMe::Get_submission_queue_depth()
 {
@@ -420,7 +420,7 @@ uint16_t Host_Interface_NVMe::Get_completion_queue_depth()
 	return completion_queue_depth;
 }
 
-void Host_Interface_NVMe::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter &xmlwriter)
+void Host_Interface_NVMe::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter &xmlwriter)
 {
 	std::string tmp = name_prefix + ".HostInterface";
 	xmlwriter.WriteOpenTag(tmp);

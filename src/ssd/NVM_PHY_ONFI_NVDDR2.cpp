@@ -52,7 +52,7 @@ namespace SSD_Components {
 		}
 	}
 
-	void NVM_PHY_ONFI_NVDDR2::Validate_simulation_config()
+	void NVM_PHY_ONFI_NVDDR2::ValidateSimulationConfig()
 	{
 	}
 
@@ -333,7 +333,7 @@ namespace SSD_Components {
 		}
 	}
 
-	void NVM_PHY_ONFI_NVDDR2::Execute_simulator_event(MQSimEngine::Sim_Event* ev)
+	void NVM_PHY_ONFI_NVDDR2::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev)
 	{
 		DieBookKeepingEntry* dieBKE = (DieBookKeepingEntry*)ev->Parameters;
 		flash_channel_ID_type channel_id = dieBKE->ActiveTransactions.front()->Address.ChannelID;

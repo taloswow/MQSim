@@ -125,11 +125,11 @@ void IO_Flow_Trace_Based::StartSimulation()
 	Simulator->RegisterSimEvent(std::strtoll(current_trace_line[ASCIITraceTimeColumn].c_str(), &pEnd, 10), this);
 }
 
-void IO_Flow_Trace_Based::Validate_simulation_config()
+void IO_Flow_Trace_Based::ValidateSimulationConfig()
 {
 }
 
-void IO_Flow_Trace_Based::Execute_simulator_event(MQSimEngine::Sim_Event *)
+void IO_Flow_Trace_Based::ExecuteSimulatorEvent(MQSimEngine::Sim_Event *)
 {
 	Host_IO_Request *request = Generate_next_request();
 	if (request != NULL)
@@ -163,8 +163,8 @@ void IO_Flow_Trace_Based::Execute_simulator_event(MQSimEngine::Sim_Event *)
 	}
 }
 
-void IO_Flow_Trace_Based::Get_statistics(Utils::Workload_Statistics &stats, LPA_type (*Convert_host_logical_address_to_device_address)(LHA_type lha),
-										 page_status_type (*Find_NVM_subunit_access_bitmap)(LHA_type lha))
+void IO_Flow_Trace_Based::Get_statistics(Utils::Workload_Statistics &stats, LPA_type (*ConvertHostLogicToDeviceAddress)(LHA_type lha),
+										 page_status_type (*FindNVMSubunitAccessBitmap)(LHA_type lha))
 {
 	stats.Type = Utils::Workload_Type::TRACE_BASED;
 	stats.Stream_id = io_queue_id - 1; //In MQSim, there is a simple relation between stream id and the io_queue_id of NVMe
@@ -234,8 +234,8 @@ void IO_Flow_Trace_Based::Get_statistics(Utils::Workload_Statistics &stats, LPA_
 		//Address access pattern statistics
 		while (start_LBA <= end_LBA)
 		{
-			LPA_type device_address = Convert_host_logical_address_to_device_address(start_LBA);
-			page_status_type access_status_bitmap = Find_NVM_subunit_access_bitmap(start_LBA);
+			LPA_type device_address = ConvertHostLogicToDeviceAddress(start_LBA);
+			page_status_type access_status_bitmap = FindNVMSubunitAccessBitmap(start_LBA);
 			if (line_splitted[ASCIITraceTypeColumn].compare(ASCIITraceWriteCode) == 0)
 			{
 				if (stats.Write_address_access_pattern.find(device_address) == stats.Write_address_access_pattern.end())

@@ -412,11 +412,11 @@ namespace SSD_Components
 		StoreMappingTableOnFlashAtStart();
 	}
 
-	void Address_Mapping_Unit_Page_Level::Validate_simulation_config()
+	void Address_Mapping_Unit_Page_Level::ValidateSimulationConfig()
 	{
 	}
 
-	void Address_Mapping_Unit_Page_Level::Execute_simulator_event(MQSimEngine::Sim_Event* event)
+	void Address_Mapping_Unit_Page_Level::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event)
 	{
 	}
 

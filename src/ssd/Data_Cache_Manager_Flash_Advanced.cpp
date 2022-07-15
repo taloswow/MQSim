@@ -531,7 +531,7 @@ namespace SSD_Components
 		}
 	}
 
-	void Data_Cache_Manager_Flash_Advanced::Execute_simulator_event(MQSimEngine::Sim_Event* ev)
+	void Data_Cache_Manager_Flash_Advanced::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev)
 	{
 		Data_Cache_Simulation_Event_Type eventType = (Data_Cache_Simulation_Event_Type)ev->Type;
 		Memory_Transfer_Info* transfer_info = (Memory_Transfer_Info*)ev->Parameters;

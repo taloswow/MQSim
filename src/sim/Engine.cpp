@@ -83,7 +83,7 @@ namespace MQSimEngine
 				obj->second->Setup_triggers();
 			}
 
-			obj->second->Validate_simulation_config();
+			obj->second->ValidateSimulationConfig();
 			obj->second->StartSimulation();
 		}
 			
@@ -103,7 +103,7 @@ namespace MQSimEngine
 			while (ev != NULL)
 			{
 				if(!ev->Ignore) {
-					ev->Target_sim_object->Execute_simulator_event(ev);
+					ev->Target_sim_object->ExecuteSimulatorEvent(ev);
 				}
 
 				ev = ev->Next_event;

@@ -113,20 +113,20 @@ void TSU_Priority_OutOfOrder::StartSimulation()
 {
 }
 
-void TSU_Priority_OutOfOrder::Validate_simulation_config()
+void TSU_Priority_OutOfOrder::ValidateSimulationConfig()
 {
 }
 
-void TSU_Priority_OutOfOrder::Execute_simulator_event(MQSimEngine::Sim_Event *event)
+void TSU_Priority_OutOfOrder::ExecuteSimulatorEvent(MQSimEngine::Sim_Event *event)
 {
 }
 
-void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter &xmlwriter)
+void TSU_Priority_OutOfOrder::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter &xmlwriter)
 {
     name_prefix = name_prefix + ".TSU";
     xmlwriter.WriteOpenTag(name_prefix);
 
-    TSU_Base::Report_results_in_XML(name_prefix, xmlwriter);
+    TSU_Base::ReportResultsInXML(name_prefix, xmlwriter);
 
     for (unsigned int channelID = 0; channelID < channel_count; channelID++)
     {
@@ -134,7 +134,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
         {
             for (unsigned int priorityClass = 0; priorityClass < IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserReadTRQueue[channelID][chip_cntr][priorityClass].Report_results_in_XML(name_prefix + ".User_Read_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
+                UserReadTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Read_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
             }
         }
     }
@@ -145,7 +145,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
         {
             for (unsigned int priorityClass = 0; priorityClass < IO_Flow_Priority_Class::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserWriteTRQueue[channelID][chip_cntr][priorityClass].Report_results_in_XML(name_prefix + ".User_Write_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
+                UserWriteTRQueue[channelID][chip_cntr][priorityClass].ReportResultsInXML(name_prefix + ".User_Write_TR_Queue.Priority." + IO_Flow_Priority_Class::to_string(priorityClass), xmlwriter);
             }
         }
     }
@@ -154,7 +154,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            MappingReadTRQueue[channelID][chip_cntr].Report_results_in_XML(name_prefix + ".Mapping_Read_TR_Queue", xmlwriter);
+            MappingReadTRQueue[channelID][chip_cntr].ReportResultsInXML(name_prefix + ".Mapping_Read_TR_Queue", xmlwriter);
         }
     }
 
@@ -162,7 +162,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            MappingWriteTRQueue[channelID][chip_cntr].Report_results_in_XML(name_prefix + ".Mapping_Write_TR_Queue", xmlwriter);
+            MappingWriteTRQueue[channelID][chip_cntr].ReportResultsInXML(name_prefix + ".Mapping_Write_TR_Queue", xmlwriter);
         }
     }
 
@@ -170,7 +170,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            GCReadTRQueue[channelID][chip_cntr].Report_results_in_XML(name_prefix + ".GC_Read_TR_Queue", xmlwriter);
+            GCReadTRQueue[channelID][chip_cntr].ReportResultsInXML(name_prefix + ".GC_Read_TR_Queue", xmlwriter);
         }
     }
 
@@ -178,7 +178,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            GCWriteTRQueue[channelID][chip_cntr].Report_results_in_XML(name_prefix + ".GC_Write_TR_Queue", xmlwriter);
+            GCWriteTRQueue[channelID][chip_cntr].ReportResultsInXML(name_prefix + ".GC_Write_TR_Queue", xmlwriter);
         }
     }
 
@@ -186,7 +186,7 @@ void TSU_Priority_OutOfOrder::Report_results_in_XML(std::string name_prefix, Uti
     {
         for (unsigned int chip_cntr = 0; chip_cntr < chip_no_per_channel; chip_cntr++)
         {
-            GCEraseTRQueue[channelID][chip_cntr].Report_results_in_XML(name_prefix + ".GC_Erase_TR_Queue", xmlwriter);
+            GCEraseTRQueue[channelID][chip_cntr].ReportResultsInXML(name_prefix + ".GC_Erase_TR_Queue", xmlwriter);
         }
     }
 

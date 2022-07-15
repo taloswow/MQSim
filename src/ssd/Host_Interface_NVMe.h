@@ -91,11 +91,11 @@ public:
 	stream_id_type Create_new_stream(IO_Flow_Priority_Class::Priority priority_class, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address,
 									 uint64_t submission_queue_base_address, uint64_t completion_queue_base_address);
 	void StartSimulation();
-	void Validate_simulation_config();
-	void Execute_simulator_event(MQSimEngine::Sim_Event *);
+	void ValidateSimulationConfig();
+	void ExecuteSimulatorEvent(MQSimEngine::Sim_Event *);
 	uint16_t Get_submission_queue_depth();
 	uint16_t Get_completion_queue_depth();
-	void Report_results_in_XML(std::string name_prefix, Utils::XmlWriter &xmlwriter);
+	void ReportResultsInXML(std::string name_prefix, Utils::XmlWriter &xmlwriter);
 
 private:
 	uint16_t submission_queue_depth, completion_queue_depth;

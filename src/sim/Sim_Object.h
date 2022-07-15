@@ -32,9 +32,9 @@ namespace MQSimEngine
 		// of simulation to perform initialization
 		virtual void StartSimulation() = 0;
 
-		// The Validate_simulation_config function is invoked
+		// The ValidateSimulationConfig function is invoked
 		// to check if the objected is correctly configured or not.
-		virtual void Validate_simulation_config() = 0;
+		virtual void ValidateSimulationConfig() = 0;
 
 		// The object connects its internal functions to the outside
 		// triggering events from other objects
@@ -43,7 +43,7 @@ namespace MQSimEngine
 			_triggersSetUp = true;
 		}
 		
-		virtual void Execute_simulator_event(Sim_Event*) = 0;
+		virtual void ExecuteSimulatorEvent(Sim_Event*) = 0;
 		 
 	private:
 		sim_object_id_type _id;

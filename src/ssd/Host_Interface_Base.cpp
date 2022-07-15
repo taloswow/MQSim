@@ -51,7 +51,7 @@ namespace SSD_Components
 		cache->Connect_to_user_memory_transaction_serviced_signal(handle_user_memory_transaction_serviced_signal_from_cache);
 	}
 
-	void Host_Interface_Base::Validate_simulation_config()
+	void Host_Interface_Base::ValidateSimulationConfig()
 	{
 	}
 
@@ -87,7 +87,7 @@ namespace SSD_Components
 		return max_logical_sector_address;
 	}
 
-	unsigned int Host_Interface_Base::Get_no_of_LHAs_in_an_NVM_write_unit()
+	unsigned int Host_Interface_Base::GetNoOfLHAsInAnNVMWriteUnit()
 	{
 		return sectors_per_page;
 	}

@@ -65,7 +65,7 @@ namespace SSD_Components
 		}
 	}
 
-	void TSU_Base::Report_results_in_XML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
+	void TSU_Base::ReportResultsInXML(std::string name_prefix, Utils::XmlWriter& xmlwriter)
 	{
 	}
 
