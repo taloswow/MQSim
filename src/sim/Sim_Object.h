@@ -38,7 +38,7 @@ namespace MQSimEngine
 
 		// The object connects its internal functions to the outside
 		// triggering events from other objects
-		virtual void Setup_triggers()
+		virtual void SetupTriggers()
 		{
 			_triggersSetUp = true;
 		}

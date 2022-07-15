@@ -80,7 +80,7 @@ namespace MQSimEngine
 			++obj) {
 			// Set triggers if not yet done
 			if (!obj->second->IsTriggersSetUp()) {
-				obj->second->Setup_triggers();
+				obj->second->SetupTriggers();
 			}
 
 			obj->second->ValidateSimulationConfig();

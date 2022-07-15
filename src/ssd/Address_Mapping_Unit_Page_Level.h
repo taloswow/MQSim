@@ -141,7 +141,7 @@ namespace SSD_Components
 			unsigned int Block_no_per_plane, unsigned int Page_no_per_block, unsigned int SectorsPerPage, unsigned int PageSizeInBytes,
 			double Overprovisioning_ratio, CMT_Sharing_Mode sharing_mode = CMT_Sharing_Mode::SHARED, bool fold_large_addresses = true);
 		~Address_Mapping_Unit_Page_Level();
-		void Setup_triggers();
+		void SetupTriggers();
 		void StartSimulation();
 		void ValidateSimulationConfig();
 		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event*);

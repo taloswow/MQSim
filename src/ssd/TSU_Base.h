@@ -29,7 +29,7 @@ public:
 			 sim_time_type EraseReasonableSuspensionTimeForRead,
 			 sim_time_type EraseReasonableSuspensionTimeForWrite);
 	virtual ~TSU_Base();
-	void Setup_triggers();
+	void SetupTriggers();
 
 	/*When an MQSim needs to send a set of transactions for execution, the following 
 		* three funcitons should be invoked in this order:

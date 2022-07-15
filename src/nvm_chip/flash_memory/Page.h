@@ -10,7 +10,6 @@ namespace NVM
 		
 		struct PageMetadata
 		{
-			//page_status_type Status;
 			LPA_type LPA;
 		};
 
@@ -18,9 +17,7 @@ namespace NVM
 		public:
 			Page()
 			{
-				//Metadata.Status = FREE_PAGE;
 				Metadata.LPA = NO_LPA;
-				//Metadata.SourceStreamID = NO_STREAM;
 			};
 			
 			PageMetadata Metadata;

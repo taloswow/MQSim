@@ -91,9 +91,9 @@ namespace SSD_Components
 		delete[] bloom_filter;
 	}
 
-	void Data_Cache_Manager_Flash_Advanced::Setup_triggers()
+	void Data_Cache_Manager_Flash_Advanced::SetupTriggers()
 	{
-		Data_Cache_Manager_Base::Setup_triggers();
+		Data_Cache_Manager_Base::SetupTriggers();
 		flash_controller->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
 	}
 

@@ -401,9 +401,9 @@ namespace SSD_Components
 		delete[] domains;
 	}
 
-	void Address_Mapping_Unit_Page_Level::Setup_triggers()
+	void Address_Mapping_Unit_Page_Level::SetupTriggers()
 	{
-		Sim_Object::Setup_triggers();
+		Sim_Object::SetupTriggers();
 		flash_controller->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
 	}
 
@@ -727,7 +727,7 @@ namespace SSD_Components
 									LPA_type lpa = assigned_lpas[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID].back();
 									assigned_lpas[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID].pop_back();
 									PPA_type ppa = ConvertAddressToPPA(address);
-									flash_controller->Change_memory_status_preconditioning(&address, &lpa);
+									flash_controller->ChangeMemoryStatusPreconditioning(&address, &lpa);
 									domains[stream_id]->GlobalMappingTable[lpa].PPA = ppa;
 									domains[stream_id]->GlobalMappingTable[lpa].WrittenStateBitmap = (*lpa_list.find(lpa)).second;
 									domains[stream_id]->GlobalMappingTable[lpa].TimeStamp = 0;
@@ -1774,13 +1774,13 @@ namespace SSD_Components
 			if (block_manager->Is_page_valid(block, pageID)) {
 				addr.PageID = pageID;
 				if (block->Holds_mapping_data) {
-					MVPN_type mpvn = (MVPN_type)flash_controller->Get_metadata(addr.ChannelID, addr.ChipID, addr.DieID, addr.PlaneID, addr.BlockID, addr.PageID);
+					MVPN_type mpvn = (MVPN_type)flash_controller->GetMetadata(addr.ChannelID, addr.ChipID, addr.DieID, addr.PlaneID, addr.BlockID, addr.PageID);
 					if (domains[block->Stream_id]->GlobalTranslationDirectory[mpvn].MPPN != ConvertAddressToPPA(addr)) {
 						PRINT_ERROR("Inconsistency in the global translation directory when locking an MPVN!")
 						SetBarrierForAccessingMVPN(block->Stream_id, mpvn);
 					}
 				} else {
-					LPA_type lpa = flash_controller->Get_metadata(addr.ChannelID, addr.ChipID, addr.DieID, addr.PlaneID, addr.BlockID, addr.PageID);
+					LPA_type lpa = flash_controller->GetMetadata(addr.ChannelID, addr.ChipID, addr.DieID, addr.PlaneID, addr.BlockID, addr.PageID);
 					LPA_type ppa = domains[block->Stream_id]->GlobalMappingTable[lpa].PPA;
 					if (domains[block->Stream_id]->CMT->Exists(block->Stream_id, lpa)) {
 						ppa = domains[block->Stream_id]->CMT->Retrieve_ppa(block->Stream_id, lpa);

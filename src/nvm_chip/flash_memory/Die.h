@@ -1,9 +1,10 @@
 #ifndef DIE_H
 #define DIE_H
 
-#include "../../sim/Sim_Event.h"
 #include "FlashTypes.h"
 #include "Plane.h"
+
+#include "../../sim/Sim_Event.h"
 
 namespace NVM
 {
@@ -20,7 +21,7 @@ namespace NVM
 			DieStatus Status;
 			MQSimEngine::Sim_Event* CommandFinishEvent;
 			sim_time_type Expected_finish_time;
-			sim_time_type RemainingSuspendedExecTime;//used to support suspend command
+			sim_time_type RemainingSuspendedExecTime; // used to support suspend command
 			Flash_Command* CurrentCMD, *SuspendedCMD;
 			bool Suspended;
 

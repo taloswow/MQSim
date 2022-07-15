@@ -42,12 +42,12 @@ namespace SSD_Components {
 		_my_instance = this;
 	}
 
-	void NVM_PHY_ONFI_NVDDR2::Setup_triggers()
+	void NVM_PHY_ONFI_NVDDR2::SetupTriggers()
 	{
-		Sim_Object::Setup_triggers();
+		Sim_Object::SetupTriggers();
 		for (unsigned int i = 0; i < channel_count; i++) {
 			for (unsigned int j = 0; j < chip_no_per_channel; j++) {
-				channels[i]->Chips[j]->Connect_to_chip_ready_signal(handle_ready_signal_from_chip);
+				channels[i]->Chips[j]->ConnectToChipReadySignal(handle_ready_signal_from_chip);
 			}
 		}
 	}
@@ -70,9 +70,9 @@ namespace SSD_Components {
 		return channels[channelID]->Chips[chipID];
 	}
 
-	LPA_type NVM_PHY_ONFI_NVDDR2::Get_metadata(flash_channel_ID_type channe_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id, flash_block_ID_type block_id, flash_page_ID_type page_id)//A simplification to decrease the complexity of GC execution! The GC unit may need to know the metadata of a page to decide if a page is valid or invalid. 
+	LPA_type NVM_PHY_ONFI_NVDDR2::GetMetadata(flash_channel_ID_type channe_id, flash_chip_ID_type chip_id, flash_die_ID_type die_id, flash_plane_ID_type plane_id, flash_block_ID_type block_id, flash_page_ID_type page_id)//A simplification to decrease the complexity of GC execution! The GC unit may need to know the metadata of a page to decide if a page is valid or invalid. 
 	{
-		return channels[channe_id]->Chips[chip_id]->Get_metadata(die_id, plane_id, block_id, page_id);
+		return channels[channe_id]->Chips[chip_id]->GetMetadata(die_id, plane_id, block_id, page_id);
 	}
 
 	inline bool NVM_PHY_ONFI_NVDDR2::HasSuspendedCommand(NVM::FlashMemory::Flash_Chip* chip)
@@ -125,7 +125,7 @@ namespace SSD_Components {
 
 	void NVM_PHY_ONFI_NVDDR2::Change_flash_page_status_for_preconditioning(const NVM::FlashMemory::Physical_Page_Address& page_address, const LPA_type lpa)
 	{
-		channels[page_address.ChannelID]->Chips[page_address.ChipID]->Change_memory_status_preconditioning(&page_address, &lpa);
+		channels[page_address.ChannelID]->Chips[page_address.ChipID]->ChangeMemoryStatusPreconditioning(&page_address, &lpa);
 	}
 	
 	void NVM_PHY_ONFI_NVDDR2::Send_command_to_chip(std::list<NVM_Transaction_Flash*>& transaction_list)
@@ -206,7 +206,7 @@ namespace SSD_Components {
 				}
 				chipBKE->OngoingDieCMDTransfers.push(dieBKE);
 
-				dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->Get_command_execution_latency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
+				dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->GetCommandExecutionLatency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
 				if (chipBKE->Expected_command_exec_finish_time < dieBKE->Expected_finish_time) {
 					chipBKE->Expected_command_exec_finish_time = dieBKE->Expected_finish_time;
 				}
@@ -242,7 +242,7 @@ namespace SSD_Components {
 					}
 					chipBKE->OngoingDieCMDTransfers.push(dieBKE);
 
-					dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->Get_command_execution_latency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
+					dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->GetCommandExecutionLatency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
 					if (chipBKE->Expected_command_exec_finish_time < dieBKE->Expected_finish_time) {
 						chipBKE->Expected_command_exec_finish_time = dieBKE->Expected_finish_time;
 					}
@@ -273,7 +273,7 @@ namespace SSD_Components {
 					}
 					chipBKE->OngoingDieCMDTransfers.push(dieBKE);
 
-					dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->Get_command_execution_latency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
+					dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->GetCommandExecutionLatency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
 					if (chipBKE->Expected_command_exec_finish_time < dieBKE->Expected_finish_time) {
 						chipBKE->Expected_command_exec_finish_time = dieBKE->Expected_finish_time;
 					}
@@ -305,7 +305,7 @@ namespace SSD_Components {
 				}
 				chipBKE->OngoingDieCMDTransfers.push(dieBKE);
 
-				dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->Get_command_execution_latency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
+				dieBKE->Expected_finish_time = chipBKE->Last_transfer_finish_time + targetChip->GetCommandExecutionLatency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
 				if (chipBKE->Expected_command_exec_finish_time < dieBKE->Expected_finish_time) {
 					chipBKE->Expected_command_exec_finish_time = dieBKE->Expected_finish_time;
 				}
@@ -317,9 +317,9 @@ namespace SSD_Components {
 		target_channel->SetStatus(BusChannelStatus::BUSY, targetChip);
 	}
 
-	void NVM_PHY_ONFI_NVDDR2::Change_memory_status_preconditioning(const NVM::NVM_Memory_Address* address, const void* status_info)
+	void NVM_PHY_ONFI_NVDDR2::ChangeMemoryStatusPreconditioning(const NVM::NVM_Memory_Address* address, const void* status_info)
 	{
-		channels[((NVM::FlashMemory::Physical_Page_Address*)address)->ChannelID]->Chips[((NVM::FlashMemory::Physical_Page_Address*)address)->ChipID]->Change_memory_status_preconditioning(address, status_info);
+		channels[((NVM::FlashMemory::Physical_Page_Address*)address)->ChannelID]->Chips[((NVM::FlashMemory::Physical_Page_Address*)address)->ChipID]->ChangeMemoryStatusPreconditioning(address, status_info);
 	}
 
 	void copy_read_data_to_transaction(NVM_Transaction_Flash_RD* read_transaction, NVM::FlashMemory::Flash_Command* command)
@@ -452,7 +452,7 @@ namespace SSD_Components {
 			waitingChipBKE->OngoingDieCMDTransfers.push(waitingBKE);
 
 			waitingBKE->Expected_finish_time = Simulator->Time() + this->channels[channel_id]->ProgramCommandTime[waitingBKE->ActiveTransactions.size()]
-				+ targetChip->Get_command_execution_latency(waitingBKE->ActiveCommand->CommandCode, waitingBKE->ActiveCommand->Address[0].PageID);
+				+ targetChip->GetCommandExecutionLatency(waitingBKE->ActiveCommand->CommandCode, waitingBKE->ActiveCommand->Address[0].PageID);
 			if (waitingChipBKE->Expected_command_exec_finish_time < waitingBKE->Expected_finish_time) {
 				waitingChipBKE->Expected_command_exec_finish_time = waitingBKE->Expected_finish_time;
 			}
@@ -556,7 +556,7 @@ namespace SSD_Components {
 				_my_instance->channels[chip->ChannelID]->SetStatus(BusChannelStatus::BUSY, chip);
 
 				dieBKE->Expected_finish_time = Simulator->Time() + _my_instance->channels[chip->ChannelID]->ProgramCommandTime[dieBKE->ActiveTransactions.size()]
-					+ chip->Get_command_execution_latency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
+					+ chip->GetCommandExecutionLatency(dieBKE->ActiveCommand->CommandCode, dieBKE->ActiveCommand->Address[0].PageID);
 				if (chipBKE->Expected_command_exec_finish_time < dieBKE->Expected_finish_time)
 					chipBKE->Expected_command_exec_finish_time = dieBKE->Expected_finish_time;
 #if 0	

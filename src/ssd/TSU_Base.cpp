@@ -31,9 +31,9 @@ namespace SSD_Components
 		delete[] Round_robin_turn_of_channel;
 	}
 
-	void TSU_Base::Setup_triggers()
+	void TSU_Base::SetupTriggers()
 	{
-		Sim_Object::Setup_triggers();
+		Sim_Object::SetupTriggers();
 		_NVMController->ConnectToTransactionServicedSignal(handle_transaction_serviced_signal_from_PHY);
 		_NVMController->ConnectToChannelIdleSignal(handle_channel_idle_signal);
 		_NVMController->ConnectToChipIdleSignal(handle_chip_idle_signal);

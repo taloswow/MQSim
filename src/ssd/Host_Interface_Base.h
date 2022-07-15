@@ -101,7 +101,7 @@ namespace SSD_Components
 		Host_Interface_Base(const sim_object_id_type& id, HostInterface_Types type, LHA_type max_logical_sector_address, 
 			unsigned int sectors_per_page, Data_Cache_Manager_Base* cache);
 		virtual ~Host_Interface_Base();
-		void Setup_triggers();
+		void SetupTriggers();
 		void ValidateSimulationConfig();
 
 		typedef void(*UserRequestArrivedSignalHandlerType) (User_Request*);

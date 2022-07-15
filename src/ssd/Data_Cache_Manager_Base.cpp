@@ -23,9 +23,9 @@ namespace SSD_Components
 
 	Data_Cache_Manager_Base::~Data_Cache_Manager_Base() {}
 
-	void Data_Cache_Manager_Base::Setup_triggers()
+	void Data_Cache_Manager_Base::SetupTriggers()
 	{
-		Sim_Object::Setup_triggers();
+		Sim_Object::SetupTriggers();
 		host_interface->Connect_to_user_request_arrived_signal(handle_user_request_arrived_signal);
 	}
 

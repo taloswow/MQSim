@@ -4,7 +4,6 @@
 #include "FlashTypes.h"
 #include "Page.h"
 
-
 namespace NVM
 {
 	namespace FlashMemory
@@ -14,9 +13,8 @@ namespace NVM
 		public:
 			Block(unsigned int PagesNoPerBlock, flash_block_ID_type BlockID);
 			~Block();
-			Page* Pages;						//Records the status of each sub-page
-			flash_block_ID_type ID;            //Again this variable is required in list based garbage collections
-			//BlockMetadata Metadata;
+			Page* Pages; // Records the status of each sub-page
+			flash_block_ID_type ID; // Again this variable is required in list based garbage collections
 		};
 	}
 }

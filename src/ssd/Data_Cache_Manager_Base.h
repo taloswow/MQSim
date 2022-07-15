@@ -27,7 +27,7 @@ namespace SSD_Components
 			unsigned int dram_row_size, unsigned int dram_data_rate, unsigned int dram_busrt_size, sim_time_type dram_tRCD, sim_time_type dram_tCL, sim_time_type dram_tRP,
 			Caching_Mode* caching_mode_per_input_stream, Cache_Sharing_Mode sharing_mode, unsigned int stream_count);
 		virtual ~Data_Cache_Manager_Base();
-		void Setup_triggers();
+		void SetupTriggers();
 		void StartSimulation();
 		void ValidateSimulationConfig();
 

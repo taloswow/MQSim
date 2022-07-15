@@ -17,7 +17,7 @@ namespace NVM
 			~Plane();
 			Block** Blocks;
 			unsigned int Healthy_block_no;
-			unsigned long Read_count;                     //how many read count in the process of workload
+			unsigned long Read_count; // how many read count in the process of workload
 			unsigned long Progam_count;
 			unsigned long Erase_count;
 			stream_id_type* Allocated_streams;

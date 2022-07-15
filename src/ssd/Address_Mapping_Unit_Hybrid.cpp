@@ -10,7 +10,7 @@ namespace SSD_Components
 		Address_Mapping_Unit_Base(id, ftl, flash_controller, block_manager, ideal_mapping_table,
 			concurrent_streams_no, channel_count, chip_no_per_channel, die_no_per_chip, plane_no_in_die,
 			block_no_per_plane, page_no_per_block, sectors_per_page, page_size_in_byte, overprovisioning_ratio, sharing_mode, fold_out_of_range_addresses) {}
-	void Address_Mapping_Unit_Hybrid::Setup_triggers() {}
+	void Address_Mapping_Unit_Hybrid::SetupTriggers() {}
 	void Address_Mapping_Unit_Hybrid::StartSimulation() {}
 	void Address_Mapping_Unit_Hybrid::ValidateSimulationConfig() {}
 	void Address_Mapping_Unit_Hybrid::ExecuteSimulatorEvent(MQSimEngine::Sim_Event* event) {}

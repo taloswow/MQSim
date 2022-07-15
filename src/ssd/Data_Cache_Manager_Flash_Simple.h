@@ -21,7 +21,7 @@ namespace SSD_Components
 			Caching_Mode* caching_mode_per_input_stream, unsigned int stream_count, unsigned int sector_no_per_page, unsigned int back_pressure_buffer_max_depth);
 		~Data_Cache_Manager_Flash_Simple();
 		void ExecuteSimulatorEvent(MQSimEngine::Sim_Event* ev);
-		void Setup_triggers();
+		void SetupTriggers();
 		void Do_warmup(std::vector<Utils::Workload_Statistics*> workload_stats);
 	private:
 		NVM_PHY_ONFI * flash_controller;

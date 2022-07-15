@@ -44,9 +44,9 @@ namespace SSD_Components
 		delete request_fetch_unit;
 	}
 
-	void Host_Interface_Base::Setup_triggers()
+	void Host_Interface_Base::SetupTriggers()
 	{
-		Sim_Object::Setup_triggers();
+		Sim_Object::SetupTriggers();
 		cache->Connect_to_user_request_serviced_signal(handle_user_request_serviced_signal_from_cache);
 		cache->Connect_to_user_memory_transaction_serviced_signal(handle_user_memory_transaction_serviced_signal_from_cache);
 	}
