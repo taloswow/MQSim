@@ -2,14 +2,15 @@
 #define HOST_INTERFACE_BASE_H
 
 #include <vector>
+#include <stdint.h>
+#include <cstring>
+
 #include "../sim/Sim_Object.h"
 #include "../sim/Sim_Reporter.h"
 #include "../host/PCIe_Switch.h"
 #include "../host/PCIe_Message.h"
 #include "User_Request.h"
 #include "Data_Cache_Manager_Base.h"
-#include <stdint.h>
-#include <cstring>
 
 namespace Host_Components
 {
@@ -50,21 +51,21 @@ namespace SSD_Components
 	public:
 		Input_Stream_Manager_Base(Host_Interface_Base* host_interface);
 		virtual ~Input_Stream_Manager_Base();
-		virtual void Handle_new_arrived_request(User_Request* request) = 0;
-		virtual void Handle_arrived_write_data(User_Request* request) = 0;
-		virtual void Handle_serviced_request(User_Request* request) = 0;
-		void Update_transaction_statistics(NVM_Transaction* transaction);
-		uint32_t Get_average_read_transaction_turnaround_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_read_transaction_execution_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_read_transaction_transfer_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_read_transaction_waiting_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_write_transaction_turnaround_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_write_transaction_execution_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_write_transaction_transfer_time(stream_id_type stream_id);//in microseconds
-		uint32_t Get_average_write_transaction_waiting_time(stream_id_type stream_id);//in microseconds
+		virtual void HandleNewArrivedRequest(User_Request* request) = 0;
+		virtual void HandleArrivedWriteData(User_Request* request) = 0;
+		virtual void HandleServicedRequest(User_Request* request) = 0;
+		void UpdateTransactionStatistics(NVM_Transaction* transaction);
+		uint32_t GetAverageReadTransactionTurnaroundTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageReadTransactionExecutionTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageReadTransactionTransferTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageReadTransactionWaitingTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageWriteTransactionTurnaroundTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageWriteTransactionExecutionTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageWriteTransactionTransferTime(stream_id_type stream_id);//in microseconds
+		uint32_t GetAverageWriteTransactionWaitingTime(stream_id_type stream_id);//in microseconds
 	protected:
 		Host_Interface_Base* host_interface;
-		virtual void segment_user_request(User_Request* user_request) = 0;
+		virtual void SegmentUserRequest(User_Request* user_request) = 0;
 		std::vector<Input_Stream_Base*> input_streams;
 	};
 
@@ -73,11 +74,11 @@ namespace SSD_Components
 	public:
 		Request_Fetch_Unit_Base(Host_Interface_Base* host_interface);
 		virtual ~Request_Fetch_Unit_Base();
-		virtual void Fetch_next_request(stream_id_type stream_id) = 0;
-		virtual void Fetch_write_data(User_Request* request) = 0;
-		virtual void Send_read_data(User_Request* request) = 0;
-		virtual void Process_pcie_write_message(uint64_t, void *, unsigned int) = 0;
-		virtual void Process_pcie_read_message(uint64_t, void *, unsigned int) = 0;
+		virtual void FetchNextRequest(stream_id_type stream_id) = 0;
+		virtual void FetchWriteData(User_Request* request) = 0;
+		virtual void SendReadData(User_Request* request) = 0;
+		virtual void ProcessPCIeWriteMessage(uint64_t, void *, unsigned int) = 0;
+		virtual void ProcessPCIeReadMessage(uint64_t, void *, unsigned int) = 0;
 	protected:
 		enum class DMA_Req_Type { REQUEST_INFO, WRITE_DATA };
 		struct DMA_Req_Item
@@ -105,7 +106,7 @@ namespace SSD_Components
 		void ValidateSimulationConfig();
 
 		typedef void(*UserRequestArrivedSignalHandlerType) (User_Request*);
-		void Connect_to_user_request_arrived_signal(UserRequestArrivedSignalHandlerType function)
+		void ConnectToUserRequestArrivedSignal(UserRequestArrivedSignalHandlerType function)
 		{
 			connected_user_request_arrived_signal_handlers.push_back(function);
 		}
@@ -113,19 +114,19 @@ namespace SSD_Components
 		void ConsumePCIeMessage(Host_Components::PCIe_Message* message)
 		{
 			if (message->Type == Host_Components::PCIe_Message_Type::READ_COMP) {
-				request_fetch_unit->Process_pcie_read_message(message->Address, message->Payload, message->Payload_size);
+				request_fetch_unit->ProcessPCIeReadMessage(message->Address, message->Payload, message->Payload_size);
 			} else {
-				request_fetch_unit->Process_pcie_write_message(message->Address, message->Payload, message->Payload_size);
+				request_fetch_unit->ProcessPCIeWriteMessage(message->Address, message->Payload, message->Payload_size);
 			}
 			delete message;
 		}
 	
-		void Send_read_message_to_host(uint64_t addresss, unsigned int request_read_data_size);
-		void Send_write_message_to_host(uint64_t addresss, void* message, unsigned int message_size);
+		void SendReadMessageToHost(uint64_t addresss, unsigned int request_read_data_size);
+		void SendWriteMessageToHost(uint64_t addresss, void* message, unsigned int message_size);
 
 		HostInterface_Types GetType() { return type; }
-		void Attach_to_device(Host_Components::PCIe_Switch* pcie_switch);
-		LHA_type Get_max_logical_sector_address();
+		void AttachToDevice(Host_Components::PCIe_Switch* pcie_switch);
+		LHA_type GetMaxLogicalSectorAddress();
 		unsigned int GetNoOfLHAsInAnNVMWriteUnit();
 	protected:
 		HostInterface_Types type;
@@ -137,7 +138,7 @@ namespace SSD_Components
 		Data_Cache_Manager_Base* cache;
 		std::vector<UserRequestArrivedSignalHandlerType> connected_user_request_arrived_signal_handlers;
 
-		void broadcast_user_request_arrival_signal(User_Request* user_request)
+		void BroadcastUserRequestArrivalSignal(User_Request* user_request)
 		{
 			for (std::vector<UserRequestArrivedSignalHandlerType>::iterator it = connected_user_request_arrived_signal_handlers.begin();
 				it != connected_user_request_arrived_signal_handlers.end(); it++) {
@@ -145,14 +146,14 @@ namespace SSD_Components
 			}
 		}
 
-		static void handle_user_request_serviced_signal_from_cache(User_Request* user_request)
+		static void HandleUserRequestServicedSignalFromCache(User_Request* user_request)
 		{
-			_my_instance->input_stream_manager->Handle_serviced_request(user_request);
+			_my_instance->input_stream_manager->HandleServicedRequest(user_request);
 		}
 
-		static void handle_user_memory_transaction_serviced_signal_from_cache(NVM_Transaction* transaction)
+		static void HandleUserMemoryTransactionServicedSignalFromCache(NVM_Transaction* transaction)
 		{
-			_my_instance->input_stream_manager->Update_transaction_statistics(transaction);
+			_my_instance->input_stream_manager->UpdateTransactionStatistics(transaction);
 		}
 	private:
 		Host_Components::PCIe_Switch* pcie_switch;

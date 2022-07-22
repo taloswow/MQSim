@@ -4,10 +4,16 @@
 namespace SSD_Components
 {
 	Input_Stream_Base::Input_Stream_Base() :
-		STAT_number_of_read_requests(0), STAT_number_of_write_requests(0), 
-		STAT_number_of_read_transactions(0), STAT_number_of_write_transactions(0),
-		STAT_sum_of_read_transactions_execution_time(0), STAT_sum_of_read_transactions_transfer_time(0), STAT_sum_of_read_transactions_waiting_time(0),
-		STAT_sum_of_write_transactions_execution_time(0), STAT_sum_of_write_transactions_transfer_time(0), STAT_sum_of_write_transactions_waiting_time(0)
+		STAT_number_of_read_requests(0),
+		STAT_number_of_write_requests(0), 
+		STAT_number_of_read_transactions(0),
+		STAT_number_of_write_transactions(0),
+		STAT_sum_of_read_transactions_execution_time(0),
+		STAT_sum_of_read_transactions_transfer_time(0),
+		STAT_sum_of_read_transactions_waiting_time(0),
+		STAT_sum_of_write_transactions_execution_time(0),
+		STAT_sum_of_write_transactions_transfer_time(0),
+		STAT_sum_of_write_transactions_waiting_time(0)
 	{}
 	
 	Input_Stream_Manager_Base::~Input_Stream_Manager_Base()
@@ -47,15 +53,15 @@ namespace SSD_Components
 	void Host_Interface_Base::SetupTriggers()
 	{
 		Sim_Object::SetupTriggers();
-		cache->ConnectToUserRequestServicedSignal(handle_user_request_serviced_signal_from_cache);
-		cache->ConnectToUserMemoryTransactionServicedSignal(handle_user_memory_transaction_serviced_signal_from_cache);
+		cache->ConnectToUserRequestServicedSignal(HandleUserRequestServicedSignalFromCache);
+		cache->ConnectToUserMemoryTransactionServicedSignal(HandleUserMemoryTransactionServicedSignalFromCache);
 	}
 
 	void Host_Interface_Base::ValidateSimulationConfig()
 	{
 	}
 
-	void Host_Interface_Base::Send_read_message_to_host(uint64_t addresss, unsigned int request_read_data_size)
+	void Host_Interface_Base::SendReadMessageToHost(uint64_t addresss, unsigned int request_read_data_size)
 	{
 		Host_Components::PCIe_Message* pcie_message = new Host_Components::PCIe_Message;
 		pcie_message->Type = Host_Components::PCIe_Message_Type::READ_REQ;
@@ -66,7 +72,7 @@ namespace SSD_Components
 		pcie_switch->SendToHost(pcie_message);
 	}
 
-	void Host_Interface_Base::Send_write_message_to_host(uint64_t addresss, void* message, unsigned int message_size)
+	void Host_Interface_Base::SendWriteMessageToHost(uint64_t addresss, void* message, unsigned int message_size)
 	{
 		Host_Components::PCIe_Message* pcie_message = new Host_Components::PCIe_Message;
 		pcie_message->Type = Host_Components::PCIe_Message_Type::WRITE_REQ;
@@ -77,12 +83,12 @@ namespace SSD_Components
 		pcie_switch->SendToHost(pcie_message);
 	}
 
-	void Host_Interface_Base::Attach_to_device(Host_Components::PCIe_Switch* pcie_switch)
+	void Host_Interface_Base::AttachToDevice(Host_Components::PCIe_Switch* pcie_switch)
 	{
 		this->pcie_switch = pcie_switch;
 	}
 
-	LHA_type Host_Interface_Base::Get_max_logical_sector_address()
+	LHA_type Host_Interface_Base::GetMaxLogicalSectorAddress()
 	{
 		return max_logical_sector_address;
 	}
@@ -97,7 +103,7 @@ namespace SSD_Components
 	{
 	}
 
-	void Input_Stream_Manager_Base::Update_transaction_statistics(NVM_Transaction* transaction)
+	void Input_Stream_Manager_Base::UpdateTransactionStatistics(NVM_Transaction* transaction)
 	{
 		switch (transaction->Type)
 		{
@@ -116,7 +122,7 @@ namespace SSD_Components
 		}
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_read_transaction_turnaround_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageReadTransactionTurnaroundTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_read_transactions == 0) {
 			return 0;
@@ -125,7 +131,7 @@ namespace SSD_Components
 			/ input_streams[stream_id]->STAT_number_of_read_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_read_transaction_execution_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageReadTransactionExecutionTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_read_transactions == 0) {
 			return 0;
@@ -133,7 +139,7 @@ namespace SSD_Components
 		return (uint32_t)(input_streams[stream_id]->STAT_sum_of_read_transactions_execution_time / input_streams[stream_id]->STAT_number_of_read_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_read_transaction_transfer_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageReadTransactionTransferTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_read_transactions == 0) {
 			return 0;
@@ -141,7 +147,7 @@ namespace SSD_Components
 		return (uint32_t)(input_streams[stream_id]->STAT_sum_of_read_transactions_transfer_time / input_streams[stream_id]->STAT_number_of_read_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_read_transaction_waiting_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageReadTransactionWaitingTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_read_transactions == 0) {
 			return 0;
@@ -149,7 +155,7 @@ namespace SSD_Components
 		return (uint32_t)(input_streams[stream_id]->STAT_sum_of_read_transactions_waiting_time / input_streams[stream_id]->STAT_number_of_read_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_write_transaction_turnaround_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageWriteTransactionTurnaroundTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_write_transactions == 0) {
 			return 0;
@@ -158,7 +164,7 @@ namespace SSD_Components
 			/ input_streams[stream_id]->STAT_number_of_write_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_write_transaction_execution_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageWriteTransactionExecutionTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_write_transactions == 0) {
 			return 0;
@@ -166,7 +172,7 @@ namespace SSD_Components
 		return (uint32_t)(input_streams[stream_id]->STAT_sum_of_write_transactions_execution_time / input_streams[stream_id]->STAT_number_of_write_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_write_transaction_transfer_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageWriteTransactionTransferTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_write_transactions == 0) {
 			return 0;
@@ -174,7 +180,7 @@ namespace SSD_Components
 		return (uint32_t)(input_streams[stream_id]->STAT_sum_of_write_transactions_transfer_time / input_streams[stream_id]->STAT_number_of_write_transactions / SIM_TIME_TO_MICROSECONDS_COEFF);
 	}
 
-	uint32_t Input_Stream_Manager_Base::Get_average_write_transaction_waiting_time(stream_id_type stream_id)//in microseconds
+	uint32_t Input_Stream_Manager_Base::GetAverageWriteTransactionWaitingTime(stream_id_type stream_id) // in microseconds
 	{
 		if (input_streams[stream_id]->STAT_number_of_write_transactions == 0) {
 			return 0;

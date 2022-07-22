@@ -64,15 +64,15 @@ TSU_Priority_OutOfOrder::TSU_Priority_OutOfOrder(const sim_object_id_type &id,
             currentWeightWrite[channelID][chipId] = IO_Flow_PriorityClass::get_scheduling_weight(IO_Flow_PriorityClass::HIGH);
             for (unsigned int priorityClass = 0; priorityClass < IO_Flow_PriorityClass::NUMBER_OF_PRIORITY_LEVELS; priorityClass++)
             {
-                UserReadTRQueue[channelID][chipId][priorityClass].Set_id("User_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
-                UserWriteTRQueue[channelID][chipId][priorityClass].Set_id("User_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
+                UserReadTRQueue[channelID][chipId][priorityClass].SetID("User_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
+                UserWriteTRQueue[channelID][chipId][priorityClass].SetID("User_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId) + "@" + IO_Flow_PriorityClass::to_string(priorityClass));
             }
 
-            GCReadTRQueue[channelID][chipId].Set_id("GC_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
-            MappingReadTRQueue[channelID][chipId].Set_id("Mapping_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
-            MappingWriteTRQueue[channelID][chipId].Set_id("Mapping_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
-            GCWriteTRQueue[channelID][chipId].Set_id("GC_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
-            GCEraseTRQueue[channelID][chipId].Set_id("GC_Erase_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
+            GCReadTRQueue[channelID][chipId].SetID("GC_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
+            MappingReadTRQueue[channelID][chipId].SetID("Mapping_Read_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
+            MappingWriteTRQueue[channelID][chipId].SetID("Mapping_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
+            GCWriteTRQueue[channelID][chipId].SetID("GC_Write_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
+            GCEraseTRQueue[channelID][chipId].SetID("GC_Erase_TR_Queue@" + std::to_string(channelID) + "@" + std::to_string(chipId));
         }
     }
 }
@@ -340,7 +340,7 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
     if (MappingReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
     {
         sourceQueue1 = &MappingReadTRQueue[chip->ChannelID][chip->ChipID];
-        if (ftl->GC_and_WL_Unit->GC_is_in_urgent_mode(chip) && GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
+        if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip) && GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
         {
             sourceQueue2 = &GCReadTRQueue[chip->ChannelID][chip->ChipID];
         }
@@ -349,7 +349,7 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
             sourceQueue2 = get_next_read_service_queue(chip);
         }
     }
-    else if (ftl->GC_and_WL_Unit->GC_is_in_urgent_mode(chip))
+    else if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
     {
         //If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
         if (GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
@@ -473,7 +473,7 @@ bool TSU_Priority_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_
     Flash_Transaction_Queue *sourceQueue1 = NULL, *sourceQueue2 = NULL;
 
     //If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
-    if (ftl->GC_and_WL_Unit->GC_is_in_urgent_mode(chip))
+    if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
     {
         if (GCWriteTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
         {

@@ -29,10 +29,10 @@ namespace SSD_Components
 		((Input_Stream_SATA*)this->input_streams[SATA_STREAM_ID])->Completion_queue_base_address = completion_queue_base_address;
 	}
 
-	inline void Input_Stream_Manager_SATA::Submission_queue_tail_pointer_update(uint16_t tail_pointer_value)
+	inline void Input_Stream_Manager_SATA::SubmissionQueueTailPointerUpdate(uint16_t tail_pointer_value)
 	{
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_tail = tail_pointer_value;
-		((Host_Interface_SATA*)host_interface)->request_fetch_unit->Fetch_next_request(SATA_STREAM_ID);
+		((Host_Interface_SATA*)host_interface)->request_fetch_unit->FetchNextRequest(SATA_STREAM_ID);
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->On_the_fly_requests++;
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head++;
 		if (((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head == ncq_depth) {
@@ -40,18 +40,18 @@ namespace SSD_Components
 		}
 	}
 
-	inline void Input_Stream_Manager_SATA::Completion_queue_head_pointer_update(uint16_t head_pointer_value)
+	inline void Input_Stream_Manager_SATA::CompletionQueueHeadPointerUpdate(uint16_t head_pointer_value)
 	{
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Completion_head = head_pointer_value;
 
 		if (((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Completed_user_requests.size() > 0) {
 			User_Request* request = ((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Completed_user_requests.front();
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Completed_user_requests.pop_front();
-			inform_host_request_completed(request);
+			InformHostRequestCompleted(request);
 		}
 	}
 
-	inline void Input_Stream_Manager_SATA::Handle_new_arrived_request(User_Request* request)
+	inline void Input_Stream_Manager_SATA::HandleNewArrivedRequest(User_Request* request)
 	{
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head_informed_to_host++;
 		if (((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head_informed_to_host == ncq_depth) {
@@ -60,23 +60,23 @@ namespace SSD_Components
 		if (request->Type == UserRequestType::READ) {
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Waiting_user_requests.push_back(request);
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->STAT_number_of_read_requests++;
-			segment_user_request(request);
+			SegmentUserRequest(request);
 
-			((Host_Interface_SATA*)host_interface)->broadcast_user_request_arrival_signal(request);
+			((Host_Interface_SATA*)host_interface)->BroadcastUserRequestArrivalSignal(request);
 		} else {//This is a write request
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Waiting_user_requests.push_back(request);
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->STAT_number_of_write_requests++;
-			((Host_Interface_SATA*)host_interface)->request_fetch_unit->Fetch_write_data(request);
+			((Host_Interface_SATA*)host_interface)->request_fetch_unit->FetchWriteData(request);
 		}
 	}
 
-	inline void Input_Stream_Manager_SATA::Handle_arrived_write_data(User_Request* request)
+	inline void Input_Stream_Manager_SATA::HandleArrivedWriteData(User_Request* request)
 	{
-		segment_user_request(request);
-		((Host_Interface_SATA*)host_interface)->broadcast_user_request_arrival_signal(request);
+		SegmentUserRequest(request);
+		((Host_Interface_SATA*)host_interface)->BroadcastUserRequestArrivalSignal(request);
 	}
 
-	inline void Input_Stream_Manager_SATA::Handle_serviced_request(User_Request* request)
+	inline void Input_Stream_Manager_SATA::HandleServicedRequest(User_Request* request)
 	{
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Waiting_user_requests.remove(request);
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->On_the_fly_requests--;
@@ -85,11 +85,11 @@ namespace SSD_Components
 
 		//If this is a read request, then the read data should be written to host memory
 		if (request->Type == UserRequestType::READ) {
-			((Host_Interface_SATA*)host_interface)->request_fetch_unit->Send_read_data(request);
+			((Host_Interface_SATA*)host_interface)->request_fetch_unit->SendReadData(request);
 		}
 
 		if (((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head != ((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_tail) {
-			((Host_Interface_SATA*)host_interface)->request_fetch_unit->Fetch_next_request(SATA_STREAM_ID);
+			((Host_Interface_SATA*)host_interface)->request_fetch_unit->FetchNextRequest(SATA_STREAM_ID);
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->On_the_fly_requests++;
 			((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head++;//Update submission queue head after starting fetch request
 			if (((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head == ncq_depth) {//Circular queue implementation
@@ -110,13 +110,13 @@ namespace SSD_Components
 			return;
 		}
 
-		inform_host_request_completed(request);//Completion queue is not full, so the device can DMA the completion queue entry to the host
+		InformHostRequestCompleted(request);//Completion queue is not full, so the device can DMA the completion queue entry to the host
 		DELETE_REQUEST_NVME(request);
 	}
 
-	inline void Input_Stream_Manager_SATA::inform_host_request_completed(User_Request* request)
+	inline void Input_Stream_Manager_SATA::InformHostRequestCompleted(User_Request* request)
 	{
-		((Request_Fetch_Unit_SATA*)((Host_Interface_SATA*)host_interface)->request_fetch_unit)->Send_completion_queue_element(request, ((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head_informed_to_host);
+		((Request_Fetch_Unit_SATA*)((Host_Interface_SATA*)host_interface)->request_fetch_unit)->SendCompletionQueueElement(request, ((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Submission_head_informed_to_host);
 		((Input_Stream_SATA*)input_streams[SATA_STREAM_ID])->Completion_tail++;//Next free slot in the completion queue
 		
 		//Circular queue implementation
@@ -125,7 +125,7 @@ namespace SSD_Components
 		}
 	}
 
-	void Input_Stream_Manager_SATA::segment_user_request(User_Request* user_request)
+	void Input_Stream_Manager_SATA::SegmentUserRequest(User_Request* user_request)
 	{
 		LHA_type lsa = user_request->Start_LBA;
 		LHA_type lsa2 = user_request->Start_LBA;
@@ -171,24 +171,24 @@ namespace SSD_Components
 	Request_Fetch_Unit_SATA::Request_Fetch_Unit_SATA(Host_Interface_Base* host_interface, uint16_t ncq_depth) :
 		Request_Fetch_Unit_Base(host_interface), current_phase(0xffff), number_of_sent_cqe(0), ncq_depth(ncq_depth) {}
 
-	void Request_Fetch_Unit_SATA::Process_pcie_write_message(uint64_t address, void * payload, unsigned int payload_size)
+	void Request_Fetch_Unit_SATA::ProcessPCIeWriteMessage(uint64_t address, void * payload, unsigned int payload_size)
 	{
 		Host_Interface_SATA* hi = (Host_Interface_SATA*)host_interface;
 		uint64_t val = (uint64_t)payload;
 		switch (address)
 		{
 			case NCQ_SUBMISSION_REGISTER:
-				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->Submission_queue_tail_pointer_update((uint16_t)val);
+				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->SubmissionQueueTailPointerUpdate((uint16_t)val);
 				break;
 			case NCQ_COMPLETION_REGISTER:
-				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->Completion_queue_head_pointer_update((uint16_t)val);
+				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->CompletionQueueHeadPointerUpdate((uint16_t)val);
 				break;
 			default:
 				throw std::invalid_argument("Unknown register is written in Request_Fetch_Unit_SATA!");
 		}
 	}
 
-	void Request_Fetch_Unit_SATA::Process_pcie_read_message(uint64_t address, void * payload, unsigned int payload_size)
+	void Request_Fetch_Unit_SATA::ProcessPCIeReadMessage(uint64_t address, void * payload, unsigned int payload_size)
 	{
 		Host_Interface_SATA* hi = (Host_Interface_SATA*)host_interface;
 		DMA_Req_Item* dma_req_item = dma_list.front();
@@ -220,12 +220,12 @@ namespace SSD_Components
 					default:
 						throw std::invalid_argument("SATA command is not supported!");
 				}
-				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->Handle_new_arrived_request(new_request);
+				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->HandleNewArrivedRequest(new_request);
 				break;
 			}
 			case DMA_Req_Type::WRITE_DATA:
 				COPYDATA(((User_Request*)dma_req_item->object)->Data, payload, payload_size);
-				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->Handle_arrived_write_data((User_Request*)dma_req_item->object);
+				((Input_Stream_Manager_SATA*)(hi->input_stream_manager))->HandleArrivedWriteData((User_Request*)dma_req_item->object);
 				break;
 			default:
 				break;
@@ -234,7 +234,7 @@ namespace SSD_Components
 		delete dma_req_item;
 	}
 
-	void Request_Fetch_Unit_SATA::Fetch_next_request(stream_id_type stream_id)
+	void Request_Fetch_Unit_SATA::FetchNextRequest(stream_id_type stream_id)
 	{
 		DMA_Req_Item* dma_req_item = new DMA_Req_Item;
 		dma_req_item->Type = DMA_Req_Type::REQUEST_INFO;
@@ -243,10 +243,10 @@ namespace SSD_Components
 
 		Host_Interface_SATA* hi = (Host_Interface_SATA*)host_interface;
 		Input_Stream_SATA* im = ((Input_Stream_SATA*)hi->input_stream_manager->input_streams[SATA_STREAM_ID]);
-		host_interface->Send_read_message_to_host(im->Submission_queue_base_address + im->Submission_head * sizeof(Submission_Queue_Entry), sizeof(Submission_Queue_Entry));
+		host_interface->SendReadMessageToHost(im->Submission_queue_base_address + im->Submission_head * sizeof(Submission_Queue_Entry), sizeof(Submission_Queue_Entry));
 	}
 
-	void Request_Fetch_Unit_SATA::Fetch_write_data(User_Request* request)
+	void Request_Fetch_Unit_SATA::FetchWriteData(User_Request* request)
 	{
 		DMA_Req_Item* dma_req_item = new DMA_Req_Item;
 		dma_req_item->Type = DMA_Req_Type::WRITE_DATA;
@@ -254,10 +254,10 @@ namespace SSD_Components
 		dma_list.push_back(dma_req_item);
 
 		Submission_Queue_Entry* sqe = (Submission_Queue_Entry*)request->IO_command_info;
-		host_interface->Send_read_message_to_host((sqe->PRP_entry_2 << 31) | sqe->PRP_entry_1, request->Size_in_byte);
+		host_interface->SendReadMessageToHost((sqe->PRP_entry_2 << 31) | sqe->PRP_entry_1, request->Size_in_byte);
 	}
 
-	void Request_Fetch_Unit_SATA::Send_completion_queue_element(User_Request* request, uint16_t sq_head_value)
+	void Request_Fetch_Unit_SATA::SendCompletionQueueElement(User_Request* request, uint16_t sq_head_value)
 	{
 		Host_Interface_SATA* hi = (Host_Interface_SATA*)host_interface;
 		Completion_Queue_Entry* cqe = new Completion_Queue_Entry;
@@ -266,7 +266,7 @@ namespace SSD_Components
 		cqe->SF_P = 0x0001 & current_phase;
 		cqe->Command_Identifier = ((Submission_Queue_Entry*)request->IO_command_info)->Command_Identifier;
 		Input_Stream_SATA* im = ((Input_Stream_SATA*)hi->input_stream_manager->input_streams[SATA_STREAM_ID]);
-		host_interface->Send_write_message_to_host(im->Completion_queue_base_address + im->Completion_tail * sizeof(Completion_Queue_Entry), cqe, sizeof(Completion_Queue_Entry));
+		host_interface->SendWriteMessageToHost(im->Completion_queue_base_address + im->Completion_tail * sizeof(Completion_Queue_Entry), cqe, sizeof(Completion_Queue_Entry));
 		number_of_sent_cqe++;
 		if (number_of_sent_cqe % ncq_depth == 0) {
 			if (current_phase == 0xffff) {//According to protocol specification, the value of the Phase Tag is inverted each pass through the Completion Queue
@@ -277,10 +277,10 @@ namespace SSD_Components
 		}
 	}
 
-	void Request_Fetch_Unit_SATA::Send_read_data(User_Request* request)
+	void Request_Fetch_Unit_SATA::SendReadData(User_Request* request)
 	{
 		Submission_Queue_Entry* sqe = (Submission_Queue_Entry*)request->IO_command_info;
-		host_interface->Send_write_message_to_host(sqe->PRP_entry_1, request->Data, request->Size_in_byte);
+		host_interface->SendWriteMessageToHost(sqe->PRP_entry_1, request->Data, request->Size_in_byte);
 	}
 
 	Host_Interface_SATA::Host_Interface_SATA(const sim_object_id_type& id,
@@ -321,35 +321,35 @@ namespace SSD_Components
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Read_Transaction_Turnaround_Time";
-		val = std::to_string(input_stream_manager->Get_average_read_transaction_turnaround_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageReadTransactionTurnaroundTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Read_Transaction_Execution_Time";
-		val = std::to_string(input_stream_manager->Get_average_read_transaction_execution_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageReadTransactionExecutionTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Read_Transaction_Transfer_Time";
-		val = std::to_string(input_stream_manager->Get_average_read_transaction_transfer_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageReadTransactionTransferTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Read_Transaction_Waiting_Time";
-		val = std::to_string(input_stream_manager->Get_average_read_transaction_waiting_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageReadTransactionWaitingTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Write_Transaction_Turnaround_Time";
-		val = std::to_string(input_stream_manager->Get_average_write_transaction_turnaround_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageWriteTransactionTurnaroundTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Write_Transaction_Execution_Time";
-		val = std::to_string(input_stream_manager->Get_average_write_transaction_execution_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageWriteTransactionExecutionTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Write_Transaction_Transfer_Time";
-		val = std::to_string(input_stream_manager->Get_average_write_transaction_transfer_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageWriteTransactionTransferTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		attr = "Average_Write_Transaction_Waiting_Time";
-		val = std::to_string(input_stream_manager->Get_average_write_transaction_waiting_time(SATA_STREAM_ID));
+		val = std::to_string(input_stream_manager->GetAverageWriteTransactionWaitingTime(SATA_STREAM_ID));
 		xmlwriter.WriteAttributeString(attr, val);
 
 		xmlwriter.WriteCloseTag();

@@ -5,18 +5,50 @@ namespace SSD_Components
 	GC_and_WL_Unit_Base* GC_and_WL_Unit_Base::_my_instance;
 	
 	GC_and_WL_Unit_Base::GC_and_WL_Unit_Base(const sim_object_id_type& id,
-		Address_Mapping_Unit_Base* address_mapping_unit, Flash_Block_Manager_Base* block_manager, TSU_Base* tsu, NVM_PHY_ONFI* flash_controller,
-		GC_Block_Selection_Policy_Type block_selection_policy, double gc_threshold, bool preemptible_gc_enabled, double gc_hard_threshold,
-		unsigned int channel_count, unsigned int chip_no_per_channel, unsigned int die_no_per_chip, unsigned int plane_no_per_die,
-		unsigned int block_no_per_plane, unsigned int page_no_per_block, unsigned int sector_no_per_page, 
-		bool use_copyback, double rho, unsigned int max_ongoing_gc_reqs_per_plane, bool dynamic_wearleveling_enabled, bool static_wearleveling_enabled, unsigned int static_wearleveling_threshold, int seed) :
-		Sim_Object(id), address_mapping_unit(address_mapping_unit), block_manager(block_manager), tsu(tsu), flash_controller(flash_controller), force_gc(false),
-		block_selection_policy(block_selection_policy), gc_threshold(gc_threshold),	use_copyback(use_copyback), 
-		preemptible_gc_enabled(preemptible_gc_enabled), gc_hard_threshold(gc_hard_threshold),
-		random_generator(seed), max_ongoing_gc_reqs_per_plane(max_ongoing_gc_reqs_per_plane),
-		channel_count(channel_count), chip_no_per_channel(chip_no_per_channel), die_no_per_chip(die_no_per_chip), plane_no_per_die(plane_no_per_die),
-		block_no_per_plane(block_no_per_plane), pages_no_per_block(page_no_per_block), sector_no_per_page(sector_no_per_page),
-		dynamic_wearleveling_enabled(dynamic_wearleveling_enabled), static_wearleveling_enabled(static_wearleveling_enabled), static_wearleveling_threshold(static_wearleveling_threshold)
+			Address_Mapping_Unit_Base* address_mapping_unit,
+			Flash_Block_Manager_Base* block_manager,
+			TSU_Base* tsu,
+			NVM_PHY_ONFI* flash_controller,
+			GC_Block_Selection_Policy_Type block_selection_policy,
+			double gc_threshold,
+			bool preemptible_gc_enabled,
+			double gc_hard_threshold,
+			unsigned int channel_count,
+			unsigned int chip_no_per_channel,
+			unsigned int die_no_per_chip,
+			unsigned int plane_no_per_die,
+			unsigned int block_no_per_plane,
+			unsigned int page_no_per_block,
+			unsigned int sector_no_per_page, 
+			bool use_copyback,
+			double rho,
+			unsigned int max_ongoing_gc_reqs_per_plane,
+			bool dynamic_wearleveling_enabled,
+			bool static_wearleveling_enabled,
+			unsigned int static_wearleveling_threshold, int seed) :
+		Sim_Object(id),
+		address_mapping_unit(address_mapping_unit),
+		block_manager(block_manager), 
+		tsu(tsu),
+		flash_controller(flash_controller),
+		force_gc(false),
+		block_selection_policy(block_selection_policy),
+		gc_threshold(gc_threshold),
+		use_copyback(use_copyback), 
+		preemptible_gc_enabled(preemptible_gc_enabled),
+		gc_hard_threshold(gc_hard_threshold),
+		random_generator(seed),
+		max_ongoing_gc_reqs_per_plane(max_ongoing_gc_reqs_per_plane),
+		channel_count(channel_count),
+		chip_no_per_channel(chip_no_per_channel),
+		die_no_per_chip(die_no_per_chip),
+		plane_no_per_die(plane_no_per_die),
+		block_no_per_plane(block_no_per_plane),
+		pages_no_per_block(page_no_per_block),
+		sector_no_per_page(sector_no_per_page),
+		dynamic_wearleveling_enabled(dynamic_wearleveling_enabled),
+		static_wearleveling_enabled(static_wearleveling_enabled),
+		static_wearleveling_threshold(static_wearleveling_threshold)
 	{
 		_my_instance = this;
 		block_pool_gc_threshold = (unsigned int)(gc_threshold * (double)block_no_per_plane);
@@ -50,29 +82,28 @@ namespace SSD_Components
 				switch (transaction->Type)
 				{
 					case Transaction_Type::READ:
-						_my_instance->block_manager->Read_transaction_serviced(transaction->Address);
+						_my_instance->block_manager->ReadTransactionServiced(transaction->Address);
 						break;
 					case Transaction_Type::WRITE:
-						_my_instance->block_manager->Program_transaction_serviced(transaction->Address);
+						_my_instance->block_manager->ProgramTransactionServiced(transaction->Address);
 						break;
 					default:
 						PRINT_ERROR("Unexpected situation in the GC_and_WL_Unit_Base function!")
 				}
-				if (_my_instance->block_manager->Block_has_ongoing_gc_wl(transaction->Address)) {
-					if (_my_instance->block_manager->Can_execute_gc_wl(transaction->Address)) {
+				if (_my_instance->block_manager->BlockHasOngoingGCWL(transaction->Address)) {
+					if (_my_instance->block_manager->CanExecuteGCWL(transaction->Address)) {
 						NVM::FlashMemory::Physical_Page_Address gc_wl_candidate_address(transaction->Address);
 						Block_Pool_Slot_Type* block = &pbke->Blocks[transaction->Address.BlockID];
 						Stats::Total_gc_executions++;
 						_my_instance->tsu->Prepare_for_transaction_submit();
 						NVM_Transaction_Flash_ER* gc_wl_erase_tr = new NVM_Transaction_Flash_ER(Transaction_Source_Type::GC_WL, block->Stream_id, gc_wl_candidate_address);
 						
-						//If there are some valid pages in block, then prepare flash transactions for page movement
+						// If there are some valid pages in block, then prepare flash transactions for page movement
 						if (block->Current_page_write_index - block->Invalid_page_count > 0) {
-							//address_mapping_unit->Lock_physical_block_for_gc(gc_candidate_address);//Lock the block, so no user request can intervene while the GC is progressing
 							NVM_Transaction_Flash_RD* gc_wl_read = NULL;
 							NVM_Transaction_Flash_WR* gc_wl_write = NULL;
 							for (flash_page_ID_type pageID = 0; pageID < block->Current_page_write_index; pageID++) {
-								if (_my_instance->block_manager->Is_page_valid(block, pageID)) {
+								if (_my_instance->block_manager->IsPageValid(block, pageID)) {
 									Stats::Total_page_movements_for_gc++;
 									gc_wl_candidate_address.PageID = pageID;
 									if (_my_instance->use_copyback) {
@@ -88,7 +119,9 @@ namespace SSD_Components
 										gc_wl_write->ExecutionMode = WriteExecutionModeType::SIMPLE;
 										gc_wl_write->RelatedErase = gc_wl_erase_tr;
 										gc_wl_read->RelatedWrite = gc_wl_write;
-										_my_instance->tsu->Submit_transaction(gc_wl_read);//Only the read transaction would be submitted. The Write transaction is submitted when the read transaction is finished and the LPA of the target page is determined
+										_my_instance->tsu->Submit_transaction(gc_wl_read);
+										// Only the read transaction would be submitted.
+										// The Write transaction is submitted when the read transaction is finished and the LPA of the target page is determined
 									}
 									gc_wl_erase_tr->Page_movement_activities.push_back(gc_wl_write);
 								}
@@ -110,7 +143,7 @@ namespace SSD_Components
 				page_status_type page_status_bitmap;
 				if (pbke->Blocks[transaction->Address.BlockID].Holds_mapping_data) {
 					_my_instance->address_mapping_unit->GetTranslationMappingInfoForGC(transaction->Stream_id, (MVPN_type)transaction->LPA, mppa, page_status_bitmap);
-					//There has been no write on the page since GC start, and it is still valid
+					// There has been no write on the page since GC start, and it is still valid
 					if (mppa == transaction->PPA) {
 						_my_instance->tsu->Prepare_for_transaction_submit();
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->write_sectors_bitmap = FULL_PROGRAMMED_PAGE;
@@ -125,7 +158,7 @@ namespace SSD_Components
 				} else {
 					_my_instance->address_mapping_unit->GetDataMappingInfoForGC(transaction->Stream_id, transaction->LPA, ppa, page_status_bitmap);
 					
-					//There has been no write on the page since GC start, and it is still valid
+					// There has been no write on the page since GC start, and it is still valid
 					if (ppa == transaction->PPA) {
 						_my_instance->tsu->Prepare_for_transaction_submit();
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->write_sectors_bitmap = page_status_bitmap;
@@ -152,18 +185,20 @@ namespace SSD_Components
 				break;
 			case Transaction_Type::ERASE:
 				pbke->Ongoing_erase_operations.erase(pbke->Ongoing_erase_operations.find(transaction->Address.BlockID));
-				_my_instance->block_manager->Add_erased_block_to_pool(transaction->Address);
+				_my_instance->block_manager->AddErasedBlockToPool(transaction->Address);
 				_my_instance->block_manager->GC_WL_finished(transaction->Address);
-				if (_my_instance->check_static_wl_required(transaction->Address)) {
-					_my_instance->run_static_wearleveling(transaction->Address);
+				if (_my_instance->CheckStaticWLRequired(transaction->Address)) {
+					_my_instance->RunStaticWearleveling(transaction->Address);
 				}
-				_my_instance->address_mapping_unit->StartServicingWritesForOverfullPlane(transaction->Address);//Must be inovked after above statements since it may lead to flash page consumption for waiting program transactions
+				_my_instance->address_mapping_unit->StartServicingWritesForOverfullPlane(transaction->Address);
+				// Must be invoked after above statements since it may lead to flash
+				// page consumption for waiting program transactions
 
-				if (_my_instance->Stop_servicing_writes(transaction->Address)) {
-					_my_instance->Check_gc_required(pbke->Get_free_block_pool_size(), transaction->Address);
+				if (_my_instance->StopServicingWrites(transaction->Address)) {
+					_my_instance->CheckGCRequired(pbke->GetFreeBlockPoolSize(), transaction->Address);
 				}
 				break;
-			} //switch (transaction->Type)
+			}
 	}
 
 	void GC_and_WL_Unit_Base::StartSimulation()
@@ -178,12 +213,12 @@ namespace SSD_Components
 	{
 	}
 
-	GC_Block_Selection_Policy_Type GC_and_WL_Unit_Base::Get_gc_policy()
+	GC_Block_Selection_Policy_Type GC_and_WL_Unit_Base::GetGCPolicy()
 	{
 		return block_selection_policy;
 	}
 
-	unsigned int GC_and_WL_Unit_Base::Get_GC_policy_specific_parameter()
+	unsigned int GC_and_WL_Unit_Base::GetGCPolicySpecificParameter()
 	{
 		switch (block_selection_policy) {
 			case GC_Block_Selection_Policy_Type::RGA:
@@ -195,33 +230,30 @@ namespace SSD_Components
 		return 0;
 	}
 
-	unsigned int GC_and_WL_Unit_Base::Get_minimum_number_of_free_pages_before_GC()
+	unsigned int GC_and_WL_Unit_Base::GetMinimumNumberOfFreePagesBeforeGC()
 	{
 		return block_pool_gc_threshold;
-		/*if (preemptible_gc_enabled)
-			return block_pool_gc_hard_threshold;
-		else return block_pool_gc_threshold;*/
 	}
 
-	bool GC_and_WL_Unit_Base::Use_dynamic_wearleveling()
+	bool GC_and_WL_Unit_Base::UseDynamicWearleveling()
 	{
 		return dynamic_wearleveling_enabled;
 	}
 
-	inline bool GC_and_WL_Unit_Base::Use_static_wearleveling()
+	inline bool GC_and_WL_Unit_Base::UseStaticWearleveling()
 	{
 		return static_wearleveling_enabled;
 	}
 	
-	bool GC_and_WL_Unit_Base::Stop_servicing_writes(const NVM::FlashMemory::Physical_Page_Address& plane_address)
+	bool GC_and_WL_Unit_Base::StopServicingWrites(const NVM::FlashMemory::Physical_Page_Address& plane_address)
 	{
 		PlaneBookKeepingType* pbke = &(_my_instance->block_manager->plane_manager[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID]);
-		return block_manager->Get_pool_size(plane_address) < max_ongoing_gc_reqs_per_plane;
+		return block_manager->GetPoolSize(plane_address) < max_ongoing_gc_reqs_per_plane;
 	}
 
-	bool GC_and_WL_Unit_Base::is_safe_gc_wl_candidate(const PlaneBookKeepingType* plane_record, const flash_block_ID_type gc_wl_candidate_block_id)
+	bool GC_and_WL_Unit_Base::IsSafeGCWLCandidate(const PlaneBookKeepingType* plane_record, const flash_block_ID_type gc_wl_candidate_block_id)
 	{
-		//The block shouldn't be a current write frontier
+		// The block shouldn't be a current write frontier
 		for (unsigned int stream_id = 0; stream_id < address_mapping_unit->GetNoOfInputStreams(); stream_id++) {
 			if ((&plane_record->Blocks[gc_wl_candidate_block_id]) == plane_record->Data_wf[stream_id]
 				|| (&plane_record->Blocks[gc_wl_candidate_block_id]) == plane_record->Translation_wf[stream_id]
@@ -230,7 +262,7 @@ namespace SSD_Components
 			}
 		}
 
-		//The block shouldn't have an ongoing program request (all pages must already be written)
+		// The block shouldn't have an ongoing program request (all pages must already be written)
 		if (plane_record->Blocks[gc_wl_candidate_block_id].Ongoing_user_program_count > 0) {
 			return false;
 		}
@@ -242,16 +274,16 @@ namespace SSD_Components
 		return true;
 	}
 
-	inline bool GC_and_WL_Unit_Base::check_static_wl_required(const NVM::FlashMemory::Physical_Page_Address plane_address)
+	inline bool GC_and_WL_Unit_Base::CheckStaticWLRequired(const NVM::FlashMemory::Physical_Page_Address plane_address)
 	{
-		return static_wearleveling_enabled && (block_manager->Get_min_max_erase_difference(plane_address) >= static_wearleveling_threshold);
+		return static_wearleveling_enabled && (block_manager->GetMinMaxEraseDifference(plane_address) >= static_wearleveling_threshold);
 	}
 
-	void GC_and_WL_Unit_Base::run_static_wearleveling(const NVM::FlashMemory::Physical_Page_Address plane_address)
+	void GC_and_WL_Unit_Base::RunStaticWearleveling(const NVM::FlashMemory::Physical_Page_Address plane_address)
 	{
-		PlaneBookKeepingType* pbke = block_manager->Get_plane_bookkeeping_entry(plane_address);
-		flash_block_ID_type wl_candidate_block_id = block_manager->Get_coldest_block_id(plane_address);
-		if (!is_safe_gc_wl_candidate(pbke, wl_candidate_block_id)) {
+		PlaneBookKeepingType* pbke = block_manager->GetPlaneBookkeepingEntry(plane_address);
+		flash_block_ID_type wl_candidate_block_id = block_manager->GetColdestBlockID(plane_address);
+		if (!IsSafeGCWLCandidate(pbke, wl_candidate_block_id)) {
 			return;
 		}
 
@@ -259,20 +291,23 @@ namespace SSD_Components
 		wl_candidate_address.BlockID = wl_candidate_block_id;
 		Block_Pool_Slot_Type* block = &pbke->Blocks[wl_candidate_block_id];
 
-		//Run the state machine to protect against race condition
+		// Run the state machine to protect against race condition
 		block_manager->GC_WL_started(wl_candidate_block_id);
 		pbke->Ongoing_erase_operations.insert(wl_candidate_block_id);
-		address_mapping_unit->SetBarrierForAccessingPhysicalBlock(wl_candidate_address);//Lock the block, so no user request can intervene while the GC is progressing
-		if (block_manager->Can_execute_gc_wl(wl_candidate_address)) {//If there are ongoing requests targeting the candidate block, the gc execution should be postponed
+		address_mapping_unit->SetBarrierForAccessingPhysicalBlock(wl_candidate_address);
+		// Lock the block, so no user request can intervene while the GC is progressing
+		if (block_manager->CanExecuteGCWL(wl_candidate_address)) {
+			// If there are ongoing requests targeting the candidate block, the gc execution should be postponed
 			Stats::Total_wl_executions++;
 			tsu->Prepare_for_transaction_submit();
 
 			NVM_Transaction_Flash_ER* wl_erase_tr = new NVM_Transaction_Flash_ER(Transaction_Source_Type::GC_WL, pbke->Blocks[wl_candidate_block_id].Stream_id, wl_candidate_address);
-			if (block->Current_page_write_index - block->Invalid_page_count > 0) {//If there are some valid pages in block, then prepare flash transactions for page movement
+			if (block->Current_page_write_index - block->Invalid_page_count > 0) {
+				// If there are some valid pages in block, then prepare flash transactions for page movement
 				NVM_Transaction_Flash_RD* wl_read = NULL;
 				NVM_Transaction_Flash_WR* wl_write = NULL;
 				for (flash_page_ID_type pageID = 0; pageID < block->Current_page_write_index; pageID++) {
-					if (block_manager->Is_page_valid(block, pageID)) {
+					if (block_manager->IsPageValid(block, pageID)) {
 						Stats::Total_page_movements_for_gc;
 						wl_candidate_address.PageID = pageID;
 						if (use_copyback) {
@@ -288,7 +323,9 @@ namespace SSD_Components
 							wl_write->ExecutionMode = WriteExecutionModeType::SIMPLE;
 							wl_write->RelatedErase = wl_erase_tr;
 							wl_read->RelatedWrite = wl_write;
-							tsu->Submit_transaction(wl_read);//Only the read transaction would be submitted. The Write transaction is submitted when the read transaction is finished and the LPA of the target page is determined
+							tsu->Submit_transaction(wl_read);
+							// Only the read transaction would be submitted. The Write transaction is submitted
+							// when the read transaction is finished and the LPA of the target page is determined
 						}
 						wl_erase_tr->Page_movement_activities.push_back(wl_write);
 					}

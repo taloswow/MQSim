@@ -8,7 +8,7 @@ namespace SSD_Components
 	{
 	}
 
-	void Flash_Transaction_Queue::Set_id(std::string id)
+	void Flash_Transaction_Queue::SetID(std::string id)
 	{
 		this->id = id;
 	}

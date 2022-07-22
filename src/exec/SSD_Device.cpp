@@ -296,7 +296,7 @@ SSD_Device::SSD_Device(Device_Parameter_Set *parameters, std::vector<IO_Flow_Par
 															 parameters->Flash_Parameters.Page_Capacity / SECTOR_SIZE_IN_BYTE, parameters->Use_Copyback_for_GC, max_rho, 10,
 															 parameters->Seed++);
 		Simulator->AddObject(gcwl);
-		fbm->Set_GC_and_WL_Unit(gcwl);
+		fbm->SetGCAndWLUnit(gcwl);
 		ftl->GC_and_WL_Unit = gcwl;
 
 		// Step 9: create Data_Cache_Manager
@@ -381,7 +381,7 @@ SSD_Device::~SSD_Device()
 
 void SSD_Device::AttachToHost(Host_Components::PCIe_Switch *pcie_switch)
 {
-	this->Host_interface->Attach_to_device(pcie_switch);
+	this->Host_interface->AttachToDevice(pcie_switch);
 }
 
 void SSD_Device::PerformPreconditioning(std::vector<Utils::Workload_Statistics *> workload_stats)

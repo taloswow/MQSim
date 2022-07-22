@@ -37,14 +37,14 @@ namespace SSD_Components
 	public:
 		Input_Stream_Manager_SATA(Host_Interface_Base* host_interface, uint16_t ncq_depth, LHA_type start_logical_sector_address, LHA_type end_logical_sector_address);
 		void Set_ncq_address(uint64_t submission_queue_base_address, uint64_t completion_queue_base_address);
-		void Submission_queue_tail_pointer_update(uint16_t tail_pointer_value);
-		void Completion_queue_head_pointer_update(uint16_t head_pointer_value);
-		void Handle_new_arrived_request(User_Request* request);
-		void Handle_arrived_write_data(User_Request* request);
-		void Handle_serviced_request(User_Request* request);
+		void SubmissionQueueTailPointerUpdate(uint16_t tail_pointer_value);
+		void CompletionQueueHeadPointerUpdate(uint16_t head_pointer_value);
+		void HandleNewArrivedRequest(User_Request* request);
+		void HandleArrivedWriteData(User_Request* request);
+		void HandleServicedRequest(User_Request* request);
 	private:
-		void segment_user_request(User_Request* user_request);
-		void inform_host_request_completed(User_Request* request);
+		void SegmentUserRequest(User_Request* user_request);
+		void InformHostRequestCompleted(User_Request* request);
 		uint16_t ncq_depth;
 	};
 
@@ -52,12 +52,12 @@ namespace SSD_Components
 	{
 	public:
 		Request_Fetch_Unit_SATA(Host_Interface_Base* host_interface, uint16_t ncq_depth);
-		void Fetch_next_request(stream_id_type stream_id);
-		void Fetch_write_data(User_Request* request);
-		void Send_read_data(User_Request* request);
-		void Send_completion_queue_element(User_Request* request, uint16_t ncq_head_value);
-		void Process_pcie_write_message(uint64_t, void *, unsigned int);
-		void Process_pcie_read_message(uint64_t, void *, unsigned int);
+		void FetchNextRequest(stream_id_type stream_id);
+		void FetchWriteData(User_Request* request);
+		void SendReadData(User_Request* request);
+		void SendCompletionQueueElement(User_Request* request, uint16_t ncq_head_value);
+		void ProcessPCIeWriteMessage(uint64_t, void *, unsigned int);
+		void ProcessPCIeReadMessage(uint64_t, void *, unsigned int);
 	private:
 		uint16_t current_phase;
 		uint32_t number_of_sent_cqe;

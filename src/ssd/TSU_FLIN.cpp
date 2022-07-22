@@ -68,11 +68,11 @@ namespace SSD_Components
 				low_intensity_class_read[channel_id][chip_id] = new std::set<stream_id_type>[no_of_priority_classes];
 				low_intensity_class_write[channel_id][chip_id] = new std::set<stream_id_type>[no_of_priority_classes];
 
-				GCReadTRQueue[channel_id][chip_id].Set_id("GC_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@");
-				MappingReadTRQueue[channel_id][chip_id].Set_id("Mapping_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
-				MappingWriteTRQueue[channel_id][chip_id].Set_id("Mapping_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
-				GCWriteTRQueue[channel_id][chip_id].Set_id("GC_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
-				GCEraseTRQueue[channel_id][chip_id].Set_id("GC_Erase_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
+				GCReadTRQueue[channel_id][chip_id].SetID("GC_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@");
+				MappingReadTRQueue[channel_id][chip_id].SetID("Mapping_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
+				MappingWriteTRQueue[channel_id][chip_id].SetID("Mapping_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
+				GCWriteTRQueue[channel_id][chip_id].SetID("GC_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
+				GCEraseTRQueue[channel_id][chip_id].SetID("GC_Erase_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id));
 				for (unsigned int pclass_id = 0; pclass_id < no_of_priority_classes; pclass_id++)
 				{
 					flow_activity_info[channel_id][chip_id][pclass_id] = new FLIN_Flow_Monitoring_Unit[max_flow_id];
@@ -88,8 +88,8 @@ namespace SSD_Components
 						flow_activity_info[channel_id][chip_id][pclass_id][stream_cntr].Sum_read_slowdown = 0;
 						flow_activity_info[channel_id][chip_id][pclass_id][stream_cntr].Sum_write_slowdown = 0;
 					}
-					UserReadTRQueue[channel_id][chip_id][pclass_id].Set_id("User_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@" + std::to_string(pclass_id));
-					UserWriteTRQueue[channel_id][chip_id][pclass_id].Set_id("User_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@" + std::to_string(pclass_id));
+					UserReadTRQueue[channel_id][chip_id][pclass_id].SetID("User_Read_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@" + std::to_string(pclass_id));
+					UserWriteTRQueue[channel_id][chip_id][pclass_id].SetID("User_Write_TR_Queue@" + std::to_string(channel_id) + "@" + std::to_string(chip_id) + "@" + std::to_string(pclass_id));
 				}
 			}
 		}
@@ -558,7 +558,7 @@ namespace SSD_Components
 		if (MappingReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)//Flash transactions that are related to FTL mapping data have the highest priority
 		{
 			sourceQueue1 = &MappingReadTRQueue[chip->ChannelID][chip->ChipID];
-			if (ftl->GC_and_WL_Unit->GC_is_in_urgent_mode(chip) && GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
+			if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip) && GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
 				sourceQueue2 = &GCReadTRQueue[chip->ChannelID][chip->ChipID];
 			else
 			{

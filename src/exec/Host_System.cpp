@@ -32,7 +32,7 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 	Simulator->AddObject(this->Link);
 
 	// Create IO flows
-	LHA_type address_range_per_flow = ssd_host_interface->Get_max_logical_sector_address() / parameters->IO_Flow_Definitions.size();
+	LHA_type address_range_per_flow = ssd_host_interface->GetMaxLogicalSectorAddress() / parameters->IO_Flow_Definitions.size();
 	for (uint16_t flow_id = 0; flow_id < parameters->IO_Flow_Definitions.size(); flow_id++) {
 		Host_Components::IO_Flow_Base* io_flow = NULL;
 		// No flow should ask for I/O queue id 0, it is reserved for NVMe Admin command queue pair
@@ -40,8 +40,8 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 		uint16_t nvme_sq_size = 0, nvme_cq_size = 0;
 		switch (((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetType()) {
 			case HostInterface_Types::NVME:
-				nvme_sq_size = ((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->Get_submission_queue_depth();
-				nvme_cq_size = ((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->Get_completion_queue_depth();
+				nvme_sq_size = ((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetSubmissionQueueDepth();
+				nvme_cq_size = ((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetCompletionQueueDepth();
 				break;
 			default:
 				break;
@@ -121,7 +121,7 @@ void Host_System::StartSimulation()
 	switch (ssd_device->Host_interface->GetType()) {
 		case HostInterface_Types::NVME:
 			for (uint16_t flow_cntr = 0; flow_cntr < IO_flows.size(); flow_cntr++) {
-				((SSD_Components::Host_Interface_NVMe*) ssd_device->Host_interface)->Create_new_stream(
+				((SSD_Components::Host_Interface_NVMe*) ssd_device->Host_interface)->CreateNewStream(
 					IO_flows[flow_cntr]->Priority_class(),
 					IO_flows[flow_cntr]->GetStartLSAOnDevice(), IO_flows[flow_cntr]->GetEndLSAonDevice(),
 					IO_flows[flow_cntr]->GetNVMeQueuePairInfo()->Submission_queue_memory_base_address, IO_flows[flow_cntr]->GetNVMeQueuePairInfo()->Completion_queue_memory_base_address);

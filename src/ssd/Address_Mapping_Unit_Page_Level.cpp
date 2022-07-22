@@ -629,7 +629,6 @@ namespace SSD_Components
 
 	// This function should be invoked only if the address translation entry exists in CMT.
 	// Otherwise, the call to the CMT->Rerieve_ppa, within this function, will throw an exception.
-
 	bool Address_Mapping_Unit_Page_Level::TranslateLPAToPPA(stream_id_type streamID, NVM_Transaction_Flash* transaction)
 	{
 		PPA_type ppa = domains[streamID]->GetPPA(ideal_mapping_table, streamID, transaction->LPA);
@@ -640,14 +639,14 @@ namespace SSD_Components
 			}
 			transaction->PPA = ppa;
 			ConvertPPAToAddress(transaction->PPA, transaction->Address);
-			block_manager->Read_transaction_issued(transaction->Address);
+			block_manager->ReadTransactionIssued(transaction->Address);
 			transaction->Physical_address_determined = true;
 			
 			return true;
 		} else { // This is a write transaction
 			AllocatePlaneForUserWrite((NVM_Transaction_Flash_WR*)transaction);
 			// there are too few free pages remaining only for GC
-			if (ftl->GC_and_WL_Unit->Stop_servicing_writes(transaction->Address)){
+			if (ftl->GC_and_WL_Unit->StopServicingWrites(transaction->Address)){
 				return false;
 			}
 			AllocatePageInPlaneForUserWrite((NVM_Transaction_Flash_WR*)transaction, false);
@@ -701,7 +700,7 @@ namespace SSD_Components
 						plane_address.DieID = domains[stream_id]->Die_ids[die_cntr];
 						plane_address.PlaneID = domains[stream_id]->Plane_ids[plane_cntr];
 
-						unsigned int physical_block_consumption_goal = (unsigned int)(double(block_no_per_plane - ftl->GC_and_WL_Unit->Get_minimum_number_of_free_pages_before_GC() / 2)
+						unsigned int physical_block_consumption_goal = (unsigned int)(double(block_no_per_plane - ftl->GC_and_WL_Unit->GetMinimumNumberOfFreePagesBeforeGC() / 2)
 							* Utils::Logical_Address_Partitioning_Unit::GetShareOfPhysicalPagesInPlane(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID));
 
 						// Adjust the average
@@ -769,7 +768,7 @@ namespace SSD_Components
 									NVM::FlashMemory::Physical_Page_Address addr(plane_address.ChannelID, plane_address.ChipID, plane_address.DieID, plane_address.PlaneID, 0, 0);
 									addresses.push_back(addr);
 								}
-								block_manager->Allocate_Pages_in_block_and_invalidate_remaining_for_preconditioning(stream_id, plane_address, addresses);
+								block_manager->AllocatePagesInBlockAndInvalidateRemainingForPreconditioning(stream_id, plane_address, addresses);
 
 								// Update mapping table
 								for (auto const &address : addresses) {
@@ -819,10 +818,10 @@ namespace SSD_Components
 					LPA_type evicted_lpa;
 					CMTSlotType evictedItem = domains[transaction->Stream_id]->CMT->EvictOneSlot(evicted_lpa);
 					if (evictedItem.Dirty) {
-						/* In order to eliminate possible race conditions for the requests that
-						* will access the evicted lpa in the near future (before the translation
-						* write finishes), MQSim updates GMT (the on flash mapping table) right
-						* after eviction happens.*/
+						// In order to eliminate possible race conditions for the requests that
+						// will access the evicted lpa in the near future (before the translation 
+						// write finishes), MQSim updates GMT (the on flash mapping table) right 
+						// after eviction happens.
 						domains[transaction->Stream_id]->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 						domains[transaction->Stream_id]->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 						if (domains[transaction->Stream_id]->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp) {
@@ -858,10 +857,10 @@ namespace SSD_Components
 					LPA_type evicted_lpa;
 					CMTSlotType evictedItem = domains[stream_id]->CMT->EvictOneSlot(evicted_lpa);
 					if (evictedItem.Dirty) {
-						/* In order to eliminate possible race conditions for the requests that
-						* will access the evicted lpa in the near future (before the translation
-						* write finishes), MQSim updates GMT (the on flash mapping table) right
-						* after eviction happens.*/
+						// In order to eliminate possible race conditions for the requests that
+						// will access the evicted lpa in the near future (before the translation
+						// write finishes), MQSim updates GMT (the on flash mapping table) right
+						// after eviction happens.
 						domains[stream_id]->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 						domains[stream_id]->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 						if (domains[stream_id]->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp)
@@ -1197,7 +1196,7 @@ namespace SSD_Components
 		AddressMappingDomain* domain = domains[transaction->Stream_id];
 		PPA_type old_ppa = domain->GetPPA(ideal_mapping_table, transaction->Stream_id, transaction->LPA);
 
-		if (old_ppa == NO_PPA)  /*this is the first access to the logical page*/
+		if (old_ppa == NO_PPA)  // this is the first access to the logical page
 		{
 			if (is_for_gc) {
 				PRINT_ERROR("Unexpected mapping table status in AllocatePageInPlaneForUserWrite function for a GC/WL write!")
@@ -1206,7 +1205,7 @@ namespace SSD_Components
 			if (is_for_gc) {
 				NVM::FlashMemory::Physical_Page_Address addr;
 				ConvertPPAToAddress(old_ppa, addr);
-				block_manager->Invalidate_page_in_block(transaction->Stream_id, addr);
+				block_manager->InvalidatePageInBlock(transaction->Stream_id, addr);
 				page_status_type page_status_in_cmt = domain->GetPageStatus(ideal_mapping_table, transaction->Stream_id, transaction->LPA);
 				if (page_status_in_cmt != transaction->write_sectors_bitmap)
 					PRINT_ERROR("Unexpected mapping table status in AllocatePageInPlaneForUserWrite for a GC/WL write!")
@@ -1217,28 +1216,28 @@ namespace SSD_Components
 				if (status_intersection == prev_page_status) {
 					NVM::FlashMemory::Physical_Page_Address addr;
 					ConvertPPAToAddress(old_ppa, addr);
-					block_manager->Invalidate_page_in_block(transaction->Stream_id, addr);
+					block_manager->InvalidatePageInBlock(transaction->Stream_id, addr);
 				} else {
 					page_status_type read_pages_bitmap = status_intersection ^ prev_page_status;
 					NVM_Transaction_Flash_RD *update_read_tr = new NVM_Transaction_Flash_RD(transaction->Source, transaction->Stream_id,
 						count_sector_no_from_status_bitmap(read_pages_bitmap) * SECTOR_SIZE_IN_BYTE, transaction->LPA, old_ppa, transaction->UserIORequest,
 						transaction->Content, transaction, read_pages_bitmap, domain->GlobalMappingTable[transaction->LPA].TimeStamp);
 					ConvertPPAToAddress(old_ppa, update_read_tr->Address);
-					block_manager->Read_transaction_issued(update_read_tr->Address);
+					block_manager->ReadTransactionIssued(update_read_tr->Address);
 					// Inform block manager about a new transaction as soon as the transaction's target address is determined
-					block_manager->Invalidate_page_in_block(transaction->Stream_id, update_read_tr->Address);
+					block_manager->InvalidatePageInBlock(transaction->Stream_id, update_read_tr->Address);
 					transaction->RelatedRead = update_read_tr;
 				}
 			}
 		}
 
-		/*The following lines should not be ordered with respect to the block_manager->Invalidate_page_in_block
-		* function call in the above code blocks. Otherwise, GC may be invoked (due to the call to Allocate_block_....) and
-		* may decide to move a page that is just invalidated.*/
+		// The following lines should not be ordered with respect to the block_manager->InvalidatePageInBlock
+		// function call in the above code blocks. Otherwise, GC may be invoked (due to the call to Allocate_block_....) and
+		// may decide to move a page that is just invalidated.
 		if (is_for_gc) {
-			block_manager->Allocate_block_and_page_in_plane_for_gc_write(transaction->Stream_id, transaction->Address);
+			block_manager->AllocateBlockAndPageInPlaneForGCWrite(transaction->Stream_id, transaction->Address);
 		} else {
-			block_manager->Allocate_block_and_page_in_plane_for_user_write(transaction->Stream_id, transaction->Address);
+			block_manager->AllocateBlockAndPageInPlaneForUserWrite(transaction->Stream_id, transaction->Address);
 		}
 		transaction->PPA = ConvertAddressToPPA(transaction->Address);
 		domain->UpdateMappingInfo(ideal_mapping_table, transaction->Stream_id, transaction->LPA, transaction->PPA,
@@ -1263,10 +1262,10 @@ namespace SSD_Components
 		} else {
 			NVM::FlashMemory::Physical_Page_Address prevAddr;
 			ConvertPPAToAddress(old_MPPN, prevAddr);
-			block_manager->Invalidate_page_in_block(transaction->Stream_id, prevAddr);
+			block_manager->InvalidatePageInBlock(transaction->Stream_id, prevAddr);
 		}
 
-		block_manager->Allocate_block_and_page_in_plane_for_translation_write(transaction->Stream_id, transaction->Address, false);
+		block_manager->AllocateBlockAndPageIinPlaneForTranslationWrite(transaction->Stream_id, transaction->Address, false);
 		transaction->PPA = ConvertAddressToPPA(transaction->Address);
 		domain->GlobalTranslationDirectory[mvpn].MPPN = (MPPN_type)transaction->PPA;
 		domain->GlobalTranslationDirectory[mvpn].TimeStamp = CurrentTimeStamp;
@@ -1428,7 +1427,7 @@ namespace SSD_Components
 				PRINT_ERROR("Unknown plane allocation scheme type!")
 		}
 
-		block_manager->Allocate_block_and_page_in_plane_for_user_write(stream_id, read_address);
+		block_manager->AllocateBlockAndPageInPlaneForUserWrite(stream_id, read_address);
 		PPA_type ppa = ConvertAddressToPPA(read_address);
 		domain->UpdateMappingInfo(ideal_mapping_table, stream_id, lpa, ppa, read_sectors_bitmap);
 
@@ -1508,17 +1507,17 @@ namespace SSD_Components
 		AddressMappingDomain* domain = domains[stream_id];
 		MVPN_type mvpn = GetMVPN(lpa, stream_id);
 
-		/*This is the first time that a user request accesses this address.
-		Just create an entry in cache! No flash read is needed.*/
+		// This is the first time that a user request accesses this address.
+		// Just create an entry in cache! No flash read is needed.
 		if (domain->GlobalTranslationDirectory[mvpn].MPPN == NO_MPPN) {
 			if (!domain->CMT->CheckFreeSlotAvailability()) {
 				LPA_type evicted_lpa;
 				CMTSlotType evictedItem = domain->CMT->EvictOneSlot(evicted_lpa);
 				if (evictedItem.Dirty) {
-					/* In order to eliminate possible race conditions for the requests that
-					* will access the evicted lpa in the near future (before the translation
-					* write finishes), MQSim updates GMT (the on flash mapping table) right
-					* after eviction happens.*/
+					// In order to eliminate possible race conditions for the requests that
+					// will access the evicted lpa in the near future (before the translation
+					// write finishes), MQSim updates GMT (the on flash mapping table) right
+					// after eviction happens.
 					domain->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 					domain->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 					if (domain->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp)
@@ -1548,10 +1547,10 @@ namespace SSD_Components
 					LPA_type evicted_lpa;
 					CMTSlotType evictedItem = domain->CMT->EvictOneSlot(evicted_lpa);
 					if (evictedItem.Dirty) {
-						/* In order to eliminate possible race conditions for the requests that
-						* will access the evicted lpa in the near future (before the translation
-						* write finishes), MQSim updates GMT (the on flash mapping table) right
-						* after eviction happens.*/
+						// In order to eliminate possible race conditions for the requests that
+						// will access the evicted lpa in the near future (before the translation
+						// write finishes), MQSim updates GMT (the on flash mapping table) right
+						// after eviction happens.
 						domain->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 						domain->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 						if (domain->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp)
@@ -1567,17 +1566,17 @@ namespace SSD_Components
 			}
 		}
 
-		/*MQSim assumes that the data of all departing (evicted from CMT) translation pages are in memory, until
-		the flash program operation finishes and the entry it is cleared from DepartingMappingEntries.*/
+		// MQSim assumes that the data of all departing (evicted from CMT) translation pages are in memory, until
+		// the flash program operation finishes and the entry it is cleared from DepartingMappingEntries.
 		if (domain->DepartingMappingEntries.find(mvpn) != domain->DepartingMappingEntries.end()) {
 			if (!domain->CMT->CheckFreeSlotAvailability()) {
 				LPA_type evicted_lpa;
 				CMTSlotType evictedItem = domain->CMT->EvictOneSlot(evicted_lpa);
 				if (evictedItem.Dirty) {
-					/* In order to eliminate possible race conditions for the requests that
-					* will access the evicted lpa in the near future (before the translation
-					* write finishes), MQSim updates GMT (the on flash mapping table) right
-					* after eviction happens.*/
+					// In order to eliminate possible race conditions for the requests that
+					// will access the evicted lpa in the near future (before the translation
+					// write finishes), MQSim updates GMT (the on flash mapping table) right
+					// after eviction happens.
 					domain->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 					domain->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 					if (domain->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp)
@@ -1587,23 +1586,23 @@ namespace SSD_Components
 				}
 			}
 			domain->CMT->ReserveSlotForLPN(stream_id, lpa);
-			/*Hack: since we do not actually save the values of translation requests, we copy the mapping
-			data from GlobalMappingTable (which actually must be stored on flash)*/
+			// Hack: since we do not actually save the values of translation requests, we copy the mapping
+			// data from GlobalMappingTable (which actually must be stored on flash)
 			domain->CMT->InsertNewMappingInfo(stream_id, lpa,
 				domain->GlobalMappingTable[lpa].PPA, domain->GlobalMappingTable[lpa].WrittenStateBitmap);
 			
 			return true;
 		}
 
-		//Non of the above options provide mapping data. So, MQSim, must read the translation data from flash memory
+		// None of the above options provide mapping data. So, MQSim, must read the translation data from flash memory
 		if (!domain->CMT->CheckFreeSlotAvailability()) {
 			LPA_type evicted_lpa;
 			CMTSlotType evictedItem = domain->CMT->EvictOneSlot(evicted_lpa);
 			if (evictedItem.Dirty) {
-				/* In order to eliminate possible race conditions for the requests that
-				* will access the evicted lpa in the near future (before the translation
-				* write finishes), MQSim updates GMT (the on flash mapping table) right
-				* after eviction happens.*/
+				// In order to eliminate possible race conditions for the requests that
+				// will access the evicted lpa in the near future (before the translation
+				// write finishes), MQSim updates GMT (the on flash mapping table) right
+				// after eviction happens.
 				domain->GlobalMappingTable[evicted_lpa].PPA = evictedItem.PPA;
 				domain->GlobalMappingTable[evicted_lpa].WrittenStateBitmap = evictedItem.WrittenStateBitmap;
 				if (domain->GlobalMappingTable[evicted_lpa].TimeStamp > CurrentTimeStamp) {
@@ -1656,7 +1655,7 @@ namespace SSD_Components
 				readTR = new NVM_Transaction_Flash_RD(Transaction_Source_Type::MAPPING, stream_id, read_size,
 					mvpn, mppn, NULL, mvpn, NULL, readSectorsBitmap, CurrentTimeStamp);
 				ConvertPPAToAddress(mppn, readTR->Address);
-				block_manager->Read_transaction_issued(readTR->Address);
+				block_manager->ReadTransactionIssued(readTR->Address);
 				// Inform block_manager as soon as the transaction's target address is determined
 				domains[stream_id]->ArrivingMappingEntries.insert(std::pair<MVPN_type, LPA_type>(mvpn, lpn));
 				ftl->TSU->Submit_transaction(readTR);
@@ -1702,7 +1701,7 @@ namespace SSD_Components
 			NVM_Transaction_Flash_RD* readTR = new NVM_Transaction_Flash_RD(Transaction_Source_Type::MAPPING, stream_id,
 					SECTOR_SIZE_IN_BYTE, NO_LPA, NO_PPA, NULL, mvpn, ((page_status_type)0x1) << sector_no_per_page, CurrentTimeStamp);
 			ConvertPPAToAddress(ppn, readTR->Address);
-			block_manager->Read_transaction_issued(readTR->Address);
+			block_manager->ReadTransactionIssued(readTR->Address);
 			// Inform block_manager as soon as the transaction's target address is determined
 			readTR->PPA = ppn;
 			ftl->TSU->Submit_transaction(readTR);
@@ -1728,8 +1727,8 @@ namespace SSD_Components
 		if (transaction->Type == Transaction_Type::WRITE) {
 			_my_instance->domains[transaction->Stream_id]->DepartingMappingEntries.erase((MVPN_type)((NVM_Transaction_Flash_WR*)transaction)->Content);
 		} else {
-			/*If this is a read for an MVP that is required for merging unchanged mapping enries
-			* (stored on flash) with those updated entries that are evicted from CMT*/
+			// If this is a read for an MVP that is required for merging unchanged mapping enries
+			// (stored on flash) with those updated entries that are evicted from CMT
 			if (((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite != NULL) {
 				((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->RelatedRead = NULL;
 			}
@@ -1826,7 +1825,7 @@ namespace SSD_Components
 		Block_Pool_Slot_Type* block = &(block_manager->plane_manager[block_address.ChannelID][block_address.ChipID][block_address.DieID][block_address.PlaneID].Blocks[block_address.BlockID]);
 		NVM::FlashMemory::Physical_Page_Address addr(block_address);
 		for (flash_page_ID_type pageID = 0; pageID < block->Current_page_write_index; pageID++) {
-			if (block_manager->Is_page_valid(block, pageID)) {
+			if (block_manager->IsPageValid(block, pageID)) {
 				addr.PageID = pageID;
 				if (block->Holds_mapping_data) {
 					MVPN_type mpvn = (MVPN_type)flash_controller->GetMetadata(addr.ChannelID, addr.ChipID, addr.DieID, addr.PlaneID, addr.BlockID, addr.PageID);

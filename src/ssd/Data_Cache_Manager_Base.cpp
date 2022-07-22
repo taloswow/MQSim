@@ -43,7 +43,7 @@ namespace SSD_Components
 	void Data_Cache_Manager_Base::SetupTriggers()
 	{
 		Sim_Object::SetupTriggers();
-		host_interface->Connect_to_user_request_arrived_signal(HandleUserRequestArrivedSignal);
+		host_interface->ConnectToUserRequestArrivedSignal(HandleUserRequestArrivedSignal);
 	}
 
 	void Data_Cache_Manager_Base::StartSimulation() {}
@@ -78,7 +78,7 @@ namespace SSD_Components
 
 	void Data_Cache_Manager_Base::HandleUserRequestArrivedSignal(User_Request* user_request)
 	{
-		_my_instance->process_new_user_request(user_request);
+		_my_instance->ProcessNewUserRequest(user_request);
 	}
 
 	void Data_Cache_Manager_Base::SetHostInterface(Host_Interface_Base* host_interface)

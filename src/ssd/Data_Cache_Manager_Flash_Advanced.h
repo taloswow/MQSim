@@ -4,6 +4,7 @@
 #include <list>
 #include <queue>
 #include <unordered_map>
+
 #include "../nvm_chip/flash_memory/FlashTypes.h"
 #include "SSD_Defs.h"
 #include "Data_Cache_Manager_Base.h"
@@ -45,8 +46,8 @@ namespace SSD_Components
 		Data_Cache_Flash** per_stream_cache;
 		bool memory_channel_is_busy;
 		
-		void process_new_user_request(User_Request* user_request);
-		void write_to_destage_buffer(User_Request* user_request);//Used in the WRITE_CACHE and WRITE_READ_CACHE modes in which the DRAM space is used as a destage buffer
+		void ProcessNewUserRequest(User_Request* user_request);
+		void WriteToDestageBuffer(User_Request* user_request);//Used in the WRITE_CACHE and WRITE_READ_CACHE modes in which the DRAM space is used as a destage buffer
 		std::queue<Memory_Transfer_Info*>* dram_execution_queue;//The list of DRAM transfers that are waiting to be executed
 		std::list<User_Request*>* waiting_user_requests_queue_for_dram_free_slot;//The list of user requests that are waiting for free space in DRAM
 		bool shared_dram_request_queue;
@@ -58,7 +59,7 @@ namespace SSD_Components
 		sim_time_type next_bloom_filter_reset_milestone = 0;
 
 		static void HandleTransactionServicedSignalFromPHY(NVM_Transaction_Flash* transaction);
-		void service_dram_access_request(Memory_Transfer_Info* request_info);
+		void ServiceDRAMAccessRequest(Memory_Transfer_Info* request_info);
 	};
 }
 

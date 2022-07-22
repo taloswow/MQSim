@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+
 #include "NVM_Transaction_Flash.h"
 #include "Queue_Probe.h"
 #include "../sim/Sim_Reporter.h"
@@ -14,7 +15,7 @@ namespace SSD_Components
 	public:
 		Flash_Transaction_Queue();
 		Flash_Transaction_Queue(std::string id);
-		void Set_id(std::string id);
+		void SetID(std::string id);
 		void push_back(NVM_Transaction_Flash* const&);
 		void push_front(NVM_Transaction_Flash* const&);
 		std::list<NVM_Transaction_Flash*>::iterator insert(list<NVM_Transaction_Flash*>::iterator position, NVM_Transaction_Flash* const& transaction);

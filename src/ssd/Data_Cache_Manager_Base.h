@@ -69,7 +69,7 @@ namespace SSD_Components
 		void BroadcastUserMemoryTransactionServicedSignal(NVM_Transaction* transaction);
 
 		static void HandleUserRequestArrivedSignal(User_Request* user_request);
-		virtual void process_new_user_request(User_Request* user_request) = 0;
+		virtual void ProcessNewUserRequest(User_Request* user_request) = 0;
 
 		bool is_user_request_finished(const User_Request* user_request) { return (user_request->Transaction_list.size() == 0 && user_request->Sectors_serviced_from_cache == 0); }
 	};
