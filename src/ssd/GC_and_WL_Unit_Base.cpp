@@ -95,7 +95,7 @@ namespace SSD_Components
 						NVM::FlashMemory::Physical_Page_Address gc_wl_candidate_address(transaction->Address);
 						Block_Pool_Slot_Type* block = &pbke->Blocks[transaction->Address.BlockID];
 						Stats::Total_gc_executions++;
-						_my_instance->tsu->Prepare_for_transaction_submit();
+						_my_instance->tsu->PrepareForTransactionSubmit();
 						NVM_Transaction_Flash_ER* gc_wl_erase_tr = new NVM_Transaction_Flash_ER(Transaction_Source_Type::GC_WL, block->Stream_id, gc_wl_candidate_address);
 						
 						// If there are some valid pages in block, then prepare flash transactions for page movement
@@ -110,7 +110,7 @@ namespace SSD_Components
 										gc_wl_write = new NVM_Transaction_Flash_WR(Transaction_Source_Type::GC_WL, block->Stream_id, _my_instance->sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 											NO_LPA, _my_instance->address_mapping_unit->ConvertAddressToPPA(gc_wl_candidate_address), NULL, 0, NULL, 0, INVALID_TIME_STAMP);
 										gc_wl_write->ExecutionMode = WriteExecutionModeType::COPYBACK;
-										_my_instance->tsu->Submit_transaction(gc_wl_write);
+										_my_instance->tsu->SubmitTransaction(gc_wl_write);
 									} else {
 										gc_wl_read = new NVM_Transaction_Flash_RD(Transaction_Source_Type::GC_WL, block->Stream_id, _my_instance->sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 											NO_LPA, _my_instance->address_mapping_unit->ConvertAddressToPPA(gc_wl_candidate_address), gc_wl_candidate_address, NULL, 0, NULL, 0, INVALID_TIME_STAMP);
@@ -119,7 +119,7 @@ namespace SSD_Components
 										gc_wl_write->ExecutionMode = WriteExecutionModeType::SIMPLE;
 										gc_wl_write->RelatedErase = gc_wl_erase_tr;
 										gc_wl_read->RelatedWrite = gc_wl_write;
-										_my_instance->tsu->Submit_transaction(gc_wl_read);
+										_my_instance->tsu->SubmitTransaction(gc_wl_read);
 										// Only the read transaction would be submitted.
 										// The Write transaction is submitted when the read transaction is finished and the LPA of the target page is determined
 									}
@@ -145,12 +145,12 @@ namespace SSD_Components
 					_my_instance->address_mapping_unit->GetTranslationMappingInfoForGC(transaction->Stream_id, (MVPN_type)transaction->LPA, mppa, page_status_bitmap);
 					// There has been no write on the page since GC start, and it is still valid
 					if (mppa == transaction->PPA) {
-						_my_instance->tsu->Prepare_for_transaction_submit();
+						_my_instance->tsu->PrepareForTransactionSubmit();
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->write_sectors_bitmap = FULL_PROGRAMMED_PAGE;
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->LPA = transaction->LPA;
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->RelatedRead = NULL;
 						_my_instance->address_mapping_unit->AllocateNewPageForGC(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite, pbke->Blocks[transaction->Address.BlockID].Holds_mapping_data);
-						_my_instance->tsu->Submit_transaction(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite);
+						_my_instance->tsu->SubmitTransaction(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite);
 						_my_instance->tsu->Schedule();
 					} else {
 						PRINT_ERROR("Inconsistency found when moving a page for GC/WL!")
@@ -160,12 +160,12 @@ namespace SSD_Components
 					
 					// There has been no write on the page since GC start, and it is still valid
 					if (ppa == transaction->PPA) {
-						_my_instance->tsu->Prepare_for_transaction_submit();
+						_my_instance->tsu->PrepareForTransactionSubmit();
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->write_sectors_bitmap = page_status_bitmap;
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->LPA = transaction->LPA;
 						((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->RelatedRead = NULL;
 						_my_instance->address_mapping_unit->AllocateNewPageForGC(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite, pbke->Blocks[transaction->Address.BlockID].Holds_mapping_data);
-						_my_instance->tsu->Submit_transaction(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite);
+						_my_instance->tsu->SubmitTransaction(((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite);
 						_my_instance->tsu->Schedule();
 					} else {
 						PRINT_ERROR("Inconsistency found when moving a page for GC/WL!")
@@ -299,7 +299,7 @@ namespace SSD_Components
 		if (block_manager->CanExecuteGCWL(wl_candidate_address)) {
 			// If there are ongoing requests targeting the candidate block, the gc execution should be postponed
 			Stats::Total_wl_executions++;
-			tsu->Prepare_for_transaction_submit();
+			tsu->PrepareForTransactionSubmit();
 
 			NVM_Transaction_Flash_ER* wl_erase_tr = new NVM_Transaction_Flash_ER(Transaction_Source_Type::GC_WL, pbke->Blocks[wl_candidate_block_id].Stream_id, wl_candidate_address);
 			if (block->Current_page_write_index - block->Invalid_page_count > 0) {
@@ -314,7 +314,7 @@ namespace SSD_Components
 							wl_write = new NVM_Transaction_Flash_WR(Transaction_Source_Type::GC_WL, block->Stream_id, sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 								NO_LPA, address_mapping_unit->ConvertAddressToPPA(wl_candidate_address), NULL, 0, NULL, 0, INVALID_TIME_STAMP);
 							wl_write->ExecutionMode = WriteExecutionModeType::COPYBACK;
-							tsu->Submit_transaction(wl_write);
+							tsu->SubmitTransaction(wl_write);
 						} else {
 							wl_read = new NVM_Transaction_Flash_RD(Transaction_Source_Type::GC_WL, block->Stream_id, sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 								NO_LPA, address_mapping_unit->ConvertAddressToPPA(wl_candidate_address), wl_candidate_address, NULL, 0, NULL, 0, INVALID_TIME_STAMP);
@@ -323,7 +323,7 @@ namespace SSD_Components
 							wl_write->ExecutionMode = WriteExecutionModeType::SIMPLE;
 							wl_write->RelatedErase = wl_erase_tr;
 							wl_read->RelatedWrite = wl_write;
-							tsu->Submit_transaction(wl_read);
+							tsu->SubmitTransaction(wl_read);
 							// Only the read transaction would be submitted. The Write transaction is submitted
 							// when the read transaction is finished and the LPA of the target page is determined
 						}
@@ -332,7 +332,7 @@ namespace SSD_Components
 				}
 			}
 			block->Erase_transaction = wl_erase_tr;
-			tsu->Submit_transaction(wl_erase_tr);
+			tsu->SubmitTransaction(wl_erase_tr);
 
 			tsu->Schedule();
 		}

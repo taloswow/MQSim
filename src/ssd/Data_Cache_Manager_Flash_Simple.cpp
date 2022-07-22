@@ -97,13 +97,13 @@ namespace SSD_Components
 						if (data_cache->Exists(tr->Stream_id, tr->LPA)) {
 							page_status_type available_sectors_bitmap = data_cache->GetSlot(tr->Stream_id, tr->LPA).State_bitmap_of_existing_sectors & tr->read_sectors_bitmap;
 							if (available_sectors_bitmap == tr->read_sectors_bitmap) {
-								user_request->Sectors_serviced_from_cache += count_sector_no_from_status_bitmap(tr->read_sectors_bitmap);
+								user_request->Sectors_serviced_from_cache += CountSectorNoFromStatusBitmap(tr->read_sectors_bitmap);
 								user_request->Transaction_list.erase(it++);
 								// the ++ operation should happen here, otherwise the iterator will be part of the list after erasing it from the list
 							} else if (available_sectors_bitmap != 0) {
-								user_request->Sectors_serviced_from_cache += count_sector_no_from_status_bitmap(available_sectors_bitmap);
+								user_request->Sectors_serviced_from_cache += CountSectorNoFromStatusBitmap(available_sectors_bitmap);
 								tr->read_sectors_bitmap = (tr->read_sectors_bitmap & ~available_sectors_bitmap);
-								tr->Data_and_metadata_size_in_byte -= count_sector_no_from_status_bitmap(available_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
+								tr->Data_and_metadata_size_in_byte -= CountSectorNoFromStatusBitmap(available_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
 								it++;
 							} else {
 								it++;
@@ -177,19 +177,19 @@ namespace SSD_Components
 					Data_Cache_Slot_Type evicted_slot = data_cache->EvictOneSlotLRU();
 					if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 						evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::CACHE,
-							tr->Stream_id, count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
+							tr->Stream_id, CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
 							evicted_slot.LPA, NULL, IO_Flow_PriorityClass::URGENT, evicted_slot.Content, evicted_slot.State_bitmap_of_existing_sectors, evicted_slot.Timestamp));
-						cache_eviction_read_size_in_sectors += count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors);
+						cache_eviction_read_size_in_sectors += CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors);
 					}
 				}
 				data_cache->InsertWriteData(tr->Stream_id, tr->LPA, tr->Content, tr->DataTimeStamp, tr->write_sectors_bitmap);
 			}
-			dram_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
+			dram_write_size_in_sectors += CountSectorNoFromStatusBitmap(tr->write_sectors_bitmap);
 
 			// hot/cold data separation
 			if (bloom_filter[0].find(tr->LPA) == bloom_filter[0].end()) {
 				data_cache->ChangeSlotStatusToWriteback(tr->Stream_id, tr->LPA); // Eagerly write back cold data
-				flash_written_back_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
+				flash_written_back_write_size_in_sectors += CountSectorNoFromStatusBitmap(tr->write_sectors_bitmap);
 				bloom_filter[0].insert(tr->LPA);
 				writeback_transactions.push_back(tr);
 			}

@@ -2,6 +2,7 @@
 #define TSU_OUTOFORDER_H
 
 #include <list>
+
 #include "TSU_Base.h"
 #include "NVM_Transaction_Flash.h"
 #include "NVM_PHY_ONFI_NVDDR2.h"
@@ -51,9 +52,9 @@ private:
 	Flash_Transaction_Queue **MappingReadTRQueue;
 	Flash_Transaction_Queue **MappingWriteTRQueue;
 
-	bool service_read_transaction(NVM::FlashMemory::Flash_Chip *chip);
-	bool service_write_transaction(NVM::FlashMemory::Flash_Chip *chip);
-	bool service_erase_transaction(NVM::FlashMemory::Flash_Chip *chip);
+	bool ServiceReadTransaction(NVM::FlashMemory::Flash_Chip *chip);
+	bool ServiceWriteTransaction(NVM::FlashMemory::Flash_Chip *chip);
+	bool ServiceEraseTransaction(NVM::FlashMemory::Flash_Chip *chip);
 };
 } // namespace SSD_Components
 

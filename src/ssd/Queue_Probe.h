@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+
 #include "../sim/Sim_Defs.h"
 #include "NVM_Transaction.h"
 #include "../utils/XMLWriter.h"

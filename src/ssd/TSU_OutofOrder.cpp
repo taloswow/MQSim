@@ -3,15 +3,31 @@
 namespace SSD_Components
 {
 
-TSU_OutOfOrder::TSU_OutOfOrder(const sim_object_id_type &id, FTL *ftl, NVM_PHY_ONFI_NVDDR2 *NVMController, unsigned int ChannelCount, unsigned int chip_no_per_channel,
-							   unsigned int DieNoPerChip, unsigned int PlaneNoPerDie,
-							   sim_time_type WriteReasonableSuspensionTimeForRead,
-							   sim_time_type EraseReasonableSuspensionTimeForRead,
-							   sim_time_type EraseReasonableSuspensionTimeForWrite,
-							   bool EraseSuspensionEnabled, bool ProgramSuspensionEnabled)
-	: TSU_Base(id, ftl, NVMController, Flash_Scheduling_Type::OUT_OF_ORDER, ChannelCount, chip_no_per_channel, DieNoPerChip, PlaneNoPerDie,
-			   WriteReasonableSuspensionTimeForRead, EraseReasonableSuspensionTimeForRead, EraseReasonableSuspensionTimeForWrite,
-			   EraseSuspensionEnabled, ProgramSuspensionEnabled)
+TSU_OutOfOrder::TSU_OutOfOrder(const sim_object_id_type &id,
+		FTL *ftl,
+		NVM_PHY_ONFI_NVDDR2 *NVMController,
+		unsigned int ChannelCount,
+		unsigned int chip_no_per_channel,
+		unsigned int DieNoPerChip,
+		unsigned int PlaneNoPerDie,
+		sim_time_type WriteReasonableSuspensionTimeForRead,
+		sim_time_type EraseReasonableSuspensionTimeForRead,
+		sim_time_type EraseReasonableSuspensionTimeForWrite,
+		bool EraseSuspensionEnabled,
+		bool ProgramSuspensionEnabled) :
+	TSU_Base(id,
+			ftl,
+			NVMController,
+			Flash_Scheduling_Type::OUT_OF_ORDER,
+			ChannelCount,
+			chip_no_per_channel,
+			DieNoPerChip,
+			PlaneNoPerDie,
+			WriteReasonableSuspensionTimeForRead,
+			EraseReasonableSuspensionTimeForRead,
+			EraseReasonableSuspensionTimeForWrite,
+			EraseSuspensionEnabled,
+			ProgramSuspensionEnabled)
 {
 	UserReadTRQueue = new Flash_Transaction_Queue *[channel_count];
 	UserWriteTRQueue = new Flash_Transaction_Queue *[channel_count];
@@ -212,8 +228,8 @@ void TSU_OutOfOrder::Schedule()
 			for (unsigned int i = 0; i < chip_no_per_channel; i++)
 			{
 				NVM::FlashMemory::Flash_Chip *chip = _NVMController->Get_chip(channelID, Round_robin_turn_of_channel[channelID]);
-				//The TSU does not check if the chip is idle or not since it is possible to suspend a busy chip and issue a new command
-				process_chip_requests(chip);
+				// The TSU does not check if the chip is idle or not since it is possible to suspend a busy chip and issue a new command
+				ProcessChipRequests(chip);
 				Round_robin_turn_of_channel[channelID] = (flash_chip_ID_type)(Round_robin_turn_of_channel[channelID] + 1) % chip_no_per_channel;
 				if (_NVMController->Get_channel_status(chip->ChannelID) != BusChannelStatus::IDLE)
 				{
@@ -224,11 +240,11 @@ void TSU_OutOfOrder::Schedule()
 	}
 }
 
-bool TSU_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_OutOfOrder::ServiceReadTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
 	Flash_Transaction_Queue *sourceQueue1 = NULL, *sourceQueue2 = NULL;
 
-	//Flash transactions that are related to FTL mapping data have the highest priority
+	// Flash transactions that are related to FTL mapping data have the highest priority
 	if (MappingReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
 	{
 		sourceQueue1 = &MappingReadTRQueue[chip->ChannelID][chip->ChipID];
@@ -243,7 +259,7 @@ bool TSU_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_Chip *chip
 	}
 	else if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
 	{
-		//If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
+		// If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
 
 		if (GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
 		{
@@ -272,7 +288,7 @@ bool TSU_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_Chip *chip
 	}
 	else
 	{
-		//If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
+		// If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
 
 		if (UserReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
 		{
@@ -326,16 +342,16 @@ bool TSU_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_Chip *chip
 		return false;
 	}
 
-	issue_command_to_chip(sourceQueue1, sourceQueue2, Transaction_Type::READ, suspensionRequired);
+	IssueCommandToChip(sourceQueue1, sourceQueue2, Transaction_Type::READ, suspensionRequired);
 
 	return true;
 }
 
-bool TSU_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_OutOfOrder::ServiceWriteTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
 	Flash_Transaction_Queue *sourceQueue1 = NULL, *sourceQueue2 = NULL;
 
-	//If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
+	// If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
 	if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
 	{
 		if (GCWriteTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
@@ -361,7 +377,7 @@ bool TSU_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_Chip *chi
 	}
 	else
 	{
-		//If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
+		// If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
 		if (UserWriteTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
 		{
 			sourceQueue1 = &UserWriteTRQueue[chip->ChannelID][chip->ChipID];
@@ -396,12 +412,12 @@ bool TSU_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_Chip *chi
 		return false;
 	}
 
-	issue_command_to_chip(sourceQueue1, sourceQueue2, Transaction_Type::WRITE, suspensionRequired);
+	IssueCommandToChip(sourceQueue1, sourceQueue2, Transaction_Type::WRITE, suspensionRequired);
 
 	return true;
 }
 
-bool TSU_OutOfOrder::service_erase_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_OutOfOrder::ServiceEraseTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
 	if (_NVMController->GetChipStatus(chip) != ChipStatus::IDLE)
 	{
@@ -414,7 +430,7 @@ bool TSU_OutOfOrder::service_erase_transaction(NVM::FlashMemory::Flash_Chip *chi
 		return false;
 	}
 
-	issue_command_to_chip(source_queue, NULL, Transaction_Type::ERASE, false);
+	IssueCommandToChip(source_queue, NULL, Transaction_Type::ERASE, false);
 
 	return true;
 }

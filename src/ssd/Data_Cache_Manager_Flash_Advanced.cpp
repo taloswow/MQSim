@@ -224,13 +224,13 @@ namespace SSD_Components
 						if (per_stream_cache[tr->Stream_id]->Exists(tr->Stream_id, tr->LPA)) {
 							page_status_type available_sectors_bitmap = per_stream_cache[tr->Stream_id]->GetSlot(tr->Stream_id, tr->LPA).State_bitmap_of_existing_sectors & tr->read_sectors_bitmap;
 							if (available_sectors_bitmap == tr->read_sectors_bitmap) {
-								user_request->Sectors_serviced_from_cache += count_sector_no_from_status_bitmap(tr->read_sectors_bitmap);
+								user_request->Sectors_serviced_from_cache += CountSectorNoFromStatusBitmap(tr->read_sectors_bitmap);
 								user_request->Transaction_list.erase(it++);
 								// the ++ operation should happen here, otherwise the iterator will be part of the list after erasing it from the list
 							} else if (available_sectors_bitmap != 0) {
-								user_request->Sectors_serviced_from_cache += count_sector_no_from_status_bitmap(available_sectors_bitmap);
+								user_request->Sectors_serviced_from_cache += CountSectorNoFromStatusBitmap(available_sectors_bitmap);
 								tr->read_sectors_bitmap = (tr->read_sectors_bitmap & ~available_sectors_bitmap);
-								tr->Data_and_metadata_size_in_byte -= count_sector_no_from_status_bitmap(available_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
+								tr->Data_and_metadata_size_in_byte -= CountSectorNoFromStatusBitmap(available_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
 								it++;
 							} else {
 								it++;
@@ -317,18 +317,18 @@ namespace SSD_Components
 					Data_Cache_Slot_Type evicted_slot = per_stream_cache[tr->Stream_id]->EvictOneSlotLRU();
 					if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 						evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::CACHE,
-							tr->Stream_id, count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
+							tr->Stream_id, CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE,
 							evicted_slot.LPA, NULL, IO_Flow_PriorityClass::URGENT, evicted_slot.Content, evicted_slot.State_bitmap_of_existing_sectors, evicted_slot.Timestamp));
-						cache_eviction_read_size_in_sectors += count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors);
+						cache_eviction_read_size_in_sectors += CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors);
 					}
 				}
 				per_stream_cache[tr->Stream_id]->InsertWriteData(tr->Stream_id, tr->LPA, tr->Content, tr->DataTimeStamp, tr->write_sectors_bitmap);
 			}
-			dram_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
+			dram_write_size_in_sectors += CountSectorNoFromStatusBitmap(tr->write_sectors_bitmap);
 			// hot/cold data separation
 			if (bloom_filter[tr->Stream_id].find(tr->LPA) == bloom_filter[tr->Stream_id].end()) {
 				per_stream_cache[tr->Stream_id]->ChangeSlotStatusToWriteback(tr->Stream_id, tr->LPA); // Eagerly write back cold data
-				flash_written_back_write_size_in_sectors += count_sector_no_from_status_bitmap(tr->write_sectors_bitmap);
+				flash_written_back_write_size_in_sectors += CountSectorNoFromStatusBitmap(tr->write_sectors_bitmap);
 				bloom_filter[user_request->Stream_id].insert(tr->LPA);
 				writeback_transactions.push_back(tr);
 			}
@@ -421,14 +421,14 @@ namespace SSD_Components
 							Data_Cache_Slot_Type evicted_slot = ((Data_Cache_Manager_Flash_Advanced*)_my_instance)->per_stream_cache[transaction->Stream_id]->EvictOneSlotLRU();
 							if (evicted_slot.Status == Cache_Slot_Status::DIRTY_NO_FLASH_WRITEBACK) {
 								Memory_Transfer_Info* transfer_info = new Memory_Transfer_Info;
-								transfer_info->Size_in_bytes = count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE;
+								transfer_info->Size_in_bytes = CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors) * SECTOR_SIZE_IN_BYTE;
 								evicted_cache_slots->push_back(new NVM_Transaction_Flash_WR(Transaction_Source_Type::USERIO,
 									transaction->Stream_id, transfer_info->Size_in_bytes, evicted_slot.LPA, NULL, IO_Flow_PriorityClass::UNDEFINED, evicted_slot.Content,
 									evicted_slot.State_bitmap_of_existing_sectors, evicted_slot.Timestamp));
 								transfer_info->Related_request = evicted_cache_slots;
 								transfer_info->next_event_type = Data_Cache_Simulation_Event_Type::MEMORY_READ_FOR_CACHE_EVICTION_FINISHED;
 								transfer_info->Stream_id = transaction->Stream_id;
-								unsigned int cache_eviction_read_size_in_sectors = count_sector_no_from_status_bitmap(evicted_slot.State_bitmap_of_existing_sectors);
+								unsigned int cache_eviction_read_size_in_sectors = CountSectorNoFromStatusBitmap(evicted_slot.State_bitmap_of_existing_sectors);
 								int sharing_id = transaction->Stream_id;
 								if (((Data_Cache_Manager_Flash_Advanced*)_my_instance)->shared_dram_request_queue) {
 									sharing_id = 0;
@@ -441,7 +441,7 @@ namespace SSD_Components
 							((NVM_Transaction_Flash_RD*)transaction)->Content, ((NVM_Transaction_Flash_RD*)transaction)->DataTimeStamp, ((NVM_Transaction_Flash_RD*)transaction)->read_sectors_bitmap);
 
 						Memory_Transfer_Info* transfer_info = new Memory_Transfer_Info;
-						transfer_info->Size_in_bytes = count_sector_no_from_status_bitmap(((NVM_Transaction_Flash_RD*)transaction)->read_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
+						transfer_info->Size_in_bytes = CountSectorNoFromStatusBitmap(((NVM_Transaction_Flash_RD*)transaction)->read_sectors_bitmap) * SECTOR_SIZE_IN_BYTE;
 						transfer_info->next_event_type = Data_Cache_Simulation_Event_Type::MEMORY_WRITE_FOR_CACHE_FINISHED;
 						transfer_info->Stream_id = transaction->Stream_id;
 						((Data_Cache_Manager_Flash_Advanced*)_my_instance)->ServiceDRAMAccessRequest(transfer_info);

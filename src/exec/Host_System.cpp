@@ -19,7 +19,7 @@ Host_System::Host_System(Host_Parameter_Set* parameters,
 
 	// Create the main components of the host system
 	if (((SSD_Components::Host_Interface_NVMe*)ssd_host_interface)->GetType() == HostInterface_Types::SATA) {
-		this->SATA_hba = new Host_Components::SATA_HBA(ID() + ".SATA_HBA", ((SSD_Components::Host_Interface_SATA*)ssd_host_interface)->Get_ncq_depth(), parameters->SATA_Processing_Delay, NULL, NULL);
+		this->SATA_hba = new Host_Components::SATA_HBA(ID() + ".SATA_HBA", ((SSD_Components::Host_Interface_SATA*)ssd_host_interface)->GetNCQDepth(), parameters->SATA_Processing_Delay, NULL, NULL);
 	} else {
 		this->SATA_hba = NULL;
 	}
@@ -128,7 +128,7 @@ void Host_System::StartSimulation()
 			}
 			break;
 		case HostInterface_Types::SATA:
-			((SSD_Components::Host_Interface_SATA*) ssd_device->Host_interface)->Set_ncq_address(
+			((SSD_Components::Host_Interface_SATA*) ssd_device->Host_interface)->SetNCQAddress(
 				SATA_hba->GetSataNCQInfo()->Submission_queue_memory_base_address, SATA_hba->GetSataNCQInfo()->Completion_queue_memory_base_address);
 		default:
 			break;

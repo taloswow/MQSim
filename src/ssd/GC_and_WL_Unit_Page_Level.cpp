@@ -193,7 +193,7 @@ namespace SSD_Components
 			// If there are ongoing requests targeting the candidate block, the gc execution should be postponed
 			if (block_manager->CanExecuteGCWL(gc_candidate_address)) {
 				Stats::Total_gc_executions++;
-				tsu->Prepare_for_transaction_submit();
+				tsu->PrepareForTransactionSubmit();
 
 				NVM_Transaction_Flash_ER* gc_erase_tr = new NVM_Transaction_Flash_ER(Transaction_Source_Type::GC_WL, pbke->Blocks[gc_candidate_block_id].Stream_id, gc_candidate_address);
 				// If there are some valid pages in block, then prepare flash transactions for page movement
@@ -208,7 +208,7 @@ namespace SSD_Components
 								gc_write = new NVM_Transaction_Flash_WR(Transaction_Source_Type::GC_WL, block->Stream_id, sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 									NO_LPA, address_mapping_unit->ConvertAddressToPPA(gc_candidate_address), NULL, 0, NULL, 0, INVALID_TIME_STAMP);
 								gc_write->ExecutionMode = WriteExecutionModeType::COPYBACK;
-								tsu->Submit_transaction(gc_write);
+								tsu->SubmitTransaction(gc_write);
 							} else {
 								gc_read = new NVM_Transaction_Flash_RD(Transaction_Source_Type::GC_WL, block->Stream_id, sector_no_per_page * SECTOR_SIZE_IN_BYTE,
 									NO_LPA, address_mapping_unit->ConvertAddressToPPA(gc_candidate_address), gc_candidate_address, NULL, 0, NULL, 0, INVALID_TIME_STAMP);
@@ -217,7 +217,7 @@ namespace SSD_Components
 								gc_write->ExecutionMode = WriteExecutionModeType::SIMPLE;
 								gc_write->RelatedErase = gc_erase_tr;
 								gc_read->RelatedWrite = gc_write;
-								tsu->Submit_transaction(gc_read);
+								tsu->SubmitTransaction(gc_read);
 								// Only the read transaction would be submitted. The Write transaction is submitted
 								// when the read transaction is finished and the LPA of the target page is determined
 							}
@@ -226,7 +226,7 @@ namespace SSD_Components
 					}
 				}
 				block->Erase_transaction = gc_erase_tr;
-				tsu->Submit_transaction(gc_erase_tr);
+				tsu->SubmitTransaction(gc_erase_tr);
 
 				tsu->Schedule();
 			}

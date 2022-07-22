@@ -1,5 +1,7 @@
-#include <cmath>
 #include "Queue_Probe.h"
+
+#include <cmath>
+
 #include "../sim/Engine.h"
 
 namespace SSD_Components
@@ -101,7 +103,7 @@ namespace SSD_Components
 			writer.WriteAttributeString("totalTimeRatio", std::to_string(r));
 			writer.WriteEndElementTag();
 		}
-		writer.WriteEndElementTag();//id + "_QueueProbe"
+		writer.WriteEndElementTag(); // id + "_QueueProbe"
 	}
 
 	unsigned long Queue_Probe::NRequests()
@@ -166,12 +168,13 @@ namespace SSD_Components
 
 	sim_time_type Queue_Probe::MaxWaitingTime()
 	{
-		return maxWaitingTime / 1000;//convert nano-seconds to micro-seconds
+		return maxWaitingTime / 1000; // convert nano-seconds to micro-seconds
 	}
 
 	sim_time_type Queue_Probe::AvgWaitingTime()
 	{
-		return (sim_time_type)((double)totalWaitingTime / (double)(nDepartures * 1000));//convert nano-seconds to micro-seconds
+		return (sim_time_type)((double)totalWaitingTime / (double)(nDepartures * 1000));
+		// convert nano-seconds to micro-seconds
 	}
 
 	sim_time_type Queue_Probe::AvgWaitingTimeEpoch()

@@ -538,14 +538,14 @@ namespace SSD_Components
 		}
 
 		if (transactionList.size() > 0) {
-			ftl->TSU->Prepare_for_transaction_submit();
+			ftl->TSU->PrepareForTransactionSubmit();
 			for (std::list<NVM_Transaction*>::const_iterator it = transactionList.begin();
 				it != transactionList.end(); it++) {
 				if (((NVM_Transaction_Flash*)(*it))->Physical_address_determined) {
-					ftl->TSU->Submit_transaction(static_cast<NVM_Transaction_Flash*>(*it));
+					ftl->TSU->SubmitTransaction(static_cast<NVM_Transaction_Flash*>(*it));
 					if (((NVM_Transaction_Flash*)(*it))->Type == Transaction_Type::WRITE) {
 						if (((NVM_Transaction_Flash_WR*)(*it))->RelatedRead != NULL) {
-							ftl->TSU->Submit_transaction(((NVM_Transaction_Flash_WR*)(*it))->RelatedRead);
+							ftl->TSU->SubmitTransaction(((NVM_Transaction_Flash_WR*)(*it))->RelatedRead);
 						}
 					}
 				}
@@ -1220,7 +1220,7 @@ namespace SSD_Components
 				} else {
 					page_status_type read_pages_bitmap = status_intersection ^ prev_page_status;
 					NVM_Transaction_Flash_RD *update_read_tr = new NVM_Transaction_Flash_RD(transaction->Source, transaction->Stream_id,
-						count_sector_no_from_status_bitmap(read_pages_bitmap) * SECTOR_SIZE_IN_BYTE, transaction->LPA, old_ppa, transaction->UserIORequest,
+						CountSectorNoFromStatusBitmap(read_pages_bitmap) * SECTOR_SIZE_IN_BYTE, transaction->LPA, old_ppa, transaction->UserIORequest,
 						transaction->Content, transaction, read_pages_bitmap, domain->GlobalMappingTable[transaction->LPA].TimeStamp);
 					ConvertPPAToAddress(old_ppa, update_read_tr->Address);
 					block_manager->ReadTransactionIssued(update_read_tr->Address);
@@ -1626,7 +1626,7 @@ namespace SSD_Components
 			ManageMappingTransactionFacingBarrier(stream_id, mvpn, false);
 			domains[stream_id]->DepartingMappingEntries.insert(GetMVPN(lpn, stream_id));
 		} else {
-			ftl->TSU->Prepare_for_transaction_submit();
+			ftl->TSU->PrepareForTransactionSubmit();
 
 			// Writing back all dirty CMT entries that fall into the same translation virtual page (MVPN)
 			unsigned int read_size = 0;
@@ -1658,7 +1658,7 @@ namespace SSD_Components
 				block_manager->ReadTransactionIssued(readTR->Address);
 				// Inform block_manager as soon as the transaction's target address is determined
 				domains[stream_id]->ArrivingMappingEntries.insert(std::pair<MVPN_type, LPA_type>(mvpn, lpn));
-				ftl->TSU->Submit_transaction(readTR);
+				ftl->TSU->SubmitTransaction(readTR);
 			}
 
 			NVM_Transaction_Flash_WR* writeTR = new NVM_Transaction_Flash_WR(Transaction_Source_Type::MAPPING, stream_id, SECTOR_SIZE_IN_BYTE * sector_no_per_page,
@@ -1666,7 +1666,7 @@ namespace SSD_Components
 			AllocatePlaneForTranslationWrite(writeTR);
 			AllocatePageInPlaneForTranslationWrite(writeTR, mvpn, false);
 			domains[stream_id]->DepartingMappingEntries.insert(GetMVPN(lpn, stream_id));
-			ftl->TSU->Submit_transaction(writeTR);
+			ftl->TSU->SubmitTransaction(writeTR);
 
 			Stats::Total_flash_reads_for_mapping++;
 			Stats::Total_flash_writes_for_mapping++;
@@ -1690,7 +1690,7 @@ namespace SSD_Components
 		if (IsMVONLockedForGC(stream_id, mvpn)) {
 			ManageMappingTransactionFacingBarrier(stream_id, mvpn, true);
 		} else {
-			ftl->TSU->Prepare_for_transaction_submit();
+			ftl->TSU->PrepareForTransactionSubmit();
 
 			PPA_type ppn = domains[stream_id]->GlobalTranslationDirectory[mvpn].MPPN;
 
@@ -1704,7 +1704,7 @@ namespace SSD_Components
 			block_manager->ReadTransactionIssued(readTR->Address);
 			// Inform block_manager as soon as the transaction's target address is determined
 			readTR->PPA = ppn;
-			ftl->TSU->Submit_transaction(readTR);
+			ftl->TSU->SubmitTransaction(readTR);
 
 			Stats::Total_flash_reads_for_mapping++;
 			Stats::Total_flash_reads_for_mapping_per_stream[stream_id]++;
@@ -1733,7 +1733,7 @@ namespace SSD_Components
 				((NVM_Transaction_Flash_RD*)transaction)->RelatedWrite->RelatedRead = NULL;
 			}
 
-			_my_instance->ftl->TSU->Prepare_for_transaction_submit();
+			_my_instance->ftl->TSU->PrepareForTransactionSubmit();
 			MVPN_type mvpn = (MVPN_type)((NVM_Transaction_Flash_RD*)transaction)->Content;
 			std::multimap<MVPN_type, LPA_type>::iterator it = _my_instance->domains[transaction->Stream_id]->ArrivingMappingEntries.find(mvpn);
 			while (it != _my_instance->domains[transaction->Stream_id]->ArrivingMappingEntries.end()) {
@@ -1754,7 +1754,7 @@ namespace SSD_Components
 								_my_instance->ManageUserTransactionFacingBarrier(it2->second);
 							} else {
 								if (_my_instance->TranslateLPAToPPA(transaction->Stream_id, it2->second)) {
-									_my_instance->ftl->TSU->Submit_transaction(it2->second);
+									_my_instance->ftl->TSU->SubmitTransaction(it2->second);
 								}
 								else {
 									_my_instance->ManageUnsuccessfulTranslation(it2->second);
@@ -1769,9 +1769,9 @@ namespace SSD_Components
 								_my_instance->ManageUserTransactionFacingBarrier(it2->second);
 							} else {
 								if (_my_instance->TranslateLPAToPPA(transaction->Stream_id, it2->second)) {
-									_my_instance->ftl->TSU->Submit_transaction(it2->second);
+									_my_instance->ftl->TSU->SubmitTransaction(it2->second);
 									if (((NVM_Transaction_Flash_WR*)it2->second)->RelatedRead != NULL) {
-										_my_instance->ftl->TSU->Submit_transaction(((NVM_Transaction_Flash_WR*)it2->second)->RelatedRead);
+										_my_instance->ftl->TSU->SubmitTransaction(((NVM_Transaction_Flash_WR*)it2->second)->RelatedRead);
 									}
 								} else {
 									_my_instance->ManageUnsuccessfulTranslation(it2->second);
@@ -1978,13 +1978,13 @@ namespace SSD_Components
 	{
 		std::set<NVM_Transaction_Flash_WR*>& waiting_write_list = Write_transactions_for_overfull_planes[plane_address.ChannelID][plane_address.ChipID][plane_address.DieID][plane_address.PlaneID];
 
-		ftl->TSU->Prepare_for_transaction_submit();
+		ftl->TSU->PrepareForTransactionSubmit();
 		auto program = waiting_write_list.begin();
 		while (program != waiting_write_list.end()) {
 			if (TranslateLPAToPPA((*program)->Stream_id, *program)) {
-				ftl->TSU->Submit_transaction(*program);
+				ftl->TSU->SubmitTransaction(*program);
 				if ((*program)->RelatedRead != NULL) {
-					ftl->TSU->Submit_transaction((*program)->RelatedRead);
+					ftl->TSU->SubmitTransaction((*program)->RelatedRead);
 				}
 				waiting_write_list.erase(program++);
 			}

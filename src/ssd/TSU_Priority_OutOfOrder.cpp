@@ -280,12 +280,12 @@ void TSU_Priority_OutOfOrder::Schedule()
             for (unsigned int i = 0; i < chip_no_per_channel; i++)
             {
                 NVM::FlashMemory::Flash_Chip *chip = _NVMController->Get_chip(channelID, Round_robin_turn_of_channel[channelID]);
-                //The TSU does not check if the chip is idle or not since it is possible to suspend a busy chip and issue a new command
-                if (!service_read_transaction(chip))
+                // The TSU does not check if the chip is idle or not since it is possible to suspend a busy chip and issue a new command
+                if (!ServiceReadTransaction(chip))
                 {
-                    if (!service_write_transaction(chip))
+                    if (!ServiceWriteTransaction(chip))
                     {
-                        service_erase_transaction(chip);
+                        ServiceEraseTransaction(chip);
                     }
                 }
                 Round_robin_turn_of_channel[channelID] = (flash_chip_ID_type)(Round_robin_turn_of_channel[channelID] + 1) % chip_no_per_channel;
@@ -332,11 +332,11 @@ Flash_Transaction_Queue *TSU_Priority_OutOfOrder::get_next_read_service_queue(NV
     return NULL;
 }
 
-bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_Priority_OutOfOrder::ServiceReadTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
     Flash_Transaction_Queue *sourceQueue1 = NULL, *sourceQueue2 = NULL;
 
-    //Flash transactions that are related to FTL mapping data have the highest priority
+    // Flash transactions that are related to FTL mapping data have the highest priority
     if (MappingReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
     {
         sourceQueue1 = &MappingReadTRQueue[chip->ChannelID][chip->ChipID];
@@ -351,7 +351,7 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
     }
     else if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
     {
-        //If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
+        // If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
         if (GCReadTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
         {
             sourceQueue1 = &GCReadTRQueue[chip->ChannelID][chip->ChipID];
@@ -376,7 +376,7 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
     }
     else
     {
-        //If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
+        // If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
         sourceQueue1 = get_next_read_service_queue(chip);
         if (sourceQueue1 != NULL)
         {
@@ -429,7 +429,7 @@ bool TSU_Priority_OutOfOrder::service_read_transaction(NVM::FlashMemory::Flash_C
         return false;
     }
 
-    issue_command_to_chip(sourceQueue1, sourceQueue2, Transaction_Type::READ, suspensionRequired);
+    IssueCommandToChip(sourceQueue1, sourceQueue2, Transaction_Type::READ, suspensionRequired);
 
     return true;
 }
@@ -468,11 +468,11 @@ Flash_Transaction_Queue *TSU_Priority_OutOfOrder::get_next_write_service_queue(N
     return NULL;
 }
 
-bool TSU_Priority_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_Priority_OutOfOrder::ServiceWriteTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
     Flash_Transaction_Queue *sourceQueue1 = NULL, *sourceQueue2 = NULL;
 
-    //If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
+    // If flash transactions related to GC are prioritzed (non-preemptive execution mode of GC), then GC queues are checked first
     if (ftl->GC_and_WL_Unit->GCIsInUrgentMode(chip))
     {
         if (GCWriteTRQueue[chip->ChannelID][chip->ChipID].size() > 0)
@@ -495,7 +495,7 @@ bool TSU_Priority_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_
     }
     else
     {
-        //If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
+        // If GC is currently executed in the preemptive mode, then user IO transaction queues are checked first
         sourceQueue1 = get_next_write_service_queue(chip);
         if (sourceQueue1 != NULL)
         {
@@ -530,12 +530,12 @@ bool TSU_Priority_OutOfOrder::service_write_transaction(NVM::FlashMemory::Flash_
         return false;
     }
 
-    issue_command_to_chip(sourceQueue1, sourceQueue2, Transaction_Type::WRITE, suspensionRequired);
+    IssueCommandToChip(sourceQueue1, sourceQueue2, Transaction_Type::WRITE, suspensionRequired);
 
     return true;
 }
 
-bool TSU_Priority_OutOfOrder::service_erase_transaction(NVM::FlashMemory::Flash_Chip *chip)
+bool TSU_Priority_OutOfOrder::ServiceEraseTransaction(NVM::FlashMemory::Flash_Chip *chip)
 {
     if (_NVMController->GetChipStatus(chip) != ChipStatus::IDLE)
     {
@@ -548,7 +548,7 @@ bool TSU_Priority_OutOfOrder::service_erase_transaction(NVM::FlashMemory::Flash_
         return false;
     }
 
-    issue_command_to_chip(source_queue, NULL, Transaction_Type::ERASE, false);
+    IssueCommandToChip(source_queue, NULL, Transaction_Type::ERASE, false);
 
     return true;
 }
